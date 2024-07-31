@@ -440,7 +440,7 @@ rule.
     Rule call is illustrated in the following example.
  $A   :=   #L2   (   'begin'  'end'  );  
     As  a  result  the  atom
-'Thetpairtbegin-end' is assigned to the variable $A. 
+'The pair begin-end' is assigned to the variable $A. 
     If  RETURN  statement  is not described in the rule, then the
 NULL value is returned. 
     If  the rule call ends in failure, then usually value NULL is
@@ -1405,7 +1405,7 @@ Notes in Computer Science, Vol.180, Springer-Verlag,
 Berlin, 1984.
   [9] R.Vilhelm. Presentation of the compiler generation system MUG2: 
 Examples, global flow analysis and optimization// Le point
-sur la compilation, INRIA, 1978, à.307-336.
+sur la compilation, INRIA, 1978, ï¿½.307-336.
   [10] Basic REFAL and its implementation on computers.// CNIPIASS,
 Moscow, 1977, (in Russian). 
   [11] P.Lucas. Formal definition of programming languages and

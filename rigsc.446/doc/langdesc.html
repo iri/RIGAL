@@ -1,1474 +1,1694 @@
+<!DOCTYPE html>
 <html>
 <head>
-<title> RIGAL PROGRAMMING SYSTEM LANGUAGE DESCRIPTION   </title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title> RIGAL PROGRAMMING SYSTEM LANGUAGE DESCRIPTION </title>
+	<meta name="generator" content="LibreOffice 24.2.5.2 (Windows)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="2024-07-31T23:55:36.173000000"/>
+	<meta name="Originator" content="Microsoft Word 15"/>
+	<meta name="ProgId" content="Word.Document"/>
+	<style type="text/css">
+		@page { size: 8.5in 11in; margin-left: 0.79in; margin-right: 0.39in; margin-top: 0.39in; margin-bottom: 0.39in }
+		p { color: #000000; line-height: 115%; margin-bottom: 0.1in; background: transparent }
+		h1 { color: #000000; margin-bottom: 0.08in; background: transparent; page-break-after: avoid }
+		h1.western { font-family: "Liberation Serif", serif; font-size: 24pt; font-weight: bold }
+		h1.cjk { font-family: "NSimSun"; font-size: 24pt; font-weight: bold }
+		h1.ctl { font-family: "Arial"; font-size: 24pt; font-weight: bold }
+		h2 { color: #000000; margin-top: 0.14in; margin-bottom: 0.08in; background: transparent; page-break-after: avoid }
+		h2.western { font-family: "Liberation Serif", serif; font-size: 18pt; font-weight: bold }
+		h2.cjk { font-family: "NSimSun"; font-size: 18pt; font-weight: bold }
+		h2.ctl { font-family: "Arial"; font-size: 18pt; font-weight: bold }
+		pre { color: #000000; background: transparent }
+		pre.western { font-family: "Liberation Mono", monospace; font-size: 10pt }
+		pre.cjk { font-family: "NSimSun", monospace; font-size: 10pt }
+		pre.ctl { font-family: "Liberation Mono", monospace; font-size: 10pt }
+		h3 { color: #000000; margin-top: 0.1in; margin-bottom: 0.08in; background: transparent; page-break-after: avoid }
+		h3.western { font-family: "Liberation Serif", serif; font-size: 14pt; font-weight: bold }
+		h3.cjk { font-family: "NSimSun"; font-size: 14pt; font-weight: bold }
+		h3.ctl { font-family: "Arial"; font-size: 14pt; font-weight: bold }
+		a:link { color: #0000ff; text-decoration: underline }
+		a:visited { color: #800080; text-decoration: underline }
+	</style>
 </head>
-<body>
-<H1>  <A HREF="http://www.ida.liu.se/labs/pelab/members/vaden/rigal.html"> RIGAL</a>  PROGRAMMING SYSTEM</H1>
-<H1> LANGUAGE DESCRIPTION
-</H1>
-<HR>
-by  Mikhail  AUGUSTON
-<p>
-University of Latvia, 
-Institute of Mathematics and Computer Science
-<p>
+<body lang="en-US" text="#000000" link="#0000ff" vlink="#800080" dir="ltr"><h1 class="western">
+<a href="http://www.ida.liu.se/labs/pelab/members/vaden/rigal.html">RIGAL</a>
+PROGRAMMING SYSTEM</h1>
+<h1 class="western">LANGUAGE DESCRIPTION 
+</h1>
+<hr size="2"/>
 
-<h2>                         TABLE OF CONTENTS</h2> 
-<p>
-<p> <a href="#a"> ABSTRACT </A>
-<p>  <a href="#1"> 1. Introduction </A>
-<p>  <a href="#2">2. Implementation </A>
-<p> <a href="#3"> 3. Lexical Rules </A>
-<p> <a href="#4"> 4.   Data </A>
- 4.1 Atoms
- 4.2 Variables
- 4.3 Lists
- 4.4 Trees
-<p> <a href="#5"> 5. Expressions </A>
- 5.1 Accumulative Assignment Statements
- 5.2  Semantics of Variables
-<p> <a href="#6"> 6. Rules </A>
- 6.1. Simple Patterns
- 6.2. Assignment in Patterns
- 6.3 Rule Branches. Onfail Operations
- 6.4 Special Variables
-<p> <a href="#7"> 7. Compound Patterns </A>
- 7.1 List Pattern
- 7.2 Iterative Pattern of Sequence
- 7.3 Patterns for Alternative and Option
- 7.4 Tree Pattern
-<p> 7.5 Iterative Tree Pattern
- 7.6 Names of Lists and Trees in Patterns
- 7.7 Patterns of Logical Condition Testing
-<p> <a href="#8"> 8. Statements </A>
- 8.1 Assignment Statement
- 8.2 Conditional Statement
- 8.3 FAIL Statement
- 8.4 Loop Statements
- 8.5 Rule Call
-<p> <a href="#9"> 9. Input and Output </A>
- 9.1 SAVE and LOAD Statements
- 9.2 Text Output
-<p> <a href="#10"> 10. Program Structure </A>
- 10.1 Local Variables
- 10.2 References to Variables of Other Rules
- 10.3 Attribute Grammars and RIGAL. Global Attributes
-<p> <a href="#11"> 11. Built-in Rules </A>
-<p> <a href="#12"> 12. Sample Compiler </A>
- 12.1 TOYLAN Language
- 12.2 Intermediate Form of Program. Abstract syntax tree
- 12.3 Target Language BAL
- 12.4 Main Module of Compiler
- 12.5 Parsing Phase
- 12.6 Code Generation Phase
-<p> <a href="#13"> 13. Conclusions and Future Work </A>
-<p> <a href="#R"> References </A>
-
- <a name="a"> 
-                              <h2> ABSTRACT </h2> 
-
-    A new programming language for compiler writing is described.
-The  main data structures are atoms, lists and trees. The control
-structures  are based on advanced pattern matching. All phases of
-compilation, including parsing, optimization and code generation,
-can  be  programmed  in this language in short and readable form.
-Sample compiler written in RIGAL is presented. 
-
- <a name="1"> 
-                        <h2>   1. Introduction </h2>
-
-
-    Programming  language  RIGAL  is  intended  to  be a tool for
-parsing (  context  checking,  diagnosing  and  neutralization  of
-errors included ), for code optimization, code generation, static
-analysis   of  programs,  as  well  as  for  the  programming  of
-preprocessors and convertors. 
-<p>    Almost   all   the   systems   envisaged  to  solve  compiler
-construction  problems  contain  means  to  describe context-free
+<p class="msonormal">by Mikhail AUGUSTON 
+</p>
+<p>University of Latvia, Institute of Mathematics and Computer
+Science 
+</p>
+<h2 class="western">TABLE OF CONTENTS</h2>
+<p><a href="#a">ABSTRACT </a>
+</p>
+<p><a href="#1">1. Introduction </a>
+</p>
+<p><a href="#2">2. Implementation </a>
+</p>
+<p><a href="#3">3. Lexical Rules </a>
+</p>
+<p><a href="#4">4. Data </a>4.1 Atoms 4.2 Variables 4.3 Lists 4.4
+Trees 
+</p>
+<p><a href="#5">5. Expressions </a>5.1 Accumulative Assignment
+Statements 5.2 Semantics of Variables 
+</p>
+<p><a href="#6">6. Rules </a>6.1. Simple Patterns 6.2. Assignment in
+Patterns 6.3 Rule Branches. Onfail Operations 6.4 Special Variables 
+</p>
+<p><a href="#7">7. Compound Patterns </a>7.1 List Pattern 7.2
+Iterative Pattern of Sequence 7.3 Patterns for Alternative and Option
+7.4 Tree Pattern 
+</p>
+<p>7.5 Iterative Tree Pattern 7.6 Names of Lists and Trees in
+Patterns 7.7 Patterns of Logical Condition Testing 
+</p>
+<p><a href="#8">8. Statements </a>8.1 Assignment Statement 8.2
+Conditional Statement 8.3 FAIL Statement 8.4 Loop Statements 8.5 Rule
+Call 
+</p>
+<p><a href="#9">9. Input and Output </a>9.1 SAVE and LOAD Statements
+9.2 Text Output 
+</p>
+<p><a href="#10">10. Program Structure </a>10.1 Local Variables 10.2
+References to Variables of Other Rules 10.3 Attribute Grammars and
+RIGAL. Global Attributes 
+</p>
+<p><a href="#11">11. Built-in Rules </a>
+</p>
+<p><a href="#12">12. Sample Compiler </a>12.1 TOYLAN Language 12.2
+Intermediate Form of Program. Abstract syntax tree 12.3 Target
+Language BAL 12.4 Main Module of Compiler 12.5 Parsing Phase 12.6
+Code Generation Phase 
+</p>
+<p><a href="#13">13. Conclusions and Future Work </a>
+</p>
+<p><a name="a"></a><a href="#R">References </a>
+</p>
+<h2 class="western">ABSTRACT 
+</h2>
+<p class="msonormal"><a name="1"></a>A new programming language for
+compiler writing is described. The main data structures are atoms,
+lists and trees. The control structures are based on advanced pattern
+matching. All phases of compilation, including parsing, optimization
+and code generation, can be programmed in this language in short and
+readable form. Sample compiler written in RIGAL is presented. 
+</p>
+<h2 class="western" style="orphans: 1">1. Introduction 
+</h2>
+<p class="msonormal" style="orphans: 1">Programming language RIGAL is
+intended to be a tool for parsing ( context checking, diagnosing and
+neutralization of errors included ), for code optimization, code
+generation, static analysis of programs, as well as for the
+programming of preprocessors and convertors. 
+</p>
+<p style="orphans: 1">Almost all the systems envisaged to solve
+compiler construction problems contain means to describe context-free
 grammar of the source language. Earlier systems, like the Floyd -
-Evans  language,  [1]  present tools to work with stack, which is
-used for parsing. Parsing methods for limited grammar classes are
-implemented  in  the  languages  and systems of later generations
+Evans language, [1] present tools to work with stack, which is used
+for parsing. Parsing methods for limited grammar classes are
+implemented in the languages and systems of later generations
 (usually LL(1) or LR(1) ). 
- <p>   Such systems as YACC (Johnson [2]), CDL-2 ( Koster [3]), SHAG
-(Agamirzyan   [4])  and  many  others  make  use  of  synchronous
-implementation  of  parsing  and  different  computations,  e.g.,
-formation of tables, context checking, etc. Usually these actions
-are  performed  by  call of semantic subroutines, written in some
-universal programming language ( e.g., in Pascal or C). 
-<p>    Attribute   grammars  advanced  by  Knuth  [5]  have  greatly
-influenced  development  of  systems  for  compiler construction.
-Systems,  like,  SUPER  (Serebryakov  [6]), ELMA (Vooglaid, Lepp,
-Lijb  [7]),  MUG2 (Wilhelm [9]) are based on the use of attribute
-grammars not only for parsing, but for code generation as well. 
- <p>   Pattern  matching  is  a  convenient  tool for programming of
-parsing,  optimization and code generation. The REFAL programming
-language  [10], acknowledged for translator writing, may serve as
-a good example. 
- <p>   Vienna method for defining semantics of programming languages
-[11] suggests the usage of labelled trees in order to present the
-abstract   syntax  of  programs.  Representation  of  compilation
-intermediate  results  in  the  tree  form  has become usual (see
-[12]). 
- <p>   Dependence  of  control  structures  in the program from data
-structures used for program's work is one of the basic principles
-in  programming. The recursive descent method could be considered
-to be the application of dependence principle. 
- <p>   The above mentioned ideas and methods were taken into account
-when creating RIGAL language. 
-<p>    The  language  possesses  few  basic notions. Data structures
-contain  atoms,  lists  and  trees. Advanced mechanism of pattern
-matching lies at the basis of control structures. 
-<p>    The  fact  that  RIGAL  is  a  closed  language  makes  RIGAL
-distinctive.   That   means   that   almost   all  the  necessary
-computations and input-output could be executed by internal means
-and  there  is  no  need  to  use  external semantic subroutines.
-Therefore the portability of RIGAL programs to other computers is
-increased. 
-<p>    Means  for  work  with  trees,  different patterns including,
-enable  both  programming  of parsing algorithms and optimization
-phases  and code generation as well. The language supports design
-of multipass translators. Trees are used as intermediate data. 
-  <p>  The  language  allows to split the program into small modules
-(rules)  and  presents  various  means  to arrange interaction of
-these modules. Pattern matching is used for parameter passing. 
- <p>   RIGAL   supports   attribute   translation  scheme  and  easy
-implementation   of   synthesized  and  inherited  attributes  is
-possible.  The problem of global attributes is solved by usage of
+</p>
+<p style="orphans: 1">Such systems as YACC (Johnson [2]), CDL-2 (
+Koster [3]), SHAG (Agamirzyan [4]) and many others make use of
+synchronous implementation of parsing and different computations,
+e.g., formation of tables, context checking, etc. Usually these
+actions are performed by call of semantic subroutines, written in
+some universal programming language ( e.g., in Pascal or C). 
+</p>
+<p style="orphans: 1">Attribute grammars advanced by Knuth [5] have
+greatly influenced development of systems for compiler construction.
+Systems, like, SUPER (Serebryakov [6]), ELMA (Vooglaid, Lepp, Lijb
+[7]), MUG2 (Wilhelm [9]) are based on the use of attribute grammars
+not only for parsing, but for code generation as well. 
+</p>
+<p style="orphans: 1">Pattern matching is a convenient tool for
+programming of parsing, optimization and code generation. The REFAL
+programming language [10], acknowledged for translator writing, may
+serve as a good example. 
+</p>
+<p style="orphans: 1">Vienna method for defining semantics of
+programming languages [11] suggests the usage of labelled trees in
+order to present the abstract syntax of programs. Representation of
+compilation intermediate results in the tree form has become usual
+(see [12]). 
+</p>
+<p style="orphans: 1">Dependence of control structures in the program
+from data structures used for program's work is one of the basic
+principles in programming. The recursive descent method could be
+considered to be the application of dependence principle. 
+</p>
+<p style="orphans: 1">The above mentioned ideas and methods were
+taken into account when creating RIGAL language. 
+</p>
+<p style="orphans: 1">The language possesses few basic notions. Data
+structures contain atoms, lists and trees. Advanced mechanism of
+pattern matching lies at the basis of control structures. 
+</p>
+<p style="orphans: 1">The fact that RIGAL is a closed language makes
+RIGAL distinctive. That means that almost all the necessary
+computations and input-output could be executed by internal means and
+there is no need to use external semantic subroutines. Therefore the
+portability of RIGAL programs to other computers is increased. 
+</p>
+<p style="orphans: 1">Means for work with trees, different patterns
+including, enable both programming of parsing algorithms and
+optimization phases and code generation as well. The language
+supports design of multipass translators. Trees are used as
+intermediate data. 
+</p>
+<p style="orphans: 1">The language allows to split the program into
+small modules (rules) and presents various means to arrange
+interaction of these modules. Pattern matching is used for parameter
+passing. 
+</p>
+<p style="orphans: 1">RIGAL supports attribute translation scheme and
+easy implementation of synthesized and inherited attributes is
+possible. The problem of global attributes is solved by usage of
 special references. 
-  <p>  Lexical  analysis  is  a  separate  task and requires special
-language  facilities  for  description  as it is, for example, in
-LEX/YACC  [2]  system. In the current implementation of RIGAL two
-scanners are included that accept lexics of Pascal, C,
-Modula-2  and RIGAL. 
-
- <a name="2"> 
-                      <h2>    2. Implementation </h2>
-
-    RIGAL was designed and implemented in the Computing Center of
-Latvia  University  in  years 1987-1988. The first implementation
-was for PDP-11 in RSX-11. 
-<p>    At the present stage RIGAL interpreter has been developed and
-optimizing compiler RIGAL -> Pascal has been implemented by means
-of  RIGAL  itself.  The  interpreter  and  the compiler have been
-ported to VAX/VMS , IBM PC XT/AT (MS-DOS and MS-Windows) and
-Unix/SUN environments. 
-
- <a name="3"> 
-                      <h2>    3. Lexical Rules </h2>
-
-    The  text  of  RIGAL  program is a sequence of tokens - atoms
-(e.g.,  identifiers and integers ), keywords (e.g., if, RETURN ),
-special  symbols  (e.g.,  +,  ##  ), names of variables and rules
-(e.g.,  $A,  #L  ).  Tokens  may  be  surrounded by any number of
-blanks.  A  comment is any string of symbols that begins with two
-consecutive  symbols  '-' (minus ). The end of the comment is the
-end of the line. For example, 
-<xmp>
- #Sum    -- rule for addition of two numbers
-      $N1   -- the first number
-      $N2   -- the second number
-    /  RETURN  $N1 + $N2 /   -- return of the result
- ##
-</xmp> <a name="4"> 
-                        <h2>      4.   Data </h2>
-
-                       <h3>      4.1 Atoms</h3>
-
-<p>    An  atom is a string of symbols. If the atom is an identifier
-(  the  first symbol is a letter followed by letters or digits or
-underscore  symbols),  in  the  text of RIGAL program it could be
-written directly: AABC total_number x25 
-<p>    Numerical atoms are integers, for instance, 2, 187, 0, -25
-<p>    In other cases the atom is quoted: '+'    ':='     '1st'
-<p>    Some  identifiers  are reserved as keywords in RIGAL. If they
-are  used  as  RIGAL  atoms,  they should be quoted. For example,
-'IF',  'RETURN'.  Besides, any atom, which is an identifier, also
-can be quoted - ABC and 'ABC' represent one and the same atom. 
-<p>    It  should be noted that 25 and '25' are different atoms, the
-latter is just a string of symbols '2' and '5'. 
-<p>    Two special atoms are distinguished in the language.
-<p>    NULL  -  this  atom  is  frequently  yielded  as  a result of
-different  operations,  if something was incorrect in the process
-of  computations.  This  atom  also  represents an empty list, an
-empty tree and Boolean value "false". 
-<p>     T  -  usually this atom is yielded by logical operations and
-represents value "true". 
-<p>
-<p>                     <h3>      4.2 Variables</h3>
-
- <p>   The name of a variable must begin with the symbol $, followed
-by  an  identifier.  Value  can  be  assigned  to a variable, for
-example, by the help of assignment statement: $E := A 
-<p>    In this case the atom A becomes value of the variable $E.
-<p>    In  RIGAL variables have no types, the same variable may have
-an atom, a list or a tree as a value in different time moments. 
-
-                       <h3>      4.3 Lists</h3>
-
-<p>    Ordered sequences, i.e., lists can be composed from atoms and
-from  other  lists  and trees, as well. A special function - list
-constructor  serves for list formation. For instance, (. A B C .)
-forms a list of three atoms A, B and C. 
-<p>    Arguments  of  the  list  constructor may be expressions. The
-sample  $E  := (. (. 8 14 7 .) (. A B .) .) could be rewritten as
-follows: 
-<p>  $A := (. 8  14  7 .); $B := (. A  B  .); $E := (. $A  $B .);
-<p>    Separate  elements  of  the list can be selected by indexing.
-Hence, $B [1] is atom A, $A [2] is atom 14, $E [2] is list 
-<p> (. A B .), but $E [10] is atom NULL
- <p>   If  the value of the index is a negative number, for instance
--N, then the N-th element, beginning from the end of the list, is
-selected. For example, $A [-1] is atom 7. 
-<p>    The  necessity  to  add one more element to the list is quite
-common. Operation !. is envisaged for this purpose. 
-<p>    Example. (. A  B .) !. C  yields the list (. A  B  C .)
-<p>    To link two lists in a new list the operation !! is applied (
-list  concatenation). For instance, (. A B .) !! (. C D .) yields
-(. A B C D .). 
-<p>
-<p>                       <h3>      4.4 Trees</h3>
-<p>
-<p>    Tree constructor is used to create a tree. For example,
-<p>                      <.  A : B,  C : D  .>
-<p>    One  can  imagine  tree  as  a graph, the nodes and arches of
-which are marked by some objects. 
-<p>    Objects   before  ':'  in  the  tree  constructor  are  named
-selectors.  In  the  given implementation solely atoms, which are
-identifiers  (  except  NULL  ),  may  serve as selectors. In the
-graphical  representation  selectors  correspond to arches of the
-graph.  All  selectors of one and the same level in the tree must
-be different. 
-<p>    Any  object  -  atom,  list  or  tree,  except atom NULL, may
-correspond  to  terminal  nodes  of  the  graph ( "leaves" of the
-tree). Hence, multilayer trees can be built. For instance, 
- <p>             <. A : B,  C : <. D : E, F : G .> .>
- <p>   Pair  "selector  : object" in the tree is named branch of the
-tree. Branches are unordered in the tree. 
-<p>    Likewise  for  the list constructor, the tree constructor may
-be  described  by  expressions  (  in  both  selector  and object
-places),  for instance, 
- <p>   $X := D; $B := (. 2 8 .); 
-<p>    $C := <. A : <. M : K .>, $X : '+' , E : $B .>; 
-<p>    Select  operation serves to extract the tree component. It is
-in the following form: tree . sel , where tree is the expression,
-whose  value  must be some tree, but sel is the expression, whose
-value must be an atom-identifier. 
- <p>   Consequently,  
-  <p>  $C . A is the tree <. M : K .> , 
- <p>   $C . D is the
-atom '+' , 
- <p>   $C . E is the list (. 2 8 .) , 
- <p>   $C . E[2] is the atom 8
-, $C . A . M is the atom K 
- <p>   If there is no branch with a given selector in the tree, then
-the result is NULL: $C . W is atom NULL. 
- <p>   Operation  of the tree "addition" is performed as well: T1 ++
-T2 , where T1 and T2 are trees. Tree T2 branches are added to the
-tree  T1  one  by  one.  If in the tree T1 there already exists a
-branch with the same selector, the branch is substituted by a new
-one. Therefore, the operation "++" is not commutative. 
- <p>   It  should  be  pointed  out  that  the  tree  constructor is
-computed  from  left to right, i.e., 
-<p>  <. s1 : a1, s2 : a2, s3 : a3.> 
-<p> gives the same result as the expression 
-<p>  (( NULL ++ <. s1 : a1 .> ) ++ <. s2 : a2 .>) ++ <. s3 : a3 .>
- <a name="5"> 
-                 <h2>          5. Expressions </h2>
-
-<p>    Operations  = and <> serve for the comparison of objects. The
-result of the comparison is either T ("true") or NULL ("false"). 
-<p>    Atoms  are  matched directly, for instance, a = b gives NULL,
-25 = 25 gives T, 17 <> 25 gives T. 
-<p>    Lists  are  considered equal iff they contain equal number of
-components and if these components are equal respectively. 
-<p>    Trees  are  considered equal iff they contain equal number of
-branches  and  if  one of the trees contains the branch "S : OB",
-then  the  other tree also contains the branch "S : OB1" and OB =
-OB1. 
- <p>   Arithmetical  operations  +,  -, *, DIV, MOD are assigned for
-numerical  atoms.  The  essence of these operations is similar to
-those  in  Pascal.  The  result of an arithmetical operation is a
-numerical  atom.  Atom  NULL  is also admitted as the argument of
-arithmetical  operation, in this case integer 0 is supposed to be
-its  value.  Under matching these atoms are considered different,
-i.e., NULL = 0 gives NULL. 
- <p>   Besides  the  operations  =  and <> numerical values could be
-compared by the help of >, <, >= and <=. 
- <p>   Logical  operations AND, OR and NOT usually are applied under
-conditions  in  conditional  statements.  Their  arguments may be
-arbitrary  objects.  If  the  object  differs  from  NULL,  it is
-supposed  to  have  the value "true" in a logical operation. Atom
-NULL  represents  the  "false"  value.  The  result  of a logical
-operation always is either T or NULL. 
- <p>   In order to make complex hierarchic objects ( trees and lists
-of  complex  structure  )  more visual and to improve the work of
-pattern  matching,  trees and lists may be labelled. A name is an
-atom  opposed  to  the  root  node of the tree or the whole list.
-Labelling operation is written the following way: 
- <p>                            A  ::  OB 
-<p> where A is an atom , OB is
-an object (a tree or a list). For example, 
- <p>       Add_op :: <. arg1 : 5, arg2 : 4 .> 
- <p>   The  execution  order  of  operations  in  the  expression is
-controlled  by  parentheses  "(" and ")". Priority is assigned to
-every  operation,  and,  if the execution order is not defined by
-parentheses,   operations   are   executed   according  to  their
-priorities  -  beginning  with  the  higher and proceeding to the
-lower. 
- <p>   Operations are listed in decreasing order of priorities (some
-operations will be discussed later). 
-<p>  1) Rule call, list constructor, tree constructor, last
-<p>  2) Selector ".", index "[]",  ::
-<p>  3) NOT, unary -
-<p>  4) *, DIV, MOD
-<p>  5) !. , !! , ++ , +, binary -
-<p>  6) = , <> , > , < , >= , <=
-<p>  7) AND
-<p>  8) OR
- <p>   Binary operations of the same priority are executed from left
-to right, while unary operations from right to left. 
-
-<p>
- <p>         <h3>    5.1 Accumulative Assignment Statements</h3>
-<p>
- <p>   It is quite often that working with a list or a tree elements
-are  added  step  by step, thus the growing object is retained in
-the  same  variable. Therefore short form of assignment statement
-has  been  introduced.  For  the  operations  !.  , !! , ++ and +
-statements of the form $X := $X op Expr can be written as 
- $X op := Expr .
-
-
-               <h3>     5.2  Semantics of Variables</h3>
-
- <p>   In  the  implementation of RIGAL every object - atom, list or
-tree  has  a  descriptor.  It  is  a  special data structure that
-contains  some  information about this object: the value of atom,
-the  number  of  elements  and pointers to elements for lists and
-trees. Variables have pointers to object descriptors as values. 
- <p>   Statement  $X  :=  OB assigns to the variable $X a pointer to
-the descriptor of object OB. After the execution of the statement
-$Y  :=  $X  both variables $X and $Y contain pointers to the same
-object OB. 
-    Operations  !.:=  , !!:= , +:= and ++:= change the descriptor
-o<p>f  their  first argument, i.e., have a side effect. Sometimes it
-can be undesirable. For example, 
- <p>           $A := (. 3 17 .); $B := $A;  $B  !.:= 25;
- <p>   The  value  of  $B  becomes list (. 3 17 25 .), but operation
-!.:= has added element 25 immediately to the list (. 3 17 .), and
-the  descriptor  of  this  list  is  changed. As the value of the
-variable  $A  was  a  pointer  to this descriptor, then after the
-execution  of  the statement $B !.:= 25 the value of the variable
-$A is changed, too. 
-<p>    To  prevent this, we must have a copy of the object, to which
-$A refers to before assigning it to $B. Operation  COPY( OB )
-is  used  for  this purpose. It makes a copy of the descriptor of
-the object OB. 
-<p>    Now  we can write a "safe" call of the operation !.:= in such
-a way: $A := (. 3 17 .); $B := COPY( $A); $B !.:= 25; 
-<p>    As  a result $B takes the value (. 3 17 25 .), but $A remains
-equal  to  (.  3  17  .).  The  same effect can be obtained after
-execution of statements $A := (. 3 17 .); $B := $A !. 25; 
-
- <a name="6"> 
-                         <h2>     6. Rules </h2>
-
-<p>    The concept of rule is analogous to concepts of procedure and
-function in conventional languages, such as Pascal or C. 
-<p>    First  of all, by the help of a rule we can check, whether an
-object  or  a sequence of objects complies with some grammar. For
-this  purpose  rule  has  a pattern. Objects, assigned under rule
-call  (arguments  of  the rule), are matched with the pattern. If
-there  is  a  necessity,  some  operations could be executed, for
-instance,     computations     and    input-output    operations,
-simultaneously with rule arguments and pattern matching. 
- <p>   Rule  that  is  called can compute and return back some value
-(object), i.e., it can be used as function. 
-<p>    Depending  on  the  result  of  rule  arguments  and  pattern
-matching,  the  rule  call ends with success or failure. Thus the
-rule call could be used in another rule patterns. 
-
-
-                 <h3>      6.1. Simple Patterns</h3>
-
-<p>    Definition of the rule begins with the indication of the name
-of   the   rule   in   the  form  of  #LLL  ,  where  LLL  is  an
-atom-identifier. In the most common case the pattern is indicated
-after  the  name  of  the  rule. Rule definition ends with symbol
-'##'. For instance, 
- #L1    A  B   ##
-<p>    In  this  case the pattern consists of atoms A and B. Call of
-the rule #L1 takes place, for instance, the following way : 
- <p>                         #L1 ( A  B )
-<p>    The  sequence of objects - atoms A and B, is assigned as rule
-arguments. 
-<p>    After rule call the argument and pattern matching begins. The
-first  argument - atom A is matched with the first pattern, which
-is  also  an  atom.  These  atoms are equal, so their matching is
-successful.  After  that  the  next  object  from the sequence of
-arguments  -  atom  B  and  the  next  pattern,  also atom B, are
-matched.  Their  matching is also successful, therefore, the call
-of the rule #L1 is successful, too. 
-<p>    #L1(  A  C ) call fails, because the second argument - atom C
-was not successfully matched with the pattern - atom B. 
-<p>    #L1(  A  )  call  fails, as there is no object for the second
-pattern with which it could be matched successfully. 
-<p>    But  #L1(  A  B  C)  call  is  successful,  as the third rule
-argument - atom C was not demanded by any pattern and matching of
-the first two rule arguments was successful. 
-<p>    Arbitrary  atoms,  both  non-numerical  and numerical, may be
-described as patterns. 
- <p>   Such  operations as assignment statements, input - output and
-others  may be indicated before the pattern, after it and between
-patterns.  These statements are quoted in the pair of symbols '/'
-.  If there is a necessity to write several statements within the
-pair '/' , these statements are separated by the symbol ';' . 
- <p>   A  group  of  statements  is executed in the rule pattern, if
-matching  of  the  previous  pattern  with the corresponding rule
-arguments was successful. 
- <p>   The  value  returned  by  the rule is worked out by statement
-RETURN   .   It   has  the  following  form:  RETURN  expression.
-Simultaneously  this  statement  completes  the  execution of the
-rule. 
-
-<p>    Example.
-<xmp> #L2  'begin'  'end'  / RETURN  'The pair begin-end' /  ##</xmp>
-
-    Rule call is illustrated in the following example.
- <xmp>  $A   :=   #L2   (   'begin'  'end'  );  </xmp>
-<p>    As  a  result  the  atom  'The pair begin-end'  is assigned to the variable $A. 
-<p>    If  RETURN  statement  is not described in the rule, then the
-NULL value is returned. 
-<p>    If  the rule call ends in failure, then usually value NULL is
-returned, although in case of failure, it is possible to work out
-the returned value, which is not NULL; for this purpose statement
-RETURN must be used in onfail-operations (see sect.6.3.). 
-<p>    Variable  could  be  used  as pattern. It is matched with one
-object  (atom, list or tree) from the sequence of rule arguments.
-Matching  always  ends  in  success,  and  as  a  side effect the
-variable  obtains  this object as value. For example, 
-<p>   #L3 $A $B /RETURN (. $B $A .)/ ## 
-<p>    After  the  call  $X := #L3 ( 1 2) the variable $X obtains as
-value (. 2 1 .) 
-<p>    The  rule  pattern,  in  its  turn,  may  refer  to some rule
-(recursively,  as well). Then the subsequence of the calling rule
-arguments  become arguments of rule - pattern. If the call of the
-rule  -  pattern is successful, then matching of further patterns
-of the calling rule with the remaining arguments proceeds. If the
-call  of  the  rule - pattern fails, then the pattern matching of
-the calling rule fails, too. For example, 
-<p> #L4   A  #L5  D  ##
-<p> #L5   B  C       ##
-<p>    Then the call #L4( A B C D) is successful, but the call
-<p> #L4( A E F D) is unsuccessful.
- <p>   There  is  a  number  of  built-in rules in the language (see
-section  11.). For instance, #NUMBER is successfully matched with
-a  numerical atom and returns it as a value, other arguments fail
-and  return  NULL.  #IDENT  is  successfully  matched with atom -
-identifier and returns it as value. 
-
-
-             <h3>       6.2. Assignment in Patterns</h3>
-
-  <p>   Every   pattern,   when   successfully   matched   with   the
-corresponding  rule  argument,  returns  some value. The value of
-atom  pattern  coincides  with  this  atom, the value of variable
-pattern  coincides  with the value obtained by this variable as a
-result  of matching with the arguments. The value of rule pattern
-is defined by statement RETURN in this rule. 
-  <p>   If  the matching ends in failure, the pattern usually returns
-value NULL. 
-  <p>   These  values,  returned by patterns, can be assigned at once
-to  some variable. It is enough to write the name of the variable
-and the assignment symbol ':=' before the pattern element. 
- <p> Example.
-<xmp>
- #L6   $A  $R := #L7  / RETURN  (. $A .) !! $R /  ##
- #L7   $B  $C   / RETURN  (.  $B  $C .) /   ##
-</xmp>
-  <p>   After execution of the statement $X := #L6 ( 1 2 3) the value
-of $X will be (. 1 2 3 .) 
-  <p>   Symbols  of  accumulative assignment '!.:=' , '!!:=' , '++:='
-and '+:=' can be used instead of ':=' in patterns . 
-  <p>   Therefore,  we can rewrite the previous example the following
-way: <xmp>
- #L6_1  $R !.:= $A    $R !!:= #L7_1  / RETURN  $R /  ##
- #L7_1  $M !.:=  $B   $M !.:=  $C    / RETURN  $M /  ##</xmp>
- <p>    It  should  be  noted  that  all  variables  in  the rule are
-initialized by value NULL, so the value of the expression NULL !.
-$A  that equals to (. $A .) is assigned to the variable $R by the
-first application of the pattern $R !.:= $A in #L6_1. 
- <p>    Patterns  of the type $N := #NUMBER or $ID := #IDENT are used
-very  often,  therefore, following defaults are introduced in the
-language.  If  the  first  letter of the variable name is N, then
-this  variable,  having been used as pattern element, will have a
-successful  matching  only  with a numerical atom, in other cases
-matching ends in failure, and variable obtains value NULL. If the
-first  letter  of the name of the variable is I, this variable is
-matched successfully only with an atom-identifier. 
-
-
-           <h3>    6.3 Rule Branches. Onfail Operations</h3>
-
-  <p>   Several groups of patterns may be united in one rule.
-   <p>  The  first group of patterns is applied to the rule arguments
-first.  If  matching of this group of patterns with the arguments
-is  successful,  the rule call is successful. But if matching has
-failed, transition to the next group of patterns takes place, and
-it  is  matched  with  the  same arguments. It goes on until some
-group   of   rule   patterns   is   matched  with  the  arguments
-successfully.  If not a single pattern group matches successfully
-with rule arguments, the rule call ends in a failure. 
- <p>    Such  alternative  pattern  groups  are called rule branches,
-and,  when  writing  the  rule,  they are separated by the symbol
-';;'. 
- <p>    If  the  branch  fails,  the  execution  of  its patterns and
-statements  is  abandoned  at  the  place,  where  branch pattern
-failed,  and  control is transferred to the next branch (if there
-is  one)  or  the  whole rule fails (if the current branch is the
-last  one  in  the rule). Still there is a possibility to execute
-some operations before exit from the branch. 
-  <p>   ONFAIL  operation is a sequence of statements, written at the
-end  of  the  branch  and  delimited  from  patterns  and  branch
-statements by keyword ONFAIL. 
-  <p>   If  ONFAIL-statements  are  described  in the branch, then in
-case  of  branch  failure,  control  is  transferred  to them and
-statements,  given  in ONFAIL-unit , are executed. So, in case of
-branch failure, causes of failure can be analyzed and message can
-be output. Statement RETURN can be executed in ONFAIL operations,
-as  well. Then exit from the rule takes place (with failure), and
-some other value than NULL can be returned. 
-
-
-              <h3>         6.4 Special Variables</h3>
-
-    Special  variable  without  name  $  denotes  the  first rule
-argument matched by a rule pattern. 
-  <p>   The  value  of  special  variable  $$  equals to the value of
-current rule argument, to which current rule pattern is applied. 
-
-<a name="7"> 
-                  <h2>      7. Compound Patterns </h2> 
-
-    Lists,  sequences  of  elements  in  lists  and  trees can be
-analyzed   by   patterns.  Nesting  of  patterns  practically  is
-unlimited.  It  is allowed to insert statements before, after and
-within any pattern. 
-
-                   <h3>      7.1 List Pattern</h3>
-
- <p>    List pattern is written in the rule the following way:
- <p>                    (.  S1 S2 ... SN .)
- <p>  where S1, S2, ..., SN are patterns . For instance, 
-  <p>                 #L8  (. $E1  $E2 .)  ##
-  <p>   Pattern  of  the  rule  #L8  is matched successfully with any
-list, containing precisely two elements. Such call is successful: 
- <xmp>  #L8( (. (. 1  2 .)  <. A : B .> .) ) </xmp>
- <p>    But  the following calls end in failure. 
- <p>   #L8( A B ) - because
-pattern will be applied to the first argument, i.e., to atom A, 
- <p>   #L8(  (. 13 .) )  -  because the argument is one element list.
- <p>    In  case of success the list pattern yields value that can be
-assigned  to  some  variable. This value coincides with the whole
-list, to which the pattern was applied. 
-
-
-             <h3>    7.2 Iterative Pattern of Sequence</h3>
-
-    In  RIGAL  the  following  pattern  is  defined  for sequence
-recognition:  (*  S1 S2 ... SN*) , where S1 , S2, ... SN are some
-patterns.  This  pattern  describes  the  repetition  of enclosed
-sequence of patterns zero or several times. 
- <p>    Rules  with  a variable number of arguments can be defined by
-iterative pattern of sequence. For example, 
- <xmp> #Sum  (*   $S +:= $N   *)  / RETURN $S /  ## </xmp>
- <p>    This rule is used for summing up any amount of numbers.
- <xmp>  #Sum( 2  5  11) = 18  and  #Sum( 3 ) = 3</xmp>
-  <p>   Iterative pattern is very often used within list pattern. For
-instance, the following rule counts the number of list elements. 
- <xmp>
- #Length (. / $L := 0 / (*  $E / $L +:= 1 / *) .) / RETURN $L / ##</xmp>
-  <p>   Samples of rule call.
-  <xmp>
- #Length( (. A  B  C .) ) = 3  and  #Length( NULL ) = 0</xmp>
- <p>    Iterative  pattern  (+  S1  S2  ... SN +) is analogous to the
-pattern (* ... *), but assigns the repetition of enclosed pattern
-sequence one or several times. 
-  <p>   In the iterative pattern of sequence the element delimiter is
-indicated  in  the form of (* S1 S2 ... SN * Delimiter ) or (+ S1
-S2 ... SN + Delimiter +) 
-  <p>   Atom or name of the rule may serve as Delimiter .
-  <p>   Example.  Analysis  of  a  simple  Algol-like  declaration. A
-fragment  of variable table coded in a tree form is returned as a
-result.
-<xmp> 
-    #Declaration $Type := ( integer ! real ) 
-               (+ $Id  / $Rez ++:= <. $Id : $Type .> /  + ',')
-        / RETURN $Rez /   ##
-</xmp>
-
-    Call #Declaration ( real X ',' Y ) returns value     <. X : real, Y  : real .>
-
- <p>    It  should  be  noted  that the pattern (* $E * ',' ) differs
-from  the  pattern (* $E ',' *) in the point that the presence of
-atom  ','  is  obligatory  in  the  second  pattern at the end of
-sequence. 
-
-
-
-         <h3>     7.3 Patterns for Alternative and Option</h3>
-
-    The  choice  of  several  possible  patterns  is  written the
-following way: ( S1 ! S2 ! ... ! SN ) 
- <p>    Patterns  S1 , S2 , ... , SN are applied one by one from left
-to right, until one of them succeeds. 
-  <p>   In  case  of  success  alternative  pattern  yields value. It
- coincides  with  the  value  of the successful pattern within the
-alternative and may be assigned by some variable. 
-  <p>   Example.   Simple   arithmetic   expression   parsing.   When
-successful, an expression tree is returned, which can be regarded
-as an intermediate form for the next compilation phases. 
-<xmp>
-  #Expression     $A1 := #Term
-        (* $Op := ( '+' ! '-' )  $A2 := #Term
-           / $A1 := <. op : $Op , arg1 : $A1 , arg2 : $A2 .> / *)
-        / RETURN $A1 /   ##
- #Term   $A := ( $Id  ! $Num ) / RETURN $A /  ;;
-        '('  $A := #Expression ')'  / RETURN $A /   ##
-</xmp>
-    The call #Expression( X '-' Y '+' 7 ) returns the value
-<xmp>
-  <. op: '+', arg1: <. op: '-', arg1: X, arg2: Y .>, arg2: 7 .>
-</xmp>
-    In  RIGAL  we may write a rule that matches successfully with
-an empty sequence of arguments:
-<xmp>    #empty ## </xmp>
-
-  <p>    Now the pattern for option can be written down: ( S ! #empty )
-   <p>   In  short  form  this  issue may be written down in RIGAL the
-following way: [ S ] where S is some pattern or pattern sequence.
-Pattern [ S ] always ends in success. 
-
-               <h3>          7.4 Tree Pattern</h3>
-
- <p>     Tree  pattern checks, whether the object is a tree with fixed
-structure.  By  means of this pattern access to the components of
-the tree is obtained. The tree pattern is described the following
-way: 
-<xmp>
-       <.  Sel1  :  Pat1, Sel2 : Pat2, ... , SelN : PatN .></xmp>
-<p>  where
-Sel1,  Sel2,  ... SelN are atoms-identifiers, but Pat1, Pat2, ...
-PatN are patterns. 
- <p>   If the object, to which the tree pattern is applied, is not a
-tree, then the application of the pattern fails at once. If there
-is  the  selector  Sel1  in  the  tree,  then the pattern Pat1 is
-applied to the corresponding object. If there is no selector Sel1
-in  the  tree  or  the  application of Pat1 has failed, the whole
-pattern also fails. 
-<p>    If  matching the first branch was successful, branch matching
-of the pattern 'Sel2 : Pat2' , etc. begins. 
-<p>    Hence,  pattern  branches are applied to the tree in the same
-order as they are written in the pattern. Therefore, the order of
-tree  traversing  may  be  controlled.  It  is  possible  to have
-reiterative  visit  of  branches  (  if  selectors are repeatedly
-described  in  the  tree  pattern)  or  omission  of branches (if
-corresponding selectors are not given in the pattern). 
-<p>    In  case of success the tree pattern returns the value, which
-coincides  with  the  whole object - a tree, to which the pattern
-was  applied,  irrespective  of presence of all tree selectors in
-the pattern or absence of some. 
-<p>    Example.  Let us suppose expression tree to be formed like in
-the  above example. The task is to traverse the tree and return a
-list that represents the Polish postfix form of this expression. 
-<xmp>
-  #Postfix_form  <. arg1: $Rez := #Postfix_form,
-                  arg2: $Rez !!:= #Postfix_form,
-                  op:   $Rez !.:= $Op  .>   / RETURN $Rez /  ;;
-               $Rez := ( $Id ! $Num )  / RETURN (. $Rez .) /  ##
-</xmp>
-    The  call 
-<xmp>
-    #Postfix_form(  <.  op: '-', 
-                        arg1: X,
-                        arg2: <. op:'+',  
-                                 arg1:  Y, 
-                                 arg2: 5 .> .>) 
-</xmp>
- returns the value
- <xmp>
-    (. X Y 5 '+' '-'.) 
-</xmp>
-
-   <p> Some  branches  in  the  tree  pattern  may  be  described as
-optional,  in this case they are enclosed in brackets '[' and ']'
-.  If  there  is  no  selector of optional branch in the argument
-tree,  its  pattern  is  omitted  and  transition to next pattern
-branch  takes  place.  If  there is a selector of the type in the
-argument tree, the pattern branch is developed as usual. 
-
-
-            <h3>        7.5 Iterative Tree Pattern</h3>
-
-    The simplest form of iterative tree pattern is the following:
-    <xmp>                     <*  $Var  :  P  *></xmp>
-  where  $Var  is  some
-variable, and P is a pattern. 
- <p>   A  loop  over  the  tree  is  performed  by  the help of this
-pattern.  All  selectors of the argument tree are assigned to the
-variable  $Var  one  by  one.  The  pattern  P is applied to each
-object,  which  corresponds  in  the argument tree to the current
-selector  in  the  variable  $Var. If even one application of the
-pattern  P  fails,  the  whole  iterative tree pattern fails. For
+</p>
+<p style="orphans: 1"><a name="2"></a>Lexical analysis is a separate
+task and requires special language facilities for description as it
+is, for example, in LEX/YACC [2] system. In the current
+implementation of RIGAL two scanners are included that accept lexics
+of Pascal, C, Modula-2 and RIGAL. 
+</p>
+<h2 class="western" style="orphans: 2">2. Implementation 
+</h2>
+<p class="msonormal" style="orphans: 2">RIGAL was designed and
+implemented in the Computing Center of Latvia University in years
+1987-1988. The first implementation was for PDP-11 in RSX-11. 
+</p>
+<p style="orphans: 2"><a name="3"></a>At the present stage RIGAL
+interpreter has been developed and optimizing compiler RIGAL -&gt;
+Pascal has been implemented by means of RIGAL itself. The interpreter
+and the compiler have been ported to VAX/VMS , IBM PC XT/AT (MS-DOS
+and MS-Windows) and Unix/SUN environments. 
+</p>
+<h2 class="western" style="orphans: 3">3. Lexical Rules 
+</h2>
+<p class="msonormal" style="orphans: 3">The text of RIGAL program is
+a sequence of tokens - atoms (e.g., identifiers and integers ),
+keywords (e.g., if, RETURN ), special symbols (e.g., +, ## ), names
+of variables and rules (e.g., $A, #L ). Tokens may be surrounded by
+any number of blanks. A comment is any string of symbols that begins
+with two consecutive symbols '-' (minus ). The end of the comment is
+the end of the line. For example, 
+</p>
+<pre class="western" style="orphans: 3; margin-bottom: 0.2in"> #Sum&nbsp;&nbsp;&nbsp; -- rule for addition of two numbers
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $N1&nbsp;&nbsp; -- the first number
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $N2&nbsp;&nbsp; -- the second number
+&nbsp;&nbsp;&nbsp; /&nbsp; RETURN&nbsp; $N1 + $N2 /&nbsp;&nbsp; -- return of the result
+ ##</pre><p class="msonormal" style="orphans: 3">
+<a name="4"></a>&nbsp;</p>
+<h2 class="western" style="orphans: 4">4. Data 
+</h2>
+<h3 class="western" style="orphans: 4">4.1 Atoms</h3>
+<p style="orphans: 4">An atom is a string of symbols. If the atom is
+an identifier ( the first symbol is a letter followed by letters or
+digits or underscore symbols), in the text of RIGAL program it could
+be written directly: AABC total_number x25 
+</p>
+<p style="orphans: 4">Numerical atoms are integers, for instance, 2,
+187, 0, -25 
+</p>
+<p style="orphans: 4">In other cases the atom is quoted: '+' ':='
+'1st' 
+</p>
+<p style="orphans: 4">Some identifiers are reserved as keywords in
+RIGAL. If they are used as RIGAL atoms, they should be quoted. For
+example, 'IF', 'RETURN'. Besides, any atom, which is an identifier,
+also can be quoted - ABC and 'ABC' represent one and the same atom. 
+</p>
+<p style="orphans: 4">It should be noted that 25 and '25' are
+different atoms, the latter is just a string of symbols '2' and '5'. 
+</p>
+<p style="orphans: 4">Two special atoms are distinguished in the
+language. 
+</p>
+<p style="orphans: 4">NULL - this atom is frequently yielded as a
+result of different operations, if something was incorrect in the
+process of computations. This atom also represents an empty list, an
+empty tree and Boolean value &quot;false&quot;. 
+</p>
+<p style="orphans: 4">T - usually this atom is yielded by logical
+operations and represents value &quot;true&quot;. 
+</p>
+<h3 class="western" style="orphans: 4">4.2 Variables</h3>
+<p style="orphans: 4">The name of a variable must begin with the
+symbol $, followed by an identifier. Value can be assigned to a
+variable, for example, by the help of assignment statement: $E := A 
+</p>
+<p style="orphans: 4">In this case the atom A becomes value of the
+variable $E. 
+</p>
+<p style="orphans: 4">In RIGAL variables have no types, the same
+variable may have an atom, a list or a tree as a value in different
+time moments. 
+</p>
+<h3 class="western" style="orphans: 4">4.3 Lists</h3>
+<p style="orphans: 4">Ordered sequences, i.e., lists can be composed
+from atoms and from other lists and trees, as well. A special
+function - list constructor serves for list formation. For instance,
+(. A B C .) forms a list of three atoms A, B and C. 
+</p>
+<p style="orphans: 4">Arguments of the list constructor may be
+expressions. The sample $E := (. (. 8 14 7 .) (. A B .) .) could be
+rewritten as follows: 
+</p>
+<p style="orphans: 4">$A := (. 8 14 7 .); $B := (. A B .); $E := (.
+$A $B .); 
+</p>
+<p style="orphans: 4">Separate elements of the list can be selected
+by indexing. Hence, $B [1] is atom A, $A [2] is atom 14, $E [2] is
+list 
+</p>
+<p style="orphans: 4">(. A B .), but $E [10] is atom NULL 
+</p>
+<p style="orphans: 4">If the value of the index is a negative number,
+for instance -N, then the N-th element, beginning from the end of the
+list, is selected. For example, $A [-1] is atom 7. 
+</p>
+<p style="orphans: 4">The necessity to add one more element to the
+list is quite common. Operation !. is envisaged for this purpose. 
+</p>
+<p style="orphans: 4">Example. (. A B .) !. C yields the list (. A B
+C .) 
+</p>
+<p style="orphans: 4">To link two lists in a new list the operation
+!! is applied ( list concatenation). For instance, (. A B .) !! (. C
+D .) yields (. A B C D .). 
+</p>
+<h3 class="western" style="orphans: 4">4.4 Trees</h3>
+<p style="orphans: 4">Tree constructor is used to create a tree. For
 example, 
-<xmp>
- #Variable_table  <* $Id : $E := ( integer ! real )
-                   / $R !.:= (. $Id  $E .)/  *>  / RETURN $R /  ##
-</xmp>
- Call example.
-<xmp>
- #Variable_table( <. X : integer, Y : real, Z : real .> ) =
-    (. (. X  integer .) (. Y  real .) (. Z  real .)  .)
-</xmp>
-    Sometimes,  performing  a  loop  over the tree, some branches
-should  be  updated  in a special way. For this purpose iterative
-tree pattern with distinguished branches is used. 
-<xmp>
-   <*  Sel1  :  Pat1,  Sel2 : Pat2, ..., SelN : PatN, $Var : P *>
-</xmp>
-<p> where Sel1, Sel2, ... SelN are atoms-identifiers;
- <p>      Pat1, Pat2, ... PatN  are  patterns,
- i.e., like elements in simple tree pattern;
-$Var  is  a  variable,  but  P is a pattern, as in simple case of
-iterative tree pattern. 
- <p>   The  pattern  is  applied  to the argument tree the following
-way.  First of all distinguished pattern branches 'Sel : Pat' are
-developed.  Their  matching  with  branches  of the argument tree
-happens  exactly  the  same way as with simple tree pattern. Then
-the  element  '$Var  :  P'  is  applied  to other branches of the
-argument tree the same way as in simple iterative tree pattern. 
-<p>    Some distinguished branches can be optional, for this purpose
-they  are enclosed in brackets '[' and ']'. Semantics is the same
-as in the case of simple tree pattern. 
- <p>   Example.  Let  it be a tree of arbitrary size. In some of its
-subtrees  there is the selector LABEL, to which numerical atom is
-attached. All these numbers over the whole tree must be collected
-in a list, and the list must be returned as result.
-<xmp>
- #Label_list 
- <*  [ LABEL : $Result !.:= $N ],
-        $S   : $Result !!:= #Label_list  *> / RETURN  $Result / ;;
-    $E            ##
-</xmp>
-<p>    The  rule  has  two  branches. Traversing of the tree and its
-subtrees  is described in the first branch. The resulting list is
-formed  in  the  variable  $Result. The traversing of subtrees is
-carried   out   by  the  help  of  recursive  call  of  the  rule
-#Label_list. The second branch of the rule consisting of just one
-pattern  $E  is  applied  at  the leaves of the tree. The pattern
-matches successfully with any object and the whole branch returns
-value NULL, which is accepted as empty list at the previous level
-of recursion. 
-<p> 
-    Call  sample. 
-<xmp>
-    #Label_list  (  <.  A: <. LABEL: 5, B: abc .>,
-                        LABEL: 17, D: 25 .> ) = (. 17 5 .) 
-</xmp>
+</p>
+<p style="orphans: 4">&lt;. A : B, C : D .&gt;</p>
+<p style="orphans: 4">One can imagine tree as a graph, the nodes and
+arches of which are marked by some objects. 
+</p>
+<p style="orphans: 4">Objects before ':' in the tree constructor are
+named selectors. In the given implementation solely atoms, which are
+identifiers ( except NULL ), may serve as selectors. In the graphical
+representation selectors correspond to arches of the graph. All
+selectors of one and the same level in the tree must be different. 
+</p>
+<p style="orphans: 4">Any object - atom, list or tree, except atom
+NULL, may correspond to terminal nodes of the graph ( &quot;leaves&quot;
+of the tree). Hence, multilayer trees can be built. For instance, 
+</p>
+<p style="orphans: 4">&lt;. A : B,  C : &lt;. D : E, F : G .&gt; .&gt;
+</p>
+<p style="orphans: 4">Pair &quot;selector : object&quot; in the tree
+is named branch of the tree. Branches are unordered in the tree. 
+</p>
+<p style="orphans: 4">Likewise for the list constructor, the tree
+constructor may be described by expressions ( in both selector and
+object places), for instance, 
+</p>
+<p style="orphans: 4">$X := D; $B := (. 2 8 .); 
+</p>
+<p style="orphans: 4">$C := &lt;. A : &lt;. M : K .&gt;, $X : '+' , E
+: $B .&gt;; 
+</p>
+<p style="orphans: 4">Select operation serves to extract the tree
+component. It is in the following form: tree . sel , where tree is
+the expression, whose value must be some tree, but sel is the
+expression, whose value must be an atom-identifier. 
+</p>
+<p style="orphans: 4">Consequently, 
+</p>
+<p style="orphans: 4">$C . A is the tree &lt;. M : K .&gt;, 
+</p>
+<p style="orphans: 4">$C . D is the atom '+' , 
+</p>
+<p style="orphans: 4">$C . E is the list (. 2 8 .) , 
+</p>
+<p style="orphans: 4">$C . E[2] is the atom 8 , $C . A . M is the
+atom K 
+</p>
+<p style="orphans: 4">If there is no branch with a given selector in
+the tree, then the result is NULL: $C . W is atom NULL. 
+</p>
+<p style="orphans: 4">Operation of the tree &quot;addition&quot; is
+performed as well: T1 ++ T2 , where T1 and T2 are trees. Tree T2
+branches are added to the tree T1 one by one. If in the tree T1 there
+already exists a branch with the same selector, the branch is
+substituted by a new one. Therefore, the operation &quot;++&quot; is
+not commutative. 
+</p>
+<p style="orphans: 4">It should be pointed out that the tree
+constructor is computed from left to right, i.e., 
+</p>
+<p style="orphans: 4">&lt;. s1 : a1, s2 : a2, s3 : a3.&gt;gives the
+same result as the expression 
+</p>
+<p style="orphans: 4">(( NULL ++ &lt;. s1 : a1 .&gt; ) ++ &lt;. s2 :
+a2 .&gt;) ++ &lt;. s3 : a3 .&gt;</p>
+<h2 class="western" style="orphans: 5">5. Expressions 
+</h2>
+<p style="orphans: 5">Operations = and &lt;&gt; serve for the
+comparison of objects. The result of the comparison is either T
+(&quot;true&quot;) or NULL (&quot;false&quot;). 
+</p>
+<p style="orphans: 5">Atoms are matched directly, for instance, a = b
+gives NULL, 25 = 25 gives T, 17 &lt;&gt; 25 gives T. 
+</p>
+<p style="orphans: 5">Lists are considered equal iff they contain
+equal number of components and if these components are equal
+respectively. 
+</p>
+<p style="orphans: 5">Trees are considered equal iff they contain
+equal number of branches and if one of the trees contains the branch
+&quot;S : OB&quot;, then the other tree also contains the branch &quot;S
+: OB1&quot; and OB = OB1. 
+</p>
+<p style="orphans: 5">Arithmetical operations +, -, *, DIV, MOD are
+assigned for numerical atoms. The essence of these operations is
+similar to those in Pascal. The result of an arithmetical operation
+is a numerical atom. Atom NULL is also admitted as the argument of
+arithmetical operation, in this case integer 0 is supposed to be its
+value. Under matching these atoms are considered different, i.e.,
+NULL = 0 gives NULL. 
+</p>
+<p style="orphans: 5">Besides the operations = and &lt;&gt; numerical
+values could be compared by the help of &gt;, &lt;, &gt;= and &lt;=. 
+</p>
+<p style="orphans: 5">Logical operations AND, OR and NOT usually are
+applied under conditions in conditional statements. Their arguments
+may be arbitrary objects. If the object differs from NULL, it is
+supposed to have the value &quot;true&quot; in a logical operation.
+Atom NULL represents the &quot;false&quot; value. The result of a
+logical operation always is either T or NULL. 
+</p>
+<p style="orphans: 5">In order to make complex hierarchic objects (
+trees and lists of complex structure ) more visual and to improve the
+work of pattern matching, trees and lists may be labelled. A name is
+an atom opposed to the root node of the tree or the whole list.
+Labelling operation is written the following way: 
+</p>
+<p style="orphans: 5">A :: OB 
+</p>
+<p style="orphans: 5">where A is an atom , OB is an object (a tree or
+a list). For example, 
+</p>
+<p style="orphans: 5">Add_op :: &lt;. arg1 : 5, arg2 : 4 .&gt;</p>
+<p style="orphans: 5">The execution order of operations in the
+expression is controlled by parentheses &quot;(&quot; and &quot;)&quot;.
+Priority is assigned to every operation, and, if the execution order
+is not defined by parentheses, operations are executed according to
+their priorities - beginning with the higher and proceeding to the
+lower. 
+</p>
+<p style="orphans: 5">Operations are listed in decreasing order of
+priorities (some operations will be discussed later). 
+</p>
+<p style="orphans: 5">1) Rule call, list constructor, tree
+constructor, last 
+</p>
+<p style="orphans: 5">2) Selector &quot;.&quot;, index &quot;[]&quot;,
+:: 
+</p>
+<p style="orphans: 5">3) NOT, unary - 
+</p>
+<p style="orphans: 5">4) *, DIV, MOD 
+</p>
+<p style="orphans: 5">5) !. , !! , ++ , +, binary - 
+</p>
+<p style="orphans: 5">6) = , &lt;&gt; , &gt; , &lt; , &gt;= , &lt;= 
+</p>
+<p style="orphans: 5">7) AND 
+</p>
+<p style="orphans: 5">8) OR 
+</p>
+<p style="orphans: 5">Binary operations of the same priority are
+executed from left to right, while unary operations from right to
+left. 
+</p>
+<h3 class="western" style="orphans: 5">5.1 Accumulative Assignment
+Statements</h3>
+<p style="orphans: 5">It is quite often that working with a list or a
+tree elements are added step by step, thus the growing object is
+retained in the same variable. Therefore short form of assignment
+statement has been introduced. For the operations !. , !! , ++ and +
+statements of the form $X := $X op Expr can be written as $X op :=
+Expr . 
+</p>
+<h3 class="western" style="orphans: 5">5.2 Semantics of Variables</h3>
+<p style="orphans: 5">In the implementation of RIGAL every object -
+atom, list or tree has a descriptor. It is a special data structure
+that contains some information about this object: the value of atom,
+the number of elements and pointers to elements for lists and trees.
+Variables have pointers to object descriptors as values. 
+</p>
+<p style="orphans: 5">Statement $X := OB assigns to the variable $X a
+pointer to the descriptor of object OB. After the execution of the
+statement $Y := $X both variables $X and $Y contain pointers to the
+same object OB. Operations !.:= , !!:= , +:= and ++:= change the
+descriptor o</p>
+<p style="orphans: 5">f their first argument, i.e., have a side
+effect. Sometimes it can be undesirable. For example, 
+</p>
+<p style="orphans: 5">$A := (. 3 17 .); $B := $A; $B !.:= 25; 
+</p>
+<p style="orphans: 5">The value of $B becomes list (. 3 17 25 .), but
+operation !.:= has added element 25 immediately to the list (. 3 17
+.), and the descriptor of this list is changed. As the value of the
+variable $A was a pointer to this descriptor, then after the
+execution of the statement $B !.:= 25 the value of the variable $A is
+changed, too. 
+</p>
+<p style="orphans: 5">To prevent this, we must have a copy of the
+object, to which $A refers to before assigning it to $B. Operation
+COPY( OB ) is used for this purpose. It makes a copy of the
+descriptor of the object OB. 
+</p>
+<p style="orphans: 5">Now we can write a &quot;safe&quot; call of the
+operation !.:= in such a way: $A := (. 3 17 .); $B := COPY( $A); $B
+!.:= 25; 
+</p>
+<p style="orphans: 5"><a name="6"></a>As a result $B takes the value
+(. 3 17 25 .), but $A remains equal to (. 3 17 .). The same effect
+can be obtained after execution of statements $A := (. 3 17 .); $B :=
+$A !. 25; 
+</p>
+<h2 class="western" style="orphans: 6">6. Rules 
+</h2>
+<p style="orphans: 6">The concept of rule is analogous to concepts of
+procedure and function in conventional languages, such as Pascal or
+C. 
+</p>
+<p style="orphans: 6">First of all, by the help of a rule we can
+check, whether an object or a sequence of objects complies with some
+grammar. For this purpose rule has a pattern. Objects, assigned under
+rule call (arguments of the rule), are matched with the pattern. If
+there is a necessity, some operations could be executed, for
+instance, computations and input-output operations, simultaneously
+with rule arguments and pattern matching. 
+</p>
+<p style="orphans: 6">Rule that is called can compute and return back
+some value (object), i.e., it can be used as function. 
+</p>
+<p style="orphans: 6">Depending on the result of rule arguments and
+pattern matching, the rule call ends with success or failure. Thus
+the rule call could be used in another rule patterns. 
+</p>
+<h3 class="western" style="orphans: 6">6.1. Simple Patterns</h3>
+<p style="orphans: 6">Definition of the rule begins with the
+indication of the name of the rule in the form of #LLL , where LLL is
+an atom-identifier. In the most common case the pattern is indicated
+after the name of the rule. Rule definition ends with symbol '##'.
+For instance, #L1 A B ## 
+</p>
+<p style="orphans: 6">In this case the pattern consists of atoms A
+and B. Call of the rule #L1 takes place, for instance, the following
+way : 
+</p>
+<p style="orphans: 6">#L1 ( A B ) 
+</p>
+<p style="orphans: 6">The sequence of objects - atoms A and B, is
+assigned as rule arguments. 
+</p>
+<p style="orphans: 6">After rule call the argument and pattern
+matching begins. The first argument - atom A is matched with the
+first pattern, which is also an atom. These atoms are equal, so their
+matching is successful. After that the next object from the sequence
+of arguments - atom B and the next pattern, also atom B, are matched.
+Their matching is also successful, therefore, the call of the rule
+#L1 is successful, too. 
+</p>
+<p style="orphans: 6">#L1( A C ) call fails, because the second
+argument - atom C was not successfully matched with the pattern -
+atom B. 
+</p>
+<p style="orphans: 6">#L1( A ) call fails, as there is no object for
+the second pattern with which it could be matched successfully. 
+</p>
+<p style="orphans: 6">But #L1( A B C) call is successful, as the
+third rule argument - atom C was not demanded by any pattern and
+matching of the first two rule arguments was successful. 
+</p>
+<p style="orphans: 6">Arbitrary atoms, both non-numerical and
+numerical, may be described as patterns. 
+</p>
+<p style="orphans: 6">Such operations as assignment statements, input
+- output and others may be indicated before the pattern, after it and
+between patterns. These statements are quoted in the pair of symbols
+'/' . If there is a necessity to write several statements within the
+pair '/' , these statements are separated by the symbol ';' . 
+</p>
+<p style="orphans: 6">A group of statements is executed in the rule
+pattern, if matching of the previous pattern with the corresponding
+rule arguments was successful. 
+</p>
+<p style="orphans: 6">The value returned by the rule is worked out by
+statement RETURN . It has the following form: RETURN expression.
+Simultaneously this statement completes the execution of the rule. 
+</p>
+<p style="orphans: 6">Example. 
+</p>
+<pre class="western" style="orphans: 6; margin-bottom: 0.2in">&nbsp;#L2&nbsp; 'begin'&nbsp; 'end'&nbsp; / RETURN&nbsp; 'The pair begin-end' /&nbsp; ##</pre><p class="msonormal" style="orphans: 6">
+Rule call is illustrated in the following example. 
+</p>
+<pre class="western" style="orphans: 6; margin-bottom: 0.2in">&nbsp; $A&nbsp;&nbsp; :=&nbsp;&nbsp; #L2&nbsp;&nbsp; (&nbsp;&nbsp; 'begin'&nbsp; 'end'&nbsp; );&nbsp; </pre><p style="orphans: 6">
+As a result the atom 'The pair begin-end' is assigned to the variable
+$A. 
+</p>
+<p style="orphans: 6">If RETURN statement is not described in the
+rule, then the NULL value is returned. 
+</p>
+<p style="orphans: 6">If the rule call ends in failure, then usually
+value NULL is returned, although in case of failure, it is possible
+to work out the returned value, which is not NULL; for this purpose
+statement RETURN must be used in onfail-operations (see sect.6.3.). 
+</p>
+<p style="orphans: 6">Variable could be used as pattern. It is
+matched with one object (atom, list or tree) from the sequence of
+rule arguments. Matching always ends in success, and as a side effect
+the variable obtains this object as value. For example, 
+</p>
+<p style="orphans: 6">#L3 $A $B /RETURN (. $B $A .)/ ## 
+</p>
+<p style="orphans: 6">After the call $X := #L3 ( 1 2) the variable $X
+obtains as value (. 2 1 .) 
+</p>
+<p style="orphans: 6">The rule pattern, in its turn, may refer to
+some rule (recursively, as well). Then the subsequence of the calling
+rule arguments become arguments of rule - pattern. If the call of the
+rule - pattern is successful, then matching of further patterns of
+the calling rule with the remaining arguments proceeds. If the call
+of the rule - pattern fails, then the pattern matching of the calling
+rule fails, too. For example, 
+</p>
+<p style="orphans: 6">#L4 A #L5 D ## 
+</p>
+<p style="orphans: 6">#L5 B C ## 
+</p>
+<p style="orphans: 6">Then the call #L4( A B C D) is successful, but
+the call 
+</p>
+<p style="orphans: 6">#L4( A E F D) is unsuccessful. 
+</p>
+<p style="orphans: 6">There is a number of built-in rules in the
+language (see section 11.). For instance, #NUMBER is successfully
+matched with a numerical atom and returns it as a value, other
+arguments fail and return NULL. #IDENT is successfully matched with
+atom - identifier and returns it as value. 
+</p>
+<h3 class="western" style="orphans: 6">6.2. Assignment in Patterns</h3>
+<p style="orphans: 6">Every pattern, when successfully matched with
+the corresponding rule argument, returns some value. The value of
+atom pattern coincides with this atom, the value of variable pattern
+coincides with the value obtained by this variable as a result of
+matching with the arguments. The value of rule pattern is defined by
+statement RETURN in this rule. 
+</p>
+<p style="orphans: 6">If the matching ends in failure, the pattern
+usually returns value NULL. 
+</p>
+<p style="orphans: 6">These values, returned by patterns, can be
+assigned at once to some variable. It is enough to write the name of
+the variable and the assignment symbol ':=' before the pattern
+element. 
+</p>
+<p style="orphans: 6">Example. 
+</p>
+<pre class="western" style="orphans: 6; margin-bottom: 0.2in"> #L6&nbsp;&nbsp; $A&nbsp; $R := #L7&nbsp; / RETURN&nbsp; (. $A .) !! $R /&nbsp; ##
+ #L7&nbsp;&nbsp; $B&nbsp; $C&nbsp;&nbsp; / RETURN&nbsp; (.&nbsp; $B&nbsp; $C .) /&nbsp;&nbsp; ##</pre><p class="msonormal" style="orphans: 6">
+&nbsp;</p>
+<p style="orphans: 6">After execution of the statement $X := #L6 ( 1
+2 3) the value of $X will be (. 1 2 3 .) 
+</p>
+<p style="orphans: 6">Symbols of accumulative assignment '!.:=' ,
+'!!:=' , '++:=' and '+:=' can be used instead of ':=' in patterns . 
+</p>
+<p style="orphans: 6">Therefore, we can rewrite the previous example
+the following way: 
+</p>
+<pre class="western" style="orphans: 6; margin-bottom: 0.2in"> #L6_1&nbsp; $R !.:= $A&nbsp;&nbsp;&nbsp; $R !!:= #L7_1&nbsp; / RETURN&nbsp; $R /&nbsp; ##
+ #L7_1&nbsp; $M !.:=&nbsp; $B&nbsp;&nbsp; $M !.:=&nbsp; $C&nbsp;&nbsp;&nbsp; / RETURN&nbsp; $M /&nbsp; ##</pre><p style="orphans: 6">
+It should be noted that all variables in the rule are initialized by
+value NULL, so the value of the expression NULL !. $A that equals to
+(. $A .) is assigned to the variable $R by the first application of
+the pattern $R !.:= $A in #L6_1. 
+</p>
+<p style="orphans: 6">Patterns of the type $N := #NUMBER or $ID :=
+#IDENT are used very often, therefore, following defaults are
+introduced in the language. If the first letter of the variable name
+is N, then this variable, having been used as pattern element, will
+have a successful matching only with a numerical atom, in other cases
+matching ends in failure, and variable obtains value NULL. If the
+first letter of the name of the variable is I, this variable is
+matched successfully only with an atom-identifier. 
+</p>
+<h3 class="western" style="orphans: 6">6.3 Rule Branches. Onfail
+Operations</h3>
+<p style="orphans: 6">Several groups of patterns may be united in one
+rule. 
+</p>
+<p style="orphans: 6">The first group of patterns is applied to the
+rule arguments first. If matching of this group of patterns with the
+arguments is successful, the rule call is successful. But if matching
+has failed, transition to the next group of patterns takes place, and
+it is matched with the same arguments. It goes on until some group of
+rule patterns is matched with the arguments successfully. If not a
+single pattern group matches successfully with rule arguments, the
+rule call ends in a failure. 
+</p>
+<p style="orphans: 6">Such alternative pattern groups are called rule
+branches, and, when writing the rule, they are separated by the
+symbol ';;'. 
+</p>
+<p style="orphans: 6">If the branch fails, the execution of its
+patterns and statements is abandoned at the place, where branch
+pattern failed, and control is transferred to the next branch (if
+there is one) or the whole rule fails (if the current branch is the
+last one in the rule). Still there is a possibility to execute some
+operations before exit from the branch. 
+</p>
+<p style="orphans: 6">ONFAIL operation is a sequence of statements,
+written at the end of the branch and delimited from patterns and
+branch statements by keyword ONFAIL. 
+</p>
+<p style="orphans: 6">If ONFAIL-statements are described in the
+branch, then in case of branch failure, control is transferred to
+them and statements, given in ONFAIL-unit , are executed. So, in case
+of branch failure, causes of failure can be analyzed and message can
+be output. Statement RETURN can be executed in ONFAIL operations, as
+well. Then exit from the rule takes place (with failure), and some
+other value than NULL can be returned. 
+</p>
+<h3 class="western" style="orphans: 6">6.4 Special Variables</h3>
+<p class="msonormal" style="orphans: 6">Special variable without name
+$ denotes the first rule argument matched by a rule pattern. 
+</p>
+<p style="orphans: 6"><a name="7"></a>The value of special variable
+$$ equals to the value of current rule argument, to which current
+rule pattern is applied. 
+</p>
+<h2 class="western" style="orphans: 7">7. Compound Patterns 
+</h2>
+<p class="msonormal" style="orphans: 7">Lists, sequences of elements
+in lists and trees can be analyzed by patterns. Nesting of patterns
+practically is unlimited. It is allowed to insert statements before,
+after and within any pattern. 
+</p>
+<h3 class="western" style="orphans: 7">7.1 List Pattern</h3>
+<p style="orphans: 7">List pattern is written in the rule the
+following way: 
+</p>
+<p style="orphans: 7">(. S1 S2 ... SN .) 
+</p>
+<p style="orphans: 7">where S1, S2, ..., SN are patterns . For
+instance, 
+</p>
+<p style="orphans: 7">#L8 (. $E1 $E2 .) ## 
+</p>
+<p style="orphans: 7">Pattern of the rule #L8 is matched successfully
+with any list, containing precisely two elements. Such call is
+successful: 
+</p>
+<pre class="western" style="orphans: 7; margin-bottom: 0.2in">&nbsp; #L8( (. (. 1&nbsp; 2 .) &nbsp;&lt;. A : B .&gt;&nbsp;.) ) </pre><p style="orphans: 7">
+But the following calls end in failure. 
+</p>
+<p style="orphans: 7">#L8( A B ) - because pattern will be applied to
+the first argument, i.e., to atom A, 
+</p>
+<p style="orphans: 7">#L8( (. 13 .) ) - because the argument is one
+element list. 
+</p>
+<p style="orphans: 7">In case of success the list pattern yields
+value that can be assigned to some variable. This value coincides
+with the whole list, to which the pattern was applied. 
+</p>
+<h3 class="western" style="orphans: 7">7.2 Iterative Pattern of
+Sequence</h3>
+<p class="msonormal" style="orphans: 7">In RIGAL the following
+pattern is defined for sequence recognition: (* S1 S2 ... SN*) ,
+where S1 , S2, ... SN are some patterns. This pattern describes the
+repetition of enclosed sequence of patterns zero or several times. 
+</p>
+<p style="orphans: 7">Rules with a variable number of arguments can
+be defined by iterative pattern of sequence. For example, 
+</p>
+<pre class="western" style="orphans: 7; margin-bottom: 0.2in">&nbsp;#Sum&nbsp; (*&nbsp;&nbsp; $S +:= $N&nbsp;&nbsp; *)&nbsp; / RETURN $S /&nbsp; ## </pre><p style="orphans: 7">
+This rule is used for summing up any amount of numbers. 
+</p>
+<pre class="western" style="orphans: 7; margin-bottom: 0.2in">&nbsp; #Sum( 2&nbsp; 5&nbsp; 11) = 18&nbsp; and&nbsp; #Sum( 3 ) = 3</pre><p style="orphans: 7">
+Iterative pattern is very often used within list pattern. For
+instance, the following rule counts the number of list elements. 
+</p>
+<pre class="western" style="orphans: 7; margin-bottom: 0.2in"> #Length (. / $L := 0 / (*&nbsp; $E / $L +:= 1 / *) .) / RETURN $L / ##</pre><p style="orphans: 7">
+Samples of rule call. 
+</p>
+<pre class="western" style="orphans: 7; margin-bottom: 0.2in"> #Length( (. A&nbsp; B&nbsp; C .) ) = 3&nbsp; and&nbsp; #Length( NULL ) = 0</pre><p style="orphans: 7">
+Iterative pattern (+ S1 S2 ... SN +) is analogous to the pattern (*
+... *), but assigns the repetition of enclosed pattern sequence one
+or several times. 
+</p>
+<p style="orphans: 7">In the iterative pattern of sequence the
+element delimiter is indicated in the form of (* S1 S2 ... SN *
+Delimiter ) or (+ S1 S2 ... SN + Delimiter +) 
+</p>
+<p style="orphans: 7">Atom or name of the rule may serve as Delimiter
+. 
+</p>
+<p style="orphans: 7">Example. Analysis of a simple Algol-like
+declaration. A fragment of variable table coded in a tree form is
+returned as a result. 
+</p>
+<pre class="western" style="orphans: 7; margin-bottom: 0.2in">&nbsp;
+&nbsp;&nbsp;&nbsp; #Declaration $Type := ( integer ! real ) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(+ $Id&nbsp; / $Rez ++:= &lt;. $Id : $Type .&gt;&nbsp;/&nbsp; + ',')
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / RETURN $Rez /&nbsp;&nbsp; ##</pre><p class="msonormal" style="orphans: 7">
+&nbsp;Call #Declaration ( real X ',' Y ) returns value 
+</p>
+<p>&lt;. X : real, Y : real .&gt; 
+</p>
+<p style="orphans: 7">It should be noted that the pattern (* $E * ','
+) differs from the pattern (* $E ',' *) in the point that the
+presence of atom ',' is obligatory in the second pattern at the end
+of sequence. 
+</p>
+<h3 class="western" style="orphans: 7">7.3 Patterns for Alternative
+and Option</h3>
+<p class="msonormal" style="orphans: 7">The choice of several
+possible patterns is written the following way: ( S1 ! S2 ! ... ! SN
+) 
+</p>
+<p style="orphans: 7">Patterns S1 , S2 , ... , SN are applied one by
+one from left to right, until one of them succeeds. 
+</p>
+<p style="orphans: 7">In case of success alternative pattern yields
+value. It coincides with the value of the successful pattern within
+the alternative and may be assigned by some variable. 
+</p>
+<p style="orphans: 7">Example. Simple arithmetic expression parsing.
+When successful, an expression tree is returned, which can be
+regarded as an intermediate form for the next compilation phases. 
+</p>
+<pre class="western" style="orphans: 7; margin-bottom: 0.2in">&nbsp; #Expression&nbsp;&nbsp;&nbsp;&nbsp; $A1 := #Term
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (* $Op := ( '+' ! '-' )&nbsp; $A2 := #Term
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / $A1 := &lt;. op : $Op , arg1 : $A1 , arg2 : $A2 .&gt;&nbsp;/ *)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / RETURN $A1 /&nbsp;&nbsp; ##
+ #Term&nbsp;&nbsp; $A := ( $Id&nbsp; ! $Num ) / RETURN $A /&nbsp; ;;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; '('&nbsp; $A := #Expression ')'&nbsp; / RETURN $A /&nbsp;&nbsp; ##</pre><p class="msonormal" style="orphans: 7">
+&nbsp;The call #Expression( X '-' Y '+' 7 ) returns the value 
+</p>
+<pre class="western" style="orphans: 7; margin-bottom: 0.2in"> &nbsp;&lt;. op: '+', arg1: &gt;&lt;. op: '-', arg1: X, arg2: Y .&gt;, arg2: 7 .&gt;</pre><p class="msonormal" style="orphans: 7">
+&nbsp;In RIGAL we may write a rule that matches successfully with an
+empty sequence of arguments: 
+</p>
+<pre class="western" style="orphans: 7; margin-bottom: 0.2in">&nbsp;&nbsp;&nbsp; #empty ## </pre><p style="orphans: 7">
+Now the pattern for option can be written down: ( S ! #empty ) 
+</p>
+<p style="orphans: 7">In short form this issue may be written down in
+RIGAL the following way: [ S ] where S is some pattern or pattern
+sequence. Pattern [ S ] always ends in success. 
+</p>
+<h3 class="western" style="orphans: 7">7.4 Tree Pattern</h3>
+<p style="orphans: 7">Tree pattern checks, whether the object is a
+tree with fixed structure. By means of this pattern access to the
+components of the tree is obtained. The tree pattern is described the
+following way: 
+</p>
+<pre class="western" style="orphans: 7; margin-bottom: 0.2in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;</pre><p>
+&lt;. Sel1 : Pat1, Sel2 : Pat2, ... , SelN : PatN .&gt; 
+</p>
+<p style="orphans: 7">where Sel1, Sel2, ... SelN are
+atoms-identifiers, but Pat1, Pat2, ... PatN are patterns. 
+</p>
+<p style="orphans: 7">If the object, to which the tree pattern is
+applied, is not a tree, then the application of the pattern fails at
+once. If there is the selector Sel1 in the tree, then the pattern
+Pat1 is applied to the corresponding object. If there is no selector
+Sel1 in the tree or the application of Pat1 has failed, the whole
+pattern also fails. 
+</p>
+<p style="orphans: 7">If matching the first branch was successful,
+branch matching of the pattern 'Sel2 : Pat2' , etc. begins. 
+</p>
+<p style="orphans: 7">Hence, pattern branches are applied to the tree
+in the same order as they are written in the pattern. Therefore, the
+order of tree traversing may be controlled. It is possible to have
+reiterative visit of branches ( if selectors are repeatedly described
+in the tree pattern) or omission of branches (if corresponding
+selectors are not given in the pattern). 
+</p>
+<p style="orphans: 7">In case of success the tree pattern returns the
+value, which coincides with the whole object - a tree, to which the
+pattern was applied, irrespective of presence of all tree selectors
+in the pattern or absence of some. 
+</p>
+<p style="orphans: 7">Example. Let us suppose expression tree to be
+formed like in the above example. The task is to traverse the tree
+and return a list that represents the Polish postfix form of this
+expression. 
+</p>
+<pre class="western" style="orphans: 7; margin-bottom: 0.2in">#Postfix_form  &lt;. arg1: $Rez := #Postfix_form,
+                  arg2: $Rez !!:= #Postfix_form,
+                  op:   $Rez !.:= $Op  .&gt;   / RETURN $Rez /  ;;
+               $Rez := ( $Id ! $Num )  / RETURN (. $Rez .) /  ##</pre><p class="msonormal" style="orphans: 7">
+<br/>
+<br/>
 
-
-        <h3>     7.6 Names of Lists and Trees in Patterns</h3>
-
-<p>     The assignment of names was discussed in Section 5.
- <p>    In  list  and  tree patterns we can have matching of list and
-tree names with the described values or simply get these names in
-the  described  variable.  For  this  purpose  the  name  may  be
+</p>
+<p class="msonormal" style="orphans: 7">The call 
+</p>
+<pre class="western" style="orphans: 7; margin-bottom: 0.2in">#Postfix_form(  &lt;.  op: '-', 
+                        arg1: X,
+                        arg2: &lt;. op:'+',  
+                                 arg1:  Y, 
+                                 arg2: 5 .&gt; .&gt;) 
+returns the value 
+&nbsp;&nbsp;&nbsp; (. X Y 5 '+' '-'.) </pre><p class="msonormal" style="orphans: 7">
+&nbsp;</p>
+<p style="orphans: 7">Some branches in the tree pattern may be
+described as optional, in this case they are enclosed in brackets '['
+and ']' . If there is no selector of optional branch in the argument
+tree, its pattern is omitted and transition to next pattern branch
+takes place. If there is a selector of the type in the argument tree,
+the pattern branch is developed as usual. 
+</p>
+<h3 class="western" style="orphans: 7">7.5 Iterative Tree Pattern</h3>
+<p class="msonormal" style="orphans: 7">The simplest form of
+iterative tree pattern is the following: 
+</p>
+<pre class="western" style="orphans: 7; margin-bottom: 0.2in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;</pre><p>
+&lt;* $Var : P *&gt; 
+</p>
+<p class="msonormal" style="orphans: 7">where $Var is some variable,
+and P is a pattern. 
+</p>
+<p style="orphans: 7">A loop over the tree is performed by the help
+of this pattern. All selectors of the argument tree are assigned to
+the variable $Var one by one. The pattern P is applied to each
+object, which corresponds in the argument tree to the current
+selector in the variable $Var. If even one application of the pattern
+P fails, the whole iterative tree pattern fails. For example, 
+</p>
+<pre class="western" style="orphans: 7; margin-bottom: 0.2in"> #Variable_table &nbsp;&lt;* $Id : $E := ( integer ! real )                     / $R !.:= (. $Id  $E .)/  *&gt;&nbsp;&nbsp;/ RETURN $R /&nbsp; ##</pre><p class="msonormal" style="orphans: 7">
+&nbsp;Call example. 
+</p>
+<pre class="western" style="orphans: 7; margin-bottom: 0.2in"> #Variable_table( &lt;. X : integer, Y : real, Z : real .&gt;&nbsp;) =
+&nbsp;&nbsp;&nbsp; (. (. X&nbsp; integer .) (. Y&nbsp; real .) (. Z&nbsp; real .)&nbsp; .)</pre><p class="msonormal" style="orphans: 7">
+&nbsp;Sometimes, performing a loop over the tree, some branches
+should be updated in a special way. For this purpose iterative tree
+pattern with distinguished branches is used. 
+</p>
+<pre class="western" style="orphans: 7; margin-bottom: 0.2in">&nbsp; &nbsp;</pre><p>
+&lt;* Sel1 : Pat1, Sel2 : Pat2, ..., SelN : PatN, $Var : P *&gt; 
+</p>
+<p style="orphans: 7">where Sel1, Sel2, ... SelN are
+atoms-identifiers; 
+</p>
+<p style="orphans: 7">Pat1, Pat2, ... PatN are patterns, i.e., like
+elements in simple tree pattern; $Var is a variable, but P is a
+pattern, as in simple case of iterative tree pattern. 
+</p>
+<p style="orphans: 7">The pattern is applied to the argument tree the
+following way. First of all distinguished pattern branches 'Sel :
+Pat' are developed. Their matching with branches of the argument tree
+happens exactly the same way as with simple tree pattern. Then the
+element '$Var : P' is applied to other branches of the argument tree
+the same way as in simple iterative tree pattern. 
+</p>
+<p style="orphans: 7">Some distinguished branches can be optional,
+for this purpose they are enclosed in brackets '[' and ']'. Semantics
+is the same as in the case of simple tree pattern. 
+</p>
+<p style="orphans: 7">Example. Let it be a tree of arbitrary size. In
+some of its subtrees there is the selector LABEL, to which numerical
+atom is attached. All these numbers over the whole tree must be
+collected in a list, and the list must be returned as result. 
+</p>
+<pre class="western" style="orphans: 7; margin-bottom: 0.2in"> #Label_list 
+&nbsp;&lt;*  [ LABEL : $Result !.:= $N ],          $S   : $Result !!:= #Label_list  *&gt;&nbsp;/ RETURN&nbsp; $Result / ;;
+&nbsp;&nbsp;&nbsp; $E&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ##</pre><p class="msonormal" style="orphans: 7">
+&nbsp;</p>
+<p style="orphans: 7">The rule has two branches. Traversing of the
+tree and its subtrees is described in the first branch. The resulting
+list is formed in the variable $Result. The traversing of subtrees is
+carried out by the help of recursive call of the rule #Label_list.
+The second branch of the rule consisting of just one pattern $E is
+applied at the leaves of the tree. The pattern matches successfully
+with any object and the whole branch returns value NULL, which is
+accepted as empty list at the previous level of recursion. 
+</p>
+<p style="orphans: 7">Call sample. 
+</p>
+<pre class="western" style="orphans: 7; margin-bottom: 0.2in">&nbsp;&nbsp;&nbsp; #Label_list&nbsp; ( &nbsp;&lt;.  A: &gt;&lt;. LABEL: 5, B: abc .&gt;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LABEL: 17, D: 25 .&gt; ) = (. 17 5 .) </pre><p class="msonormal" style="orphans: 7">
+&nbsp;</p>
+<h3 class="western" style="orphans: 7">7.6 Names of Lists and Trees
+in Patterns</h3>
+<p style="orphans: 7">The assignment of names was discussed in
+Section 5. 
+</p>
+<p style="orphans: 7">In list and tree patterns we can have matching
+of list and tree names with the described values or simply get these
+names in the described variable. For this purpose the name may be
 indicated before list or tree pattern: atom :: pattern 
- <p>    If  the atom described in the pattern coincides with the name
-of  the  list  (or  tree),  to  which the pattern is applied, the
-application  of  the  pattern  to the argument begins. If it does
-not,  other  pattern  elements  are  not  applied and the pattern
-fails. 
- <p>    To obtain access to the name of the argument, instead of atom
-we  must  indicate the variable, in which the name is assigned as
-value. 
-
-
-      <h3>       7.7 Patterns of Logical Condition Testing</h3>
-
-    Pattern  of  the  type: S' ( expression ) works the following
-way.  First  of  all  the  expression  is evaluated. If its value
-differs  from  NULL,  the pattern is successful. The value of the
-matched  argument  is  returned  as  the value of the pattern, if
-matching was successful. If the value of the expression equals to
-NULL, the pattern fails and returns NULL. 
-<p>     The  value  of  special  variable  $$  in  the  expression of
-S-pattern equals to the value of the argument, to which S-pattern
-is applied. 
- <p>    The  skip  of  token sequence until the nearest symbol ';' is
-described by the pattern: (* S' ( $$ <> ';' ) *) 
-<p>     Let  under  parsing a case is accentuated when the assignment
-statement  is  in the form of X := X + E , where X is a variable,
-and  E  is an expression. This case could be described by pattern
-of the type: $Id ':=' S' ( $$ = $Id ) '+' #Expression 
- <p>    Pattern  of  the  type:  V'  (  expression ) works similar to
-S-pattern, yet in case of success no advancing along the sequence
-of  rule  arguments  takes  place, so the next pattern element is
-applied to the same argument. 
-  <p>   This  pattern is useful for context condition check. Example.
-The pattern
-<xmp>
-     S' ( #NUMBER($$) and ( $$ > 7))
-</xmp>
-  may be substituted by
-a sequence of patterns 
-<xmp>
-     $Num V'($Num > 7) 
-</xmp>
-
-<a name="8"> 
-                   <h2>        8. Statements </h2> 
-
-               <h3>      8.1 Assignment Statement</h3>
-
-    In  the  left  side of assignment statement a variable may be
-indicated,  which  is  followed  by  an  arbitrary number of list
-indexes and/or tree selectors. For example, 
-<xmp>
-  $X := (. A B C .); $Y:= <. D : E, F : G .>; 
-</xmp>
-<p>     After assignment $X[2] := T  the value of $X is (. A T C .) .
-<p>     After assignment $Y.D :=17 the value of $Y is <.D :17, F:G .>
- <p>    The  execution of the statement $Y.A := T yields the run time
-error  message.  The  necessary  result is obtained the following
-way: 
-<xmp>
-   $Y ++:= <. A : T .>;
-</xmp>
-<p>     Tree  branch  is  deleted by assigning an empty object to the
-corresponding selector: $Y.D := NULL; 
-
-                <h3>   8.2 Conditional Statement</h3>
-
-   Conditional statement has the following form:
-<xmp>
-                 IF  expression  ->  statements 
-</xmp>
- Then branches may
-follow (it is not compulsory) 
-<xmp>
-                ELSIF   expression   ->   statements  
-</xmp>
- Conditional statement ends with keyword FI. 
- <p>    In  conditional  statement  branches expressions are computed
-one  by  one, until a value different from NULL is obtained. Then
-the statements described in this branch are executed. 
-
-
-               <h3>         8.3 FAIL Statement</h3>
-
-    FAIL statement finishes the execution of the rule branch with
-failure.  Example.  In order to repair errors in parsing process,
-the  sequence  of  tokens should be skipped quite frequently, for
-instance, until semicolon symbol. It is done the following way. 
-<xmp>
- #statement    ...            ;; -- branches for statement analysis
-    (*  #Not_semicolon   *)   ';'   -- no statement is recognised
+</p>
+<p style="orphans: 7">If the atom described in the pattern coincides
+with the name of the list (or tree), to which the pattern is applied,
+the application of the pattern to the argument begins. If it does
+not, other pattern elements are not applied and the pattern fails. 
+</p>
+<p style="orphans: 7">To obtain access to the name of the argument,
+instead of atom we must indicate the variable, in which the name is
+assigned as value. 
+</p>
+<h3 class="western" style="orphans: 7">7.7 Patterns of Logical
+Condition Testing</h3>
+<p class="msonormal" style="orphans: 7">Pattern of the type: S' (
+expression ) works the following way. First of all the expression is
+evaluated. If its value differs from NULL, the pattern is successful.
+The value of the matched argument is returned as the value of the
+pattern, if matching was successful. If the value of the expression
+equals to NULL, the pattern fails and returns NULL. 
+</p>
+<p style="orphans: 7">The value of special variable $$ in the
+expression of S-pattern equals to the value of the argument, to which
+S-pattern is applied. 
+</p>
+<p style="orphans: 7">The skip of token sequence until the nearest
+symbol ';' is described by the pattern: (* S' ( $$ &lt;&gt; ';' ) *) 
+</p>
+<p style="orphans: 7">Let under parsing a case is accentuated when
+the assignment statement is in the form of X := X + E , where X is a
+variable, and E is an expression. This case could be described by
+pattern of the type: $Id ':=' S' ( $$ = $Id ) '+' #Expression 
+</p>
+<p style="orphans: 7">Pattern of the type: V' ( expression ) works
+similar to S-pattern, yet in case of success no advancing along the
+sequence of rule arguments takes place, so the next pattern element
+is applied to the same argument. 
+</p>
+<p style="orphans: 7">This pattern is useful for context condition
+check. Example. The pattern 
+</p>
+<pre class="western" style="orphans: 7; margin-bottom: 0.2in">&nbsp;&nbsp;&nbsp;&nbsp; S' ( #NUMBER($$) and ( $$ &gt; 7))</pre><p class="msonormal" style="orphans: 7">
+&nbsp;may be substituted by a sequence of patterns 
+</p>
+<pre class="western" style="orphans: 7; margin-bottom: 0.2in">&nbsp;&nbsp;&nbsp;&nbsp; $Num V'($Num &gt; 7) </pre><p class="msonormal" style="orphans: 7">
+<a name="8"></a>&nbsp;</p>
+<h2 class="western" style="orphans: 8">8. Statements 
+</h2>
+<h3 class="western" style="orphans: 8">8.1 Assignment Statement</h3>
+<p class="msonormal" style="orphans: 8">In the left side of
+assignment statement a variable may be indicated, which is followed
+by an arbitrary number of list indexes and/or tree selectors. For
+example, 
+</p>
+<pre class="western" style="orphans: 8; margin-bottom: 0.2in">&nbsp; $X := (. A B C .); $Y:= &lt;. D : E, F : G .&gt;; </pre><p class="msonormal" style="orphans: 8">
+&nbsp;</p>
+<p style="orphans: 8">After assignment $X[2] := T the value of $X is
+(. A T C .) . 
+</p>
+<p style="orphans: 8">After assignment $Y.D :=17 the value of $Y is
+&lt;.D :17, F:G .&gt;</p>
+<p style="orphans: 8">The execution of the statement $Y.A := T yields
+the run time error message. The necessary result is obtained the
+following way: 
+</p>
+<pre class="western" style="orphans: 8; margin-bottom: 0.2in">&nbsp;&nbsp; $Y ++:= &lt;. A : T .&gt;;</pre><p class="msonormal" style="orphans: 8">
+&nbsp;</p>
+<p style="orphans: 8">Tree branch is deleted by assigning an empty
+object to the corresponding selector: $Y.D := NULL; 
+</p>
+<h3 class="western" style="orphans: 8">8.2 Conditional Statement</h3>
+<p class="msonormal" style="orphans: 8">Conditional statement has the
+following form: 
+</p>
+<pre class="western" style="orphans: 8; margin-bottom: 0.2in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IF&nbsp; expression&nbsp; -&gt;&nbsp; statements </pre><p class="msonormal" style="orphans: 8">
+&nbsp;Then branches may follow (it is not compulsory) 
+</p>
+<pre class="western" style="orphans: 8; margin-bottom: 0.2in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ELSIF&nbsp;&nbsp; expression&nbsp;&nbsp; -&gt;&nbsp;&nbsp; statements&nbsp; </pre><p class="msonormal" style="orphans: 8">
+&nbsp;Conditional statement ends with keyword FI. 
+</p>
+<p style="orphans: 8">In conditional statement branches expressions
+are computed one by one, until a value different from NULL is
+obtained. Then the statements described in this branch are executed. 
+</p>
+<h3 class="western" style="orphans: 8">8.3 FAIL Statement</h3>
+<p class="msonormal" style="orphans: 8">FAIL statement finishes the
+execution of the rule branch with failure. Example. In order to
+repair errors in parsing process, the sequence of tokens should be
+skipped quite frequently, for instance, until semicolon symbol. It is
+done the following way. 
+</p>
+<pre class="western" style="orphans: 8; margin-bottom: 0.2in"> #statement&nbsp;&nbsp;&nbsp; ...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ;; -- branches for statement analysis
+&nbsp;&nbsp;&nbsp; (*&nbsp; #Not_semicolon&nbsp;&nbsp; *)&nbsp;&nbsp; ';'&nbsp;&nbsp; -- no statement is recognised
  ##
- #Not_semicolon   $E / IF  $E = ';' -> FAIL  FI/   ##
-</xmp>
-
-
-                <h3>       8.4 Loop Statements</h3>
-
-    Statement of the types
-<xmp>
-         FORALL $VAR  IN expression
-            DO  statements  OD
-         FORALL SELECTORS $VAR BRANCHES $VAR1 IN expression
-            DO  statements  OD
-         FORALL BRANCHES $VAR1 IN expression
-            DO statements OD
-</xmp>
-  loops over a list or a tree. 
-  <p>    The  value of the expression must be either a list or a tree.
-Value  of the current list element (if the loop is over the list)
-or  value  of the current selector (if the loop is over the tree)
-is   assigned   to  the  loop  variable  $VAR  one  by  one.  The
-corresponding  branch value is assigned to the variable $VAR1 (if
-the  loop  is  over the tree). Statements, describing body of the
-loop, may use the current value of the variables $VAR and $VAR1. 
- <p> 
-    Loop statement of the type
-       <xmp>               LOOP  statements  END;</xmp>
- repeats statements of
-the  loop  body,  until  one of the statements - BREAK, RETURN or
-FAIL is not executed. 
-
-                 <h3>          8.5 Rule Call</h3>
-
-    If  a  rule is called just to execute statements described in
-it,  and  value  returned  by the rule is not necessary, the rule
-call  is  written down as statement. It is analogous to procedure
-call in traditional programming languages. Success/failure of the
-rule and value returned by it is disregarded in such a call. 
-
-<a name="9"> 
-                 <h2>        9. Input and Output </h2> 
-
-              <h3>    9.1 SAVE and LOAD Statements</h3>
-
-    Objects created by RIGAL program (atoms, lists, trees) can be
-saved in the file and loaded back to the memory. 
-  <p>    Statement
-<xmp>
-  SAVE  $Var  file-specification
-</xmp>
-  unloads the object,
-which  is  the  value  of  the variable $Var to the file with the
-given  specification.  File,  formed  by SAVE statement, contains
-precisely one object (atom, list or tree). 
- <p>     We  can  load  the  object from the file in the memory having
-executed statement:
-<xmp>
-  LOAD $Var file-specification 
-</xmp>
-
-
-            <h3>              9.2 Text Output</h3>
-
-    To  output  texts  (messages,  generated object codes, etc. )
-several  text  files can be opened in the RIGAL program. The text
-file  FFF  is  opened  by  statement: OPEN FFF file-specification
-File-specification  may be an expression. It presents the name of
-the file on the device. 
- <p>     Statement of the type
-<xmp>
-                FFF  <<  Expr1 Expr2 ... ExprN 
-</xmp>
- outputs a sequence
-of atoms to the file FFF. Values of expressions Expr1, Expr2, ...
-are  either  atoms or lists consisting of objects, different from
-trees. 
-  <p>    This  statement  outputs atoms as sequences of symbols to the
-text  file, inserting a blank after every atom. Atoms in the list
-are output in the same order as they are in the list. 
-<xmp>
-    Example.   FFF <<  A B 12 ;
-</xmp>
-  <p>    A  string  of  characters  is output in the text file FFF the
-following way: "A B 12 " 
-    Symbol  @  in the sequence of expressions of output statement
-switches over to other output mode of blanks separating atoms. By
-default  at  the  beginning of execution of text output statement
-the output mode with blanks is on. 
-  <p>    Example.   FFF << A B  @  C D  25  @  E F 57 ;
-   <p>   The following string of characters is output to the text file
-   <p>                     "A B CD25E F      57"
-   <p>   Statement  of  the  type 
-    <p>                 FFF << ... 
- <p>  always begins output with
-the  beginning  of a new record. Output statement of the type
-   <p>                   FFF <] ... 
- <p> continues output in the current record. 
-
-   <p>   By the help of the statement of the type
-
-   <p>                       PRINT  expression
- <p>  the value of atom, list
-or  tree can be output in a readable form on the display, disk or
-on the printer. It is useful when debugging RIGAL programs. 
-
- <a name="10"> 
-                 <h2>       10. Program Structure </h2>
-
-  <p>    Program  written  in  the RIGAL language consists of the main
-program and rules. The main program text must be at the beginning
-of  the  RIGAL program text, but the text of the rules is written
-afterwards.  Main  program,  as  well as rule, begins by the name
+ #Not_semicolon&nbsp;&nbsp; $E / IF&nbsp; $E = ';' -&gt; FAIL&nbsp; FI/&nbsp;&nbsp; ##</pre><p class="msonormal" style="orphans: 8">
+&nbsp;</p>
+<h3 class="western" style="orphans: 8">8.4 Loop Statements</h3>
+<p class="msonormal" style="orphans: 8">Statement of the types 
+</p>
+<pre class="western" style="orphans: 8; margin-bottom: 0.2in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FORALL $VAR&nbsp; IN expression
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DO&nbsp; statements&nbsp; OD
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FORALL SELECTORS $VAR BRANCHES $VAR1 IN expression
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DO&nbsp; statements&nbsp; OD
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FORALL BRANCHES $VAR1 IN expression
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DO statements OD</pre><p class="msonormal" style="orphans: 8">
+&nbsp;loops over a list or a tree. 
+</p>
+<p style="orphans: 8">The value of the expression must be either a
+list or a tree. Value of the current list element (if the loop is
+over the list) or value of the current selector (if the loop is over
+the tree) is assigned to the loop variable $VAR one by one. The
+corresponding branch value is assigned to the variable $VAR1 (if the
+loop is over the tree). Statements, describing body of the loop, may
+use the current value of the variables $VAR and $VAR1. 
+</p>
+<p style="orphans: 8">Loop statement of the type 
+</p>
+<pre class="western" style="orphans: 8; margin-bottom: 0.2in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;LOOP&nbsp; statements&nbsp; END;</pre><p class="msonormal" style="orphans: 8">
+repeats statements of the loop body, until one of the statements -
+BREAK, RETURN or FAIL is not executed. 
+</p>
+<h3 class="western" style="orphans: 8">8.5 Rule Call</h3>
+<p class="msonormal" style="orphans: 8"><a name="9"></a>If a rule is
+called just to execute statements described in it, and value returned
+by the rule is not necessary, the rule call is written down as
+statement. It is analogous to procedure call in traditional
+programming languages. Success/failure of the rule and value returned
+by it is disregarded in such a call. 
+</p>
+<h2 class="western" style="orphans: 9">9. Input and Output 
+</h2>
+<h3 class="western" style="orphans: 9">9.1 SAVE and LOAD Statements</h3>
+<p class="msonormal" style="orphans: 9">Objects created by RIGAL
+program (atoms, lists, trees) can be saved in the file and loaded
+back to the memory. 
+</p>
+<p style="orphans: 9">Statement 
+</p>
+<pre class="western" style="orphans: 9; margin-bottom: 0.2in">&nbsp; SAVE&nbsp; $Var&nbsp; file-specification</pre><p class="msonormal" style="orphans: 9">
+&nbsp;unloads the object, which is the value of the variable $Var to
+the file with the given specification. File, formed by SAVE
+statement, contains precisely one object (atom, list or tree). 
+</p>
+<p style="orphans: 9">We can load the object from the file in the
+memory having executed statement: 
+</p>
+<pre class="western" style="orphans: 9; margin-bottom: 0.2in">&nbsp; LOAD $Var file-specification </pre><p class="msonormal" style="orphans: 9">
+&nbsp;</p>
+<h3 class="western" style="orphans: 9">9.2 Text Output</h3>
+<p class="msonormal" style="orphans: 9">To output texts (messages,
+generated object codes, etc. ) several text files can be opened in
+the RIGAL program. The text file FFF is opened by statement: OPEN FFF
+file-specification File-specification may be an expression. It
+presents the name of the file on the device. 
+</p>
+<p style="orphans: 9">Statement of the type 
+</p>
+<pre class="western" style="orphans: 9; margin-bottom: 0.2in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FFF&nbsp; &lt;&lt;&nbsp; Expr1 Expr2 ... ExprN </pre><p class="msonormal" style="orphans: 9">
+&nbsp;outputs a sequence of atoms to the file FFF. Values of
+expressions Expr1, Expr2, ... are either atoms or lists consisting of
+objects, different from trees. 
+</p>
+<p style="orphans: 9">This statement outputs atoms as sequences of
+symbols to the text file, inserting a blank after every atom. Atoms
+in the list are output in the same order as they are in the list. 
+</p>
+<pre class="western" style="orphans: 9; margin-bottom: 0.2in">&nbsp;&nbsp;&nbsp; Example.&nbsp;&nbsp; FFF &lt;&lt;&nbsp; A B 12 ;</pre><p class="msonormal" style="orphans: 9">
+&nbsp;</p>
+<p style="orphans: 9">A string of characters is output in the text
+file FFF the following way: &quot;A B 12 &quot; Symbol @ in the
+sequence of expressions of output statement switches over to other
+output mode of blanks separating atoms. By default at the beginning
+of execution of text output statement the output mode with blanks is
+on. 
+</p>
+<p style="orphans: 9">Example. FFF &lt;&lt; A B @ C D 25 @ E F 57 ; 
+</p>
+<p style="orphans: 9">The following string of characters is output to
+the text file 
+</p>
+<p style="orphans: 9">&quot;A B CD25E F 57&quot; 
+</p>
+<p style="orphans: 9">Statement of the type 
+</p>
+<p style="orphans: 9">FFF &lt;&lt; ... 
+</p>
+<p style="orphans: 9">always begins output with the beginning of a
+new record. Output statement of the type 
+</p>
+<p style="orphans: 9">FFF &lt;] ... &gt;</p>
+<p style="orphans: 9">continues output in the current record. 
+</p>
+<p style="orphans: 9">By the help of the statement of the type 
+</p>
+<p style="orphans: 9">PRINT expression 
+</p>
+<p style="orphans: 9"><a name="10"></a>the value of atom, list or
+tree can be output in a readable form on the display, disk or on the
+printer. It is useful when debugging RIGAL programs. 
+</p>
+<h2 class="western" style="orphans: 10">10. Program Structure 
+</h2>
+<p style="orphans: 10">Program written in the RIGAL language consists
+of the main program and rules. The main program text must be at the
+beginning of the RIGAL program text, but the text of the rules is
+written afterwards. Main program, as well as rule, begins by the name
 indication in the form of #main_program_name, then statements are
-described, separated by symbols ';' . The end of the main program
-is marked by the symbol '##'. 
-  <p>    Usually operations that deal with the initial object loading,
-rule  call  and  unloading  of  created  objects in the files are
-concentrated  in the main program. Therefore, main program has no
-pattern elements or arguments of its own. 
-  <p>    When  RIGAL  is  used  for  parsing, text file with the input
-information first is updated by scanner, which transforms it into
-a  list  of tokens. Thus rules describing required parsing can be
-applied  to this list. Intermediate results of the RIGAL program,
-for  instance,  abstract  syntax trees obtained by parsing can be
-unloaded  in  the  file  by  the help of SAVE statement. They are
-unloaded  so,  that  other  RIGAL  programs (for instance, those,
-which  implement  phase of code generation in compilers) can load
-them  as  input  data. Sample of main program is given in Section
-12.4. 
- <p>     Rules can be written down after main program  in  any  order.
-
-
-                 <h3>      10.1 Local Variables</h3>
-
-  <p>    There are no special variable declarations in RIGAL. The fact
-that  a variable is used in some statement, pattern or expression
-implies  that  the  variable  is defined as local variable of the
-rule or the main program. 
- <p>     For recursive rule calls local rule variables are pushed in a
-stack,  so,  that  every  active rule instance has its own set of
-local variables. 
- <p>     All  variables  are  initialized  by the NULL value, when the
-corresponding  rule  or  the  main program is called and when the
-execution of rule branch starts. 
-
-         <h3>   10.2 References to Variables of Other Rules</h3>
-
- <p>     The  construction of RIGAL makes it possible to obtain access
-from  the  rule  to  local  variables of another rule. It has the
-following form: LAST #L $X 
- <p>     This  reference  denotes  the value of the variable $X in the
-last  (in  time  ) and still active instance of the rule #L. Such
-references  can  be  used  in  left and right sides of assignment
-statement. 
- <p>     If  at  the moment of evaluation of the expression LAST #L $X
-there  is  no  active  instance  of the rule #L, the value of the
-expression  LAST  #L $X equals NULL. If such LAST #L $X is in the
-left  side  of assignment statement, the statement is disregarded
-(and run time error message is output). 
-  <p>    By  the  help  of  LAST  we  may  refer to both rule and main
-program variables. 
-
-    <h3>   10.3 Attribute Grammars and RIGAL. Global Attributes</h3>
-
- <p>     There  is a close analogy between attribute grammar and RIGAL
-program.  Rules  in RIGAL correspond to grammar nonterminals, and
-variables - to attributes. 
-  <p>    In  attribute  grammars  the  greatest part of attributes are
-used  as  transit attributes. To avoid this global attributes are
-introduced in the attribute grammar implementations. The usage of
-LAST references solves this problem in RIGAL. 
- <p>     Implementation  of  both synthesized and inherited attributes
-is possible as it is demonstrated in the following scheme. 
-<xmp>
- #LA  ... ... ...
-    assigns value to the attribute $A
-    calls #LB     ... ... ...     ##
+described, separated by symbols ';' . The end of the main program is
+marked by the symbol '##'. 
+</p>
+<p style="orphans: 10">Usually operations that deal with the initial
+object loading, rule call and unloading of created objects in the
+files are concentrated in the main program. Therefore, main program
+has no pattern elements or arguments of its own. 
+</p>
+<p style="orphans: 10">When RIGAL is used for parsing, text file with
+the input information first is updated by scanner, which transforms
+it into a list of tokens. Thus rules describing required parsing can
+be applied to this list. Intermediate results of the RIGAL program,
+for instance, abstract syntax trees obtained by parsing can be
+unloaded in the file by the help of SAVE statement. They are unloaded
+so, that other RIGAL programs (for instance, those, which implement
+phase of code generation in compilers) can load them as input data.
+Sample of main program is given in Section 12.4. 
+</p>
+<p style="orphans: 10">Rules can be written down after main program
+in any order. 
+</p>
+<h3 class="western" style="orphans: 10">10.1 Local Variables</h3>
+<p style="orphans: 10">There are no special variable declarations in
+RIGAL. The fact that a variable is used in some statement, pattern or
+expression implies that the variable is defined as local variable of
+the rule or the main program. 
+</p>
+<p style="orphans: 10">For recursive rule calls local rule variables
+are pushed in a stack, so, that every active rule instance has its
+own set of local variables. 
+</p>
+<p style="orphans: 10">All variables are initialized by the NULL
+value, when the corresponding rule or the main program is called and
+when the execution of rule branch starts. 
+</p>
+<h3 class="western" style="orphans: 10">10.2 References to Variables
+of Other Rules</h3>
+<p style="orphans: 10">The construction of RIGAL makes it possible to
+obtain access from the rule to local variables of another rule. It
+has the following form: LAST #L $X 
+</p>
+<p style="orphans: 10">This reference denotes the value of the
+variable $X in the last (in time ) and still active instance of the
+rule #L. Such references can be used in left and right sides of
+assignment statement. 
+</p>
+<p style="orphans: 10">If at the moment of evaluation of the
+expression LAST #L $X there is no active instance of the rule #L, the
+value of the expression LAST #L $X equals NULL. If such LAST #L $X is
+in the left side of assignment statement, the statement is
+disregarded (and run time error message is output). 
+</p>
+<p style="orphans: 10">By the help of LAST we may refer to both rule
+and main program variables. 
+</p>
+<h3 class="western" style="orphans: 10">10.3 Attribute Grammars and
+RIGAL. Global Attributes</h3>
+<p style="orphans: 10">There is a close analogy between attribute
+grammar and RIGAL program. Rules in RIGAL correspond to grammar
+nonterminals, and variables - to attributes. 
+</p>
+<p style="orphans: 10">In attribute grammars the greatest part of
+attributes are used as transit attributes. To avoid this global
+attributes are introduced in the attribute grammar implementations.
+The usage of LAST references solves this problem in RIGAL. 
+</p>
+<p style="orphans: 10">Implementation of both synthesized and
+inherited attributes is possible as it is demonstrated in the
+following scheme. 
+</p>
+<pre class="western" style="orphans: 10; margin-bottom: 0.2in"> #LA&nbsp; ... ... ...
+&nbsp;&nbsp;&nbsp; assigns value to the attribute $A
+&nbsp;&nbsp;&nbsp; calls #LB&nbsp;&nbsp;&nbsp;&nbsp; ... ... ...&nbsp;&nbsp;&nbsp;&nbsp; ##
  #LB ... ... ...
-    $B1 := LAST #LA $A -- uses the inherited attribute $A from #LA
-    calls #LC
-     -- after this call the  value  of  the attribute  $C
-     -- from #LC is  assigned to the synthesized attribute $B2
-    ... ... ...     ##
+&nbsp;&nbsp;&nbsp; $B1 := LAST #LA $A -- uses the inherited attribute $A from #LA
+&nbsp;&nbsp;&nbsp; calls #LC
+&nbsp;&nbsp;&nbsp;&nbsp; -- after this call the&nbsp; value&nbsp; of&nbsp; the attribute&nbsp; $C
+&nbsp;&nbsp;&nbsp;&nbsp; -- from #LC is&nbsp; assigned to the synthesized attribute $B2
+&nbsp;&nbsp;&nbsp; ... ... ...&nbsp;&nbsp;&nbsp;&nbsp; ##
  #LC ... ... ...
-    assigns value to the attribute $C
-    LAST #LB $B2 := $C  -- the value is assigned to  the
-                         -- synthesized  attribute  $B2 of #LB
-    ... ... ...         ##
-</xmp>
- <a name="11"> 
-                 <h2>       11. Built-in Rules </h2>
-
-    There  is  a  number of built-in rules in the language. These
-rules   implement  functions,  the  implementation  of  which  is
-impossible or ineffective by other language means. 
- <p>     Call  of  built-in rules is written down the same way as call
-of  rules  defined  by  the  user  itself. Along with the value a
-built-in rule yields success or failure hence, built-in rules are
-used as patterns. 
-  <p>    There are predicates such as #ATOM(E), #NUMBER(E), #IDENT(E),
-#LIST(E) and #TREE(E). 
-  <p>    The built-in rule #LEN(E) returns numerical atom as value. If
-E  is an atom, then for non-numerical atoms it returns the number
-of atom symbols. For numerical atoms this rule returns the number
-of  significant  digits plus 1, if the atom is a negative number.
-#LEN( NULL) equals 0, #LEN('ABC') equals 3, #LEN(-185) equals 4. 
-  <p>    If  E  is  a  list,  then  #LEN(E) returns the number of list
-elements, but, if E is a tree, then it returns the number of tree
-branches. 
-  <p>    #EXPLODE(E).  If  E  is an atom, then it succeeds and returns
-one  character atom list that represents the value E 'decomposed'
-in   separate   characters.  If  E  is  a  numerical  atom,  only
+&nbsp;&nbsp;&nbsp; assigns value to the attribute $C
+&nbsp;&nbsp;&nbsp; LAST #LB $B2 := $C&nbsp; -- the value is assigned to&nbsp; the
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -- synthesized&nbsp; attribute&nbsp; $B2 of #LB
+&nbsp;&nbsp;&nbsp; ... ... ...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ##</pre><p class="msonormal" style="orphans: 10">
+<a name="11"></a>&nbsp;</p>
+<h2 class="western" style="orphans: 11">11. Built-in Rules 
+</h2>
+<p class="msonormal" style="orphans: 11">There is a number of
+built-in rules in the language. These rules implement functions, the
+implementation of which is impossible or ineffective by other
+language means. 
+</p>
+<p style="orphans: 11">Call of built-in rules is written down the
+same way as call of rules defined by the user itself. Along with the
+value a built-in rule yields success or failure hence, built-in rules
+are used as patterns. 
+</p>
+<p style="orphans: 11">There are predicates such as #ATOM(E),
+#NUMBER(E), #IDENT(E), #LIST(E) and #TREE(E). 
+</p>
+<p style="orphans: 11">The built-in rule #LEN(E) returns numerical
+atom as value. If E is an atom, then for non-numerical atoms it
+returns the number of atom symbols. For numerical atoms this rule
+returns the number of significant digits plus 1, if the atom is a
+negative number. #LEN( NULL) equals 0, #LEN('ABC') equals 3,
+#LEN(-185) equals 4. 
+</p>
+<p style="orphans: 11">If E is a list, then #LEN(E) returns the
+number of list elements, but, if E is a tree, then it returns the
+number of tree branches. 
+</p>
+<p style="orphans: 11">#EXPLODE(E). If E is an atom, then it succeeds
+and returns one character atom list that represents the value E
+'decomposed' in separate characters. If E is a numerical atom, only
 significant digits are present. 
- <p>     Examples.#EXPLODE(X25) yields (. 'X' '2' '5' .).
-  <p>              #EXPLODE(-34) yields (. '-' '3' '4' .).
-  <p>    #IMPLODE(E1 E2 ... EN). This rule yields the concatenation of
-atoms or lists E1, E2, ..., EN in a new, non-numerical atom. 
-  <p>    Examples.#IMPLODE( A B 34) equals 'AB34'.
-  <p>              #IMPLODE(25 (. A -3 .) ) equals '25A-3'.
-  <p>    #CHR(N). The rule returns an atom, which consists of just one
-ASCII character with the code N ( 0 <= N <= 127). 
-   <p>   #ORD(A). Returns an integer, which is an internal code of the
-  first character of the nonnumerical atom A. 
- <p>     For instance, #ORD( A) = 65, #ORD( ABC) = 65.
-  <p>    #PARM(T) . Returns list of parameters which was assigned when
-the whole program called for execution. 
-  <p>    #DEBUG(E). If E equals the atom 'RULES', then, as soon as the
-rule  is  called, information concerning calls of the rules (both
-user defined and built-in rules) and their execution results will
-be  output.  The  call #DEBUG(NORULES) stops the debugging of the
-rules. 
-
- <a name="12"> 
-                       <h2>  12. Sample Compiler </h2>
-    Compiler  for  the  TOYLAN  language,  which is a very simple
-programming  language,  is  discussed  in  the  following  units.
-Compiler  works  in  two  passes.  The first phase is parsing and
-construction  of  the  program's  intermediate  form  as abstract
-syntax tree. The second phase is code generation. 
-  <p>    Description  of  input  and intermediate language grammars by
-means   of   RIGAL   is   presented.   Thus  formalized  compiler
+</p>
+<p style="orphans: 11">Examples.#EXPLODE(X25) yields (. 'X' '2' '5'
+.). 
+</p>
+<p style="orphans: 11">#EXPLODE(-34) yields (. '-' '3' '4' .). 
+</p>
+<p style="orphans: 11">#IMPLODE(E1 E2 ... EN). This rule yields the
+concatenation of atoms or lists E1, E2, ..., EN in a new,
+non-numerical atom. 
+</p>
+<p style="orphans: 11">Examples.#IMPLODE( A B 34) equals 'AB34'. 
+</p>
+<p style="orphans: 11">#IMPLODE(25 (. A -3 .) ) equals '25A-3'. 
+</p>
+<p style="orphans: 11">#CHR(N). The rule returns an atom, which
+consists of just one ASCII character with the code N ( 0 &lt;= N &lt;=
+127). 
+</p>
+<p style="orphans: 11">#ORD(A). Returns an integer, which is an
+internal code of the first character of the nonnumerical atom A. 
+</p>
+<p style="orphans: 11">For instance, #ORD( A) = 65, #ORD( ABC) = 65. 
+</p>
+<p style="orphans: 11">#PARM(T) . Returns list of parameters which
+was assigned when the whole program called for execution. 
+</p>
+<p style="orphans: 11"><a name="12"></a>#DEBUG(E). If E equals the
+atom 'RULES', then, as soon as the rule is called, information
+concerning calls of the rules (both user defined and built-in rules)
+and their execution results will be output. The call #DEBUG(NORULES)
+stops the debugging of the rules. 
+</p>
+<h2 class="western" style="orphans: 12">12. Sample Compiler 
+</h2>
+<p class="msonormal" style="orphans: 12">Compiler for the TOYLAN
+language, which is a very simple programming language, is discussed
+in the following units. Compiler works in two passes. The first phase
+is parsing and construction of the program's intermediate form as
+abstract syntax tree. The second phase is code generation. 
+</p>
+<p style="orphans: 12">Description of input and intermediate language
+grammars by means of RIGAL is presented. Thus formalized compiler
 documentation (admitting checking on a computer) is obtained. 
-
-
-               <h3>       12.1 TOYLAN Language</h3>
-    The   description   of  TOYLAN  syntax  can  be  regarded  as
-description  of  acceptable  sequences of tokens. Atoms represent
-lexical   elements  of  TOYLAN  program:  keywords,  identifiers,
-constants,  operation signs, delimiters. The context free grammar
-of TOYLAN can be described in the form of RIGAL program. 
-<xmp>
-  #PROGRAM
-      'PROGRAM' $Id
-                 (* #DECLARATION ';' *)  (+ #STATEMENT + ';' )  ##
-  #DECLARATION  ('INTEGER'!'BOOLEAN')   (+ $Id  + ',')        ##
-  #STATEMENT     ( #ASSIGNMENT      !  #INPUT     !
-                   #OUTPUT          !  #CONDITIONAL  )          ##
-  #ASSIGNMENT   $Id ':='  #EXPRESSION                         ##
-  #INPUT        'GET' '(' (+ $Id  + ',') ')'                   ##
-  #OUTPUT       'PUT' '(' (+ #EXPRESSION + ',') ')'            ##
-  #CONDITIONAL  'IF' #EXPRESSION   'THEN' (+ #STATEMENT + ';')
-                ['ELSE' (+ #STATEMENT + ';' )]    'FI'         ##
-  #EXPRESSION   #SUM     [  '='  #SUM  ]                      ##
-  #SUM          #FACTOR   (* '+'  #FACTOR   *)                ##
-  #FACTOR       #TERM    (* '*' #TERM      *)                 ##
-  #TERM         $N ;; -- numeric constant
-                ('TRUE' ! 'FALSE' ) ;; -- Boolean constants
-                $Id;; -- variable
-                '(' #EXPRESSION ')'                           ##
-</xmp>
-    Context conditions are the following:
- <p>     1)  all  variables used in statements and expressions must be
-declared, 
-  <p>    2)  one  and  the  same  variable name should not be declared
-twice, 
-  <p>    3)  left  and  right parts of assignment statement must be of
-the same type, 
-  <p>    4)  operands  of  input-output statements must be of the type
-INTEGER. 
-  <p>    All  variables  of the type INTEGER have initial value 0, and
-all variables of the type BOOLEAN have initial value FALSE. 
-
-
-           <h3>     12.2 Intermediate Form of Program.
-                         Abstract syntax tree</h3>
-
-    Special   languages  to  represent  intermediate  results  of
-compilation are used in compiler building practice. For instance,
-P-code for PASCAL compilers and language DIANA [8] for ADA. 
- <p>     The  result  of  the  first phase of the TOYLAN compiler is a
-tree.   Let's   call  it  abstract  syntax  tree.  Along  program
-components  it  contains  some semantic attributes, for instance,
-types  of  expressions. One of the most significant attributes is
-table of variables, obtained as a result of parsing of the TOYLAN
-program declarations. 
- <p>     The  structure  of abstract syntax tree of the TOYLAN program
-is described by the following rules. 
-<xmp>
-  #S_PROGRAM
-      'PROGRAM'::<. NAME : $Id,
-                     DECLARATIONS : #S_DECLARATIONS ,
-                     STATEMENTS   : (.(* #S_STATEMENT *).) .>    ##
-  #S_DECLARATIONS    -- variables table
-      <* $Id : ( INTEGER ! BOOLEAN )  *>                       ##
-  #S_STATEMENT
-      ASSIGNMENT :: <. LEFT  : $Id,
-                        RIGHT : #S_EXPRESSION   .>   ;;
-      INPUT :: (. (* $Id *) .)    ;;
-      OUTPUT :: (. (* #S_EXPRESSION *) .)      ;;
-      CONDITIONAL :: <. COND : #S_EXPRESSION,
-                         THEN : (.(* #S_STATEMENT *).),
-                         [ ELSE : (.(* #S_STATEMENT *).)] .>   ##
-  #S_EXPRESSION
-      COMPARE :: <. ARG1 : #S_EXPRESSION, ARG2 : #S_EXPRESSION,
-                     TYPE : BOOLEAN    .>  ;;
-      ADD :: <. ARG1 : #S_EXPRESSION,  ARG2 : #S_EXPRESSION,
-                 TYPE : INTEGER       .>  ;;
-      MULT :: <. ARG1 : #S_EXPRESSION,  ARG2 : #S_EXPRESSION,
-                  TYPE : INTEGER       .>  ;;
-      <. VARIABLE : $Id ,  TYPE     : ( INTEGER ! BOOLEAN ) .>   ;;
-      <. CONSTANT : $N ,   TYPE     : INTEGER .>   ;;
-      <. CONSTANT : ( 0 ! 1) , TYPE : BOOLEAN .>            ##
-</xmp>
-
-
-                <h3>     12.3 Target Language BAL</h3>
-
-    The  goal of the TOYLAN compiler is to obtain program text in
-a  low level language BAL. This language is a simplified model of
-assembler  languages.  The  memory of BAL-machine is divided into
-separate words. Every word may contain an integer, besides, there
-are  work registers R0, R1, R2, ... of the word size each. Let us
-suppose  the  number  of  registers  to be unlimited, in order to
-eliminate the problem of optimal register usage during generation
-phase. 
- <p>     Command  of  BAL ABC: DEFWORD N reserves a word in the memory
-and  imbeds  integer  N in it. We can refer to this word in other
-commands by name ABC. 
-  <p>    Commands  of BAL have two operands which are described by the
-name of memory word, by the name of register or by the literal of
-the type =NNN, where NNN is an integer. Commands can be marked by
-labels. 
- <p>   1) MOV A1,A2  This command moves memory word A1 to memory word A2.
-  <p>  2) LOAD  RI,A  Loading of word A into register RI.
- <p>   3) SAVE RI,A Unloading of the contents of register RI into memory
-                word A.
- <p>   4) ADD RI,A  or  ADD RI,RJ  The sum of operands is imbedded in RI.
-  <p>  5) MULT RI,A  or  MULT RI,RJ   Multiplication of operands is
-                imbedded in RI.
- <p>   6) COMPARE RI,A  or  COMPARE RI,RJ  If operand values are equal,
-                it is 1 that is imbedded in RI,  if  they  are  not
-                equal, 0 is imbedded.
- <p>   7) BRANCH RI,M  If the value of RI is equal to 0, then transfer
-                to the command marked  by  label  M  takes  place,
-                otherwise, to the next command.
- <p>   8) JUMP M  Unconditional transfer to the command marked by label M.
-  <p>  9) EOJ       Completes the execution of the BAL program.
-  <p>  10) READ A    Reads the integer from standard  input  device  and
-                imbeds it in word A.
-  <p>  11) WRITE A  or  WRITE RI Outputs the integer from memory word or
-                from register to standard output device.
-  <p>  12) NOP      An empty statement.
-
-
-               <h3>    12.4 Main Module of Compiler</h3>
-
-    The main program of the TOYLAN compiler contains calls of the
-first and second compilation phases and file opening statements.
- <xmp>
- #TOYLAN_COMPILER
-    OPEN REP ' ';  --message file is connected with the screen
-    $LEXEMS:=#CALL_PAS(35 'A.TOY');
-     -- a list of tokens is loaded from the file A.TOY by scanner
-    $S_TREE := #A_PROGRAM($LEXEMS);
-    -- 1st  phase; result of parsing - abstract syntax tree - is
-    -- imbedded in the variable $S_TREE; during parsing messages
-    -- about discovered errors in file REP can be output.
-    IF $S_TREE  ->  OPEN GEN 'A.BAL'; -- if the tree is created,
-         -- then file is opened to output the generated BAL text
-                 #G_PROGRAM($S_TREE) -- 2nd phase - code generation
-    ELSIF  T  ->  REP << errors are discovered   FI;
-    REP << end of compilation                   ##
-
- </xmp>
-    The  compilation  listing that contains source text and error
-messages  is  not  envisaged in the TOYLAN compiler. Formation of
-the listing can be a separate phase. 
-
-
-                  <h3>      12.5 Parsing Phase</h3>
-
-    The  rule  #A_PROGRAM  carries  out  parsing  of tokens list,
-checks  context  conditions,  generates error messages and builds
-abstract syntax tree of TOYLAN program. 
- <p>     Patterns  of the rule #A_PROGRAM and of the rules subordinate
-to  it, actually, coincide with patterns of the rule #PROGRAM and
-with  the  associated rules that describe context free grammar of
-the TOYLAN language. Just operations to check context conditions,
-to  output  error  messages and to construct abstract syntax tree
-are added. 
-  <p>    In   our   parser  diagnostics  is  based  on  the  following
-principles.  First of all, "panic" reaction to an error should be
-avoided  and  several  messages concerning one and the same error
-should  not  be  output  (though,  we  can't  manage  it always),
-secondly,  error  neutralization is transition to the analysis of
-the next statement, i.e., skip of tokens until the nearest symbol
-';'. 
-
- <xmp>
-
- #A_PROGRAM    -- the rule is applied to the list of tokens
-    (. PROGRAM  $Id
-         (*  $DECL++:= #A_DECLARATION  ';'  *)
-                  --formation of variables table
-          (+  $STATEMENTS !.:= #A_STATEMENT   + ';' )
-                  --formation of statements list
-    .)  / RETURN 'PROGRAM' :: <. NAME : $Id,
-                                  DECLARATIONS : $DECL ,
-                                  STATEMENTS : $STATEMENTS .>/ ##
- #A_DECLARATION     $TYPE := ( INTEGER ! BOOLEAN )
-  (+ $Id /IF LAST #A_PROGRAM $DECL.$Id OR $REZ.$Id ->
-              REP << VARIABLE $Id DOUBLE DEFINED  FI;
-           $REZ++:= <.$Id : $TYPE .>/  + ',' ) / RETURN $REZ / ##
- #A_STATEMENT   $REZ := ( #A_ASSIGNMENT ! #A_INPUT !
-               #A_OUTPUT ! #A_CONDITIONAL )  / RETURN $REZ / ;;
-
-     (* $A!.:=S'($$ <> ';' ) *)   -- skip until nearest ';'
-               / REP << UNRECOGNIZED STATEMENT $A /
+</p>
+<h3 class="western" style="orphans: 12">12.1 TOYLAN Language</h3>
+<p class="msonormal" style="orphans: 12">The description of TOYLAN
+syntax can be regarded as description of acceptable sequences of
+tokens. Atoms represent lexical elements of TOYLAN program: keywords,
+identifiers, constants, operation signs, delimiters. The context free
+grammar of TOYLAN can be described in the form of RIGAL program. 
+</p>
+<pre class="western" style="orphans: 12; margin-bottom: 0.2in">&nbsp; #PROGRAM
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'PROGRAM' $Id
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (* #DECLARATION ';' *)&nbsp; (+ #STATEMENT + ';' )&nbsp; ##
+&nbsp; #DECLARATION&nbsp; ('INTEGER'!'BOOLEAN')&nbsp;&nbsp; (+ $Id&nbsp; + ',')&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ##
+&nbsp; #STATEMENT&nbsp;&nbsp;&nbsp;&nbsp; ( #ASSIGNMENT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; !&nbsp; #INPUT&nbsp;&nbsp;&nbsp;&nbsp; !
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #OUTPUT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; !&nbsp; #CONDITIONAL&nbsp; )&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ##
+&nbsp; #ASSIGNMENT&nbsp;&nbsp; $Id ':='&nbsp; #EXPRESSION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ##
+&nbsp; #INPUT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'GET' '(' (+ $Id&nbsp; + ',') ')'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ##
+&nbsp; #OUTPUT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'PUT' '(' (+ #EXPRESSION + ',') ')'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ##
+&nbsp; #CONDITIONAL&nbsp; 'IF' #EXPRESSION&nbsp;&nbsp; 'THEN' (+ #STATEMENT + ';')
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ['ELSE' (+ #STATEMENT + ';' )]&nbsp;&nbsp;&nbsp; 'FI'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ##
+&nbsp; #EXPRESSION&nbsp;&nbsp; #SUM&nbsp;&nbsp;&nbsp;&nbsp; [&nbsp; '='&nbsp; #SUM&nbsp; ]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ##
+&nbsp; #SUM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #FACTOR&nbsp;&nbsp; (* '+'&nbsp; #FACTOR&nbsp;&nbsp; *)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ##
+&nbsp; #FACTOR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #TERM&nbsp;&nbsp;&nbsp; (* '*' #TERM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ##
+&nbsp; #TERM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $N ;; -- numeric constant
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ('TRUE' ! 'FALSE' ) ;; -- Boolean constants
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $Id;; -- variable
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'(' #EXPRESSION ')'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ##</pre><p class="msonormal" style="orphans: 12">
+&nbsp;Context conditions are the following: 
+</p>
+<p style="orphans: 12">1) all variables used in statements and
+expressions must be declared, 
+</p>
+<p style="orphans: 12">2) one and the same variable name should not
+be declared twice, 
+</p>
+<p style="orphans: 12">3) left and right parts of assignment
+statement must be of the same type, 
+</p>
+<p style="orphans: 12">4) operands of input-output statements must be
+of the type INTEGER. 
+</p>
+<p style="orphans: 12">All variables of the type INTEGER have initial
+value 0, and all variables of the type BOOLEAN have initial value
+FALSE. 
+</p>
+<h3 class="western" style="orphans: 12">12.2 Intermediate Form of
+Program. Abstract syntax tree</h3>
+<p class="msonormal" style="orphans: 12">Special languages to
+represent intermediate results of compilation are used in compiler
+building practice. For instance, P-code for PASCAL compilers and
+language DIANA [8] for ADA. 
+</p>
+<p style="orphans: 12">The result of the first phase of the TOYLAN
+compiler is a tree. Let's call it abstract syntax tree. Along program
+components it contains some semantic attributes, for instance, types
+of expressions. One of the most significant attributes is table of
+variables, obtained as a result of parsing of the TOYLAN program
+declarations. 
+</p>
+<p style="orphans: 12">The structure of abstract syntax tree of the
+TOYLAN program is described by the following rules. 
+</p>
+<pre class="western" style="orphans: 12; margin-bottom: 0.2in">&nbsp; #S_PROGRAM
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'PROGRAM'::&lt;. NAME : $Id,                       DECLARATIONS : #S_DECLARATIONS ,                       STATEMENTS   : (.(* #S_STATEMENT *).) .&gt;&nbsp;&nbsp;&nbsp; ##
+&nbsp; #S_DECLARATIONS&nbsp;&nbsp;&nbsp; -- variables table
+&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&lt;* $Id : ( INTEGER ! BOOLEAN )  *&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;##
+&nbsp; #S_STATEMENT
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ASSIGNMENT :: &lt;. LEFT  : $Id,                          RIGHT : #S_EXPRESSION   .&gt;&nbsp;&nbsp;&nbsp;;;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; INPUT :: (. (* $Id *) .)&nbsp;&nbsp;&nbsp; ;;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; OUTPUT :: (. (* #S_EXPRESSION *) .)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ;;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CONDITIONAL :: &lt;. COND : #S_EXPRESSION,                           THEN : (.(* #S_STATEMENT *).),                           [ ELSE : (.(* #S_STATEMENT *).)] .&gt;&nbsp;&nbsp;&nbsp;##
+&nbsp; #S_EXPRESSION
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; COMPARE :: &lt;. ARG1 : #S_EXPRESSION, ARG2 : #S_EXPRESSION,                       TYPE : BOOLEAN    .&gt;&nbsp;&nbsp;;;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ADD :: &lt;. ARG1 : #S_EXPRESSION,  ARG2 : #S_EXPRESSION,                   TYPE : INTEGER       .&gt;&nbsp;&nbsp;;;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MULT :: &lt;. ARG1 : #S_EXPRESSION,  ARG2 : #S_EXPRESSION,                    TYPE : INTEGER       .&gt;&nbsp;&nbsp;;;
+&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&lt;. VARIABLE : $Id ,  TYPE     : ( INTEGER ! BOOLEAN ) .&gt;&nbsp;&nbsp;&nbsp;;;
+&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&lt;. CONSTANT : $N ,   TYPE     : INTEGER .&gt;&nbsp;&nbsp;&nbsp;;;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&lt;. CONSTANT : ( 0 ! 1) , TYPE : BOOLEAN .&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;##</pre><p class="msonormal" style="orphans: 12">
+&nbsp;</p>
+<h3 class="western" style="orphans: 12">12.3 Target Language BAL</h3>
+<p class="msonormal" style="orphans: 12">The goal of the TOYLAN
+compiler is to obtain program text in a low level language BAL. This
+language is a simplified model of assembler languages. The memory of
+BAL-machine is divided into separate words. Every word may contain an
+integer, besides, there are work registers R0, R1, R2, ... of the
+word size each. Let us suppose the number of registers to be
+unlimited, in order to eliminate the problem of optimal register
+usage during generation phase. 
+</p>
+<p style="orphans: 12">Command of BAL ABC: DEFWORD N reserves a word
+in the memory and imbeds integer N in it. We can refer to this word
+in other commands by name ABC. 
+</p>
+<p style="orphans: 12">Commands of BAL have two operands which are
+described by the name of memory word, by the name of register or by
+the literal of the type =NNN, where NNN is an integer. Commands can
+be marked by labels. 
+</p>
+<p style="orphans: 12">1) MOV A1,A2 This command moves memory word A1
+to memory word A2. 
+</p>
+<p style="orphans: 12">2) LOAD RI,A Loading of word A into register
+RI. 
+</p>
+<p style="orphans: 12">3) SAVE RI,A Unloading of the contents of
+register RI into memory word A. 
+</p>
+<p style="orphans: 12">4) ADD RI,A or ADD RI,RJ The sum of operands
+is imbedded in RI. 
+</p>
+<p style="orphans: 12">5) MULT RI,A or MULT RI,RJ Multiplication of
+operands is imbedded in RI. 
+</p>
+<p style="orphans: 12">6) COMPARE RI,A or COMPARE RI,RJ If operand
+values are equal, it is 1 that is imbedded in RI, if they are not
+equal, 0 is imbedded. 
+</p>
+<p style="orphans: 12">7) BRANCH RI,M If the value of RI is equal to
+0, then transfer to the command marked by label M takes place,
+otherwise, to the next command. 
+</p>
+<p style="orphans: 12">8) JUMP M Unconditional transfer to the
+command marked by label M. 
+</p>
+<p style="orphans: 12">9) EOJ Completes the execution of the BAL
+program. 
+</p>
+<p style="orphans: 12">10) READ A Reads the integer from standard
+input device and imbeds it in word A. 
+</p>
+<p style="orphans: 12">11) WRITE A or WRITE RI Outputs the integer
+from memory word or from register to standard output device. 
+</p>
+<p style="orphans: 12">12) NOP An empty statement. 
+</p>
+<h3 class="western" style="orphans: 12">12.4 Main Module of Compiler</h3>
+<p class="msonormal" style="orphans: 12">The main program of the
+TOYLAN compiler contains calls of the first and second compilation
+phases and file opening statements. 
+</p>
+<pre class="western" style="orphans: 12; margin-bottom: 0.2in"> #TOYLAN_COMPILER
+&nbsp;&nbsp;&nbsp; OPEN REP ' ';&nbsp; --message file is connected with the screen
+&nbsp;&nbsp;&nbsp; $LEXEMS:=#CALL_PAS(35 'A.TOY');
+&nbsp;&nbsp;&nbsp;&nbsp; -- a list of tokens is loaded from the file A.TOY by scanner
+&nbsp;&nbsp;&nbsp; $S_TREE := #A_PROGRAM($LEXEMS);
+&nbsp;&nbsp;&nbsp; -- 1st&nbsp; phase; result of parsing - abstract syntax tree - is
+&nbsp;&nbsp;&nbsp; -- imbedded in the variable $S_TREE; during parsing messages
+&nbsp;&nbsp;&nbsp; -- about discovered errors in file REP can be output.
+&nbsp;&nbsp;&nbsp; IF $S_TREE&nbsp; -&gt;&nbsp; OPEN GEN 'A.BAL'; -- if the tree is created,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -- then file is opened to output the generated BAL text
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #G_PROGRAM($S_TREE) -- 2nd phase - code generation
+&nbsp;&nbsp;&nbsp; ELSIF&nbsp; T&nbsp; -&gt;&nbsp; REP &lt;&lt; errors are discovered&nbsp;&nbsp; FI;
+&nbsp;&nbsp;&nbsp; REP &lt;&lt; end of compilation&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ##
+ </pre><p class="msonormal" style="orphans: 12">
+The compilation listing that contains source text and error messages
+is not envisaged in the TOYLAN compiler. Formation of the listing can
+be a separate phase. 
+</p>
+<h3 class="western" style="orphans: 12">12.5 Parsing Phase</h3>
+<p class="msonormal" style="orphans: 12">The rule #A_PROGRAM carries
+out parsing of tokens list, checks context conditions, generates
+error messages and builds abstract syntax tree of TOYLAN program. 
+</p>
+<p style="orphans: 12">Patterns of the rule #A_PROGRAM and of the
+rules subordinate to it, actually, coincide with patterns of the rule
+#PROGRAM and with the associated rules that describe context free
+grammar of the TOYLAN language. Just operations to check context
+conditions, to output error messages and to construct abstract syntax
+tree are added. 
+</p>
+<p style="orphans: 12">In our parser diagnostics is based on the
+following principles. First of all, &quot;panic&quot; reaction to an
+error should be avoided and several messages concerning one and the
+same error should not be output (though, we can't manage it always),
+secondly, error neutralization is transition to the analysis of the
+next statement, i.e., skip of tokens until the nearest symbol ';'. 
+</p>
+<pre class="western" style="orphans: 12; margin-bottom: 0.2in"> #A_PROGRAM&nbsp;&nbsp;&nbsp; -- the rule is applied to the list of tokens
+&nbsp;&nbsp;&nbsp; (. PROGRAM&nbsp; $Id
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (*&nbsp; $DECL++:= #A_DECLARATION&nbsp; ';'&nbsp; *)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --formation of variables table
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (+&nbsp; $STATEMENTS !.:= #A_STATEMENT&nbsp;&nbsp; + ';' )
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --formation of statements list
+&nbsp;&nbsp;&nbsp; .)&nbsp; / RETURN 'PROGRAM' :: &lt;. NAME : $Id,                                    DECLARATIONS : $DECL ,                                    STATEMENTS : $STATEMENTS .&gt;/ ##
+ #A_DECLARATION&nbsp;&nbsp;&nbsp;&nbsp; $TYPE := ( INTEGER ! BOOLEAN )
+&nbsp; (+ $Id /IF LAST #A_PROGRAM $DECL.$Id OR $REZ.$Id -&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; REP &lt;&lt; VARIABLE $Id DOUBLE DEFINED&nbsp; FI;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $REZ++:= &lt;.$Id : $TYPE .&gt;/&nbsp; + ',' ) / RETURN $REZ / ##
+ #A_STATEMENT&nbsp;&nbsp; $REZ := ( #A_ASSIGNMENT ! #A_INPUT !
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #A_OUTPUT ! #A_CONDITIONAL )&nbsp; / RETURN $REZ / ;;
+&nbsp;&nbsp;&nbsp;&nbsp; (* $A!.:=S'($$ &lt;&gt; ';' ) *)&nbsp;&nbsp; -- skip until nearest ';'
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / REP &lt;&lt; UNRECOGNIZED STATEMENT $A /
  ##
-
- #A_ASSIGNMENT $Id  ':='/ $LPType := LAST #A_PROGRAM $DECL .$Id;
-        IF NOT $LPType  -> REP << VARIABLE $Id ' IS NOT DEFINED ' FI /
-    $E:= #A_EXPRESSION
-         /IF $LPType <> $E . TYPE ->
-              REP<< 'LEFT AND RIGHT SIDE TYPES ARE DIFFERENT '
-                     'IN ASSIGNMENT STATEMENT ' FI;
-         RETURN ASSIGNMENT::<. LEFT: $Id, RIGHT: $E .> /
- ONFAIL IF $LPType  -> REP<< 'WRONG EXPRESSION IN ASSIGNMENT'  FI  ##
- #A_INPUT      GET  '('
-    (+ $E !.:= $Id  /IF  LAST #A_PROGRAM $DECL.$Id <> INTEGER ->
-            REP << $Id 'IN STATEMENT GET IS NOT OF THE TYPE INTEGER'
-                      FI / + ',' ) ')' / RETURN INPUT :: $E /   ##
- #A_OUTPUT   PUT  '(' (+  $C := #A_EXPRESSION  / $E !.:= $C;
-              IF  $C . TYPE  <> INTEGER ->
-        REP << OPERAND OF PUT STATEMENT IS NOT OF THE TYPE INTEGER
-                FI /   + ',' ) ')'/ RETURN OUTPUT :: $E /       ##
- #A_CONDITIONAL     'IF' $BE := #A_EXPRESSION
-    /IF $BE . TYPE <> BOOLEAN ->
-              REP<< CONDITION IS NOT OF BOOLEAN TYPE FI /
-                   'THEN' (+ $P1 !.:= #A_STATEMENT + ';' )
-         [ 'ELSE' (+ $P2 !.:= #A_STATEMENT + ';' ) ]      'FI'
-    / RETURN CONDITIONAL :: <. COND : $BE , THEN : $P1 ,
-                               ELSE : $P2  .> /            ##
- #A_EXPRESSION      $A := #A_SUM   [  '=' $B := #A_SUM
-    / $A := COMPARE::<. ARG1 : $A, ARG2 : $B, TYPE : BOOLEAN.>/ ]
-    / RETURN $A /           ##
- #A_SUM   $A := #A_FACTOR    (* '+' $B := #A_FACTOR
-         / $A := ADD::<. ARG1: $A, ARG2: $B, TYPE: INTEGER .>/ *)
-    / RETURN $A  /          ##
- #A_FACTOR  $A := #A_TERM     (* '*' $B := #A_TERM
-         /$A := MULT::<. ARG1: $A, ARG2: $B, TYPE: INTEGER .>/ *)
-    / RETURN $A /           ##
+ #A_ASSIGNMENT $Id&nbsp; ':='/ $LPType := LAST #A_PROGRAM $DECL .$Id;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IF NOT $LPType&nbsp; -&gt; REP &lt;&lt; VARIABLE $Id ' IS NOT DEFINED ' FI /
+&nbsp;&nbsp;&nbsp; $E:= #A_EXPRESSION
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /IF $LPType &lt;&gt; $E . TYPE -&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; REP&lt;&lt; 'LEFT AND RIGHT SIDE TYPES ARE DIFFERENT '
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'IN ASSIGNMENT STATEMENT ' FI;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RETURN ASSIGNMENT::&lt;. LEFT: $Id, RIGHT: $E .&gt; /
+ ONFAIL IF $LPType&nbsp; -&gt; REP&lt;&lt; 'WRONG EXPRESSION IN ASSIGNMENT'&nbsp; FI&nbsp; ##
+ #A_INPUT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GET&nbsp; '('
+&nbsp;&nbsp;&nbsp; (+ $E !.:= $Id&nbsp; /IF&nbsp; LAST #A_PROGRAM $DECL.$Id &lt;&gt; INTEGER -&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; REP &lt;&lt; $Id 'IN STATEMENT GET IS NOT OF THE TYPE INTEGER'
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FI / + ',' ) ')' / RETURN INPUT :: $E /&nbsp;&nbsp; ##
+ #A_OUTPUT&nbsp;&nbsp; PUT&nbsp; '(' (+&nbsp; $C := #A_EXPRESSION&nbsp; / $E !.:= $C;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IF&nbsp; $C . TYPE&nbsp; &lt;&gt; INTEGER -&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; REP &lt;&lt; OPERAND OF PUT STATEMENT IS NOT OF THE TYPE INTEGER
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FI /&nbsp;&nbsp; + ',' ) ')'/ RETURN OUTPUT :: $E /&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ##
+ #A_CONDITIONAL&nbsp;&nbsp;&nbsp;&nbsp; 'IF' $BE := #A_EXPRESSION
+&nbsp;&nbsp;&nbsp; /IF $BE . TYPE &lt;&gt; BOOLEAN -&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; REP&lt;&lt; CONDITION IS NOT OF BOOLEAN TYPE FI /
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'THEN' (+ $P1 !.:= #A_STATEMENT + ';' )
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [ 'ELSE' (+ $P2 !.:= #A_STATEMENT + ';' ) ]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'FI'
+&nbsp;&nbsp;&nbsp; / RETURN CONDITIONAL :: &lt;. COND : $BE , THEN : $P1 ,                                 ELSE : $P2  .&gt;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ##
+ #A_EXPRESSION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $A := #A_SUM&nbsp;&nbsp; [&nbsp; '=' $B := #A_SUM
+&nbsp;&nbsp;&nbsp; / $A := COMPARE::&lt;. ARG1 : $A, ARG2 : $B, TYPE : BOOLEAN.&gt;/ ]
+&nbsp;&nbsp;&nbsp; / RETURN $A /&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ##
+ #A_SUM&nbsp;&nbsp; $A := #A_FACTOR&nbsp;&nbsp;&nbsp; (* '+' $B := #A_FACTOR
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / $A := ADD::&lt;. ARG1: $A, ARG2: $B, TYPE: INTEGER .&gt;/ *)
+&nbsp;&nbsp;&nbsp; / RETURN $A&nbsp; /&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ##
+ #A_FACTOR&nbsp; $A := #A_TERM&nbsp;&nbsp;&nbsp;&nbsp; (* '*' $B := #A_TERM
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /$A := MULT::&lt;. ARG1: $A, ARG2: $B, TYPE: INTEGER .&gt;/ *)
+&nbsp;&nbsp;&nbsp; / RETURN $A /&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ##
  #A_TERM
-    $N  / RETURN <. CONSTANT : $N , TYPE : INTEGER .>/;;
-  ( ( TRUE / $K :=1/ ) ! ( FALSE / $K :=0 / ) )
-                 /RETURN <. CONSTANT: $K, TYPE: BOOLEAN .>/  ;;
-    $Id  / $X:= LAST #A_PROGRAM $DECL.$Id;
-         IF NOT $X  ->  REP << VARIABLE $Id IS NOT DECLARED
-         ELSIF T -> RETURN <. VARIABLE: $Id, TYPE: $X .> FI / ;;
-    '(' $E := #A_EXPRESSION ')' / RETURN $E /        ##
-
- </xmp>
-               <h3>    12.6 Code Generation Phase</h3>
-
-    Code  generation is performed when traversing abstract syntax
-tree. 
-  <p>    To  avoid  possible  conflicts  between variable names in the
-TOYLAN  program  and register names (of the type RNNN) and labels
-(of  the  type  LNNN)  in  the object program, variable names are
+&nbsp;&nbsp;&nbsp; $N&nbsp; / RETURN &lt;. CONSTANT : $N , TYPE : INTEGER .&gt;/;;
+&nbsp; ( ( TRUE / $K :=1/ ) ! ( FALSE / $K :=0 / ) )
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /RETURN &lt;. CONSTANT: $K, TYPE: BOOLEAN .&gt;/&nbsp; ;;
+&nbsp;&nbsp;&nbsp; $Id&nbsp; / $X:= LAST #A_PROGRAM $DECL.$Id;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IF NOT $X&nbsp; -&gt;&nbsp; REP &lt;&lt; VARIABLE $Id IS NOT DECLARED
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ELSIF T -&gt; RETURN &lt;. VARIABLE: $Id, TYPE: $X .&gt;&nbsp;FI / ;;
+&nbsp;&nbsp;&nbsp; '(' $E := #A_EXPRESSION ')' / RETURN $E /&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ##
+ </pre><h3 class="western" style="orphans: 12">
+12.6 Code Generation Phase</h3>
+<p class="msonormal" style="orphans: 12">Code generation is performed
+when traversing abstract syntax tree. 
+</p>
+<p style="orphans: 12">To avoid possible conflicts between variable
+names in the TOYLAN program and register names (of the type RNNN) and
+labels (of the type LNNN) in the object program, variable names are
 substituted by standard names of the type VARNNN. 
-<xmp>
-
- #G_PROGRAM    / $LABEL := 0 /   --global variable $LABEL serves
-                                 --to generate unique labels.
-  PROGRAM::<.DECLARATIONS: $TAB := #TABLE_OF_NUMBERS,
-              --creation of the table of unique variable numbers
-             STATEMENTS: (.(* #G_STATEMENT *).) / GEN << 'EOJ' /,
-             DECLARATIONS : #G_DECLARATIONS      .>       ##
- #TABLE_OF_NUMBERS <* $Id: $TYPE /$N :=$N+1; $T++:=<. $Id: $N.>/ *>
-                   /RETURN $T/    ##
+</p>
+<pre class="western" style="orphans: 12; margin-bottom: 0.2in"> #G_PROGRAM&nbsp;&nbsp;&nbsp; / $LABEL := 0 /&nbsp;&nbsp; --global variable $LABEL serves
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--to generate unique labels.
+&nbsp; PROGRAM::&lt;_x002e_DECLARATIONS: _x0024_TAB =&quot;#TABLE_OF_NUMBERS,&quot; _x002d_-creation of the table of unique variable numbers STATEMENTS: _x0028_._x0028__x002a_ _x0023_G_STATEMENT _x002a__x0029_._x0029_ GEN/&gt;&lt;&lt; 'EOJ' /,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DECLARATIONS : #G_DECLARATIONS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ##
+ #TABLE_OF_NUMBERS &lt;* $Id: $TYPE /$N :=$N+1; $T++:=&gt;&lt;. $Id: $N.&gt;/ *&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /RETURN $T/&nbsp;&nbsp;&nbsp; ##
  #G_STATEMENT ( #G_ASSIGNMENT ! #G_INPUT !
-              #G_OUTPUT     ! #G_CONDITIONAL )      ##
- #G_ASSIGNMENT    ASSIGNMENT::<. LEFT: $Id := #NAME,
-  RIGHT :( ( <. VARIABLE: $Id1:=#NAME .>
-              /GEN << MOV @ $Id1 ',' $Id / ) !
-           ( <. CONSTANT : $N .> /GEN << MOV @ '=' $N ',' $Id /) !
-           ( $NREG := #G_EXPRESSION
-              /GEN << 'SAVE' @ 'R' $NREG ',' $Id / ) )  .>    ##
- #G_INPUT INPUT::(. (* $Id := #NAME /GEN << READ $Id / *) .)   ##
- #G_OUTPUT     OUTPUT :: (. (*
-    ( ( <. VARIABLE : $Id := #NAME .> /GEN << WRITE $Id / ) !
-       ( <. CONSTANT : $N .> /GEN << WRITE @ '=' $N / )  !
-       ( $NREG := #G_EXPRESSION /GEN << WRITE @ 'R' $NREG /) )
-                         *) .)                                ##
- #G_CONDITIONAL     CONDITIONAL ::
-     <. COND : $NREG := #G_EXPRESSION
-            / $LABEL1 :=#NEW_LABEL(); $LABEL2 :=#NEW_LABEL() /,
-         THEN   : / GEN << BRANCH @ 'R' $NREG ',L' $LABEL1  /
-                  (. (* #G_STATEMENT *) .)
-               / IF $.ELSE -> GEN << JUMP @ 'L' $LABEL2 FI;
-                             GEN << @ 'L' $LABEL1 ': NOP' / ,
-       [ ELSE : (. (* #G_STATEMENT *) .)
-               / GEN << @ 'L' $LABEL2 ': NOP' / ]     .>  ##
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #G_OUTPUT&nbsp;&nbsp;&nbsp;&nbsp; ! #G_CONDITIONAL )&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ##
+ #G_ASSIGNMENT&nbsp;&nbsp;&nbsp; ASSIGNMENT::</pre><p>
+&lt;. LEFT: $Id := #NAME, RIGHT :( ( &gt;&lt;. VARIABLE: $Id1:=#NAME
+.&gt;</p>
+<pre class="western" style="orphans: 12; margin-bottom: 0.2in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /GEN &lt;&lt; MOV @ $Id1 ',' $Id / ) !
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( &lt;. CONSTANT : $N .&gt;&nbsp;/GEN &lt;&lt; MOV @ '=' $N ',' $Id /) !
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( $NREG := #G_EXPRESSION
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /GEN &lt;&lt; 'SAVE' @ 'R' $NREG ',' $Id / ) )&nbsp; .&gt;&nbsp;&nbsp;&nbsp; ##
+ #G_INPUT INPUT::(. (* $Id := #NAME /GEN &lt;&lt; READ $Id / *) .)&nbsp;&nbsp; ##
+ #G_OUTPUT&nbsp;&nbsp;&nbsp;&nbsp; OUTPUT :: (. (*
+&nbsp;&nbsp;&nbsp; ( ( &lt;. VARIABLE : $Id := #NAME .&gt;&nbsp;/GEN &lt;&lt; WRITE $Id / ) !
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( &lt;. CONSTANT : $N .&gt;&nbsp;/GEN &lt;&lt; WRITE @ '=' $N / )&nbsp; !
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( $NREG := #G_EXPRESSION /GEN &lt;&lt; WRITE @ 'R' $NREG /) )
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *) .) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;##
+ #G_CONDITIONAL&nbsp;&nbsp;&nbsp;&nbsp; CONDITIONAL ::
+&nbsp;&nbsp;&nbsp; &nbsp;&lt;. COND : $NREG := #G_EXPRESSION              / $LABEL1 :=#NEW_LABEL(); $LABEL2 :=#NEW_LABEL() /,           THEN   : / GEN &gt;&lt;&lt; BRANCH @ 'R' $NREG ',L' $LABEL1&nbsp; /
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (. (* #G_STATEMENT *) .)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / IF $.ELSE -&gt; GEN &lt;&lt; JUMP @ 'L' $LABEL2 FI;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GEN &lt;&lt; @ 'L' $LABEL1 ': NOP' / ,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [ ELSE : (. (* #G_STATEMENT *) .)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / GEN &lt;&lt; @ 'L' $LABEL2 ': NOP' / ]&nbsp;&nbsp;&nbsp;&nbsp; .&gt;&nbsp; ##
  #G_EXPRESSION --returns the number of the register containing
-               --result of the evaluation of expression
-  $EXPR
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --result of the evaluation of expression
+&nbsp; $EXPR
  / $NREG := 0 / -- number of the first accessible register
  /RETURN #G_EXPR($EXPR)/
  ##
-
-
- #G_EXPR     ( <. VARIABLE: $ID :=#NAME .>  !
-              <. CONSTANT: $N / $ID := #IMPLODE('=' $N)/ .>)
-            / $REG := COPY( LAST #G_EXPRESSION $NREG ) ;
-              GEN << 'LOAD' @ 'R' $REG ',' $ID  ;
-              LAST #G_EXPRESSION $NREG + := 1; RETURN $REG /  ;;
-         $OP::<. ARG1 : $R1 := #G_EXPR, ARG2 : $R2 := #G_EXPR .>
-          / GEN << $OP @ 'R' $R1 ',R' $R2 ; RETURN $R1 /   ##
+ #G_EXPR&nbsp;&nbsp;&nbsp;&nbsp; ( &lt;. VARIABLE: $ID :=#NAME .&gt;&nbsp;&nbsp;!
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&lt;. CONSTANT: $N / $ID := #IMPLODE('=' $N)/ .&gt;)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / $REG := COPY( LAST #G_EXPRESSION $NREG ) ;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GEN &lt;&lt; 'LOAD' @ 'R' $REG ',' $ID&nbsp; ;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LAST #G_EXPRESSION $NREG + := 1; RETURN $REG /&nbsp; ;;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $OP::</pre><p>
+&lt;. ARG1 : $R1 := #G_EXPR, ARG2 : $R2 := #G_EXPR .&gt;</p>
+<pre class="western" style="orphans: 12; margin-bottom: 0.2in">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / GEN &lt;&lt; $OP @ 'R' $R1 ',R' $R2 ; RETURN $R1 /&nbsp;&nbsp; ##
  #G_DECLARATIONS
- <* $ID: $TYPE /$ID1 := #NAME($ID); GEN<< $ID1 ':' DEFWORD 0 /*> ##
- #NEW_LABEL    --auxiliary rule
-    /LAST #G_PROGRAM  $LABEL+:=1;
-     RETURN COPY (LAST #G_PROGRAM $LABEL )/              ##
- #NAME    $ID --returns standard name of the variable $ID in $TAB
-     / RETURN #IMPLODE( VAR  LAST #G_PROGRAM $TAB.$ID)/    ##
-
-</xmp>
- <a name="13"> 
-         <h2>          13. Conclusions and Future Work </h2>
-
-    As  it was demonstrated above, RIGAL supports syntax-oriented
-style   of   compiler  design.  Programs  written  in  RIGAL  are
-well-structured and it is easy to read and debug them. 
- <p>     Our experience [13] proves that the optimizing RIGAL compiler
-in  VAX/VMS environment makes it possible to implement production
-quality compilers for high level languages. 
- <p>     RIGAL  can  be considered as yet another language prototyping
- tool  in  the  sense  of  [14], because it allows the designer to
-develop an experimental translator in short period of time. 
-  <p>    Besides  interpreter  for  debugging  purposes and optimizing
-compiler  RIGAL support system includes a cross-referencer, which
-helps to avoid misuse of global variables. 
-  <p>    In  order  to  improve  static  and  dynamic  type  checking,
-variable  type  descriptions in the form of formal comments would
-be added to the language. 
-  <p>    Taking  in  account  that control structures of RIGAL program
-are  very  close  to input data structures, it seems promising to
-develop  automatic  and  semiautomatic  methods  for test example
-generation for the given RIGAL program. 
-
- <a name="r"> 
-                    <h2>References</h2>
- <p>   [1]  A.Aho,  J.Ullman. The  theory  of  parsing,  translation  and
+ &lt;* $ID: $TYPE /$ID1 := #NAME($ID); GEN&gt;&lt;&lt; $ID1 ':' DEFWORD 0 /*&gt; ##
+ #NEW_LABEL&nbsp;&nbsp;&nbsp; --auxiliary rule
+&nbsp;&nbsp;&nbsp; /LAST #G_PROGRAM&nbsp; $LABEL+:=1;
+&nbsp;&nbsp;&nbsp;&nbsp; RETURN COPY (LAST #G_PROGRAM $LABEL )/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ##
+ #NAME&nbsp;&nbsp;&nbsp; $ID --returns standard name of the variable $ID in $TAB
+&nbsp;&nbsp;&nbsp;&nbsp; / RETURN #IMPLODE( VAR&nbsp; LAST #G_PROGRAM $TAB.$ID)/&nbsp;&nbsp;&nbsp; ##</pre><p class="msonormal" style="orphans: 12">
+<a name="13"></a>&nbsp;</p>
+<h2 class="western" style="orphans: 13">13. Conclusions and Future
+Work 
+</h2>
+<p class="msonormal" style="orphans: 13">As it was demonstrated
+above, RIGAL supports syntax-oriented style of compiler design.
+Programs written in RIGAL are well-structured and it is easy to read
+and debug them. 
+</p>
+<p style="orphans: 13">Our experience [13] proves that the optimizing
+RIGAL compiler in VAX/VMS environment makes it possible to implement
+production quality compilers for high level languages. 
+</p>
+<p style="orphans: 13">RIGAL can be considered as yet another
+language prototyping tool in the sense of [14], because it allows the
+designer to develop an experimental translator in short period of
+time. 
+</p>
+<p style="orphans: 13">Besides interpreter for debugging purposes and
+optimizing compiler RIGAL support system includes a cross-referencer,
+which helps to avoid misuse of global variables. 
+</p>
+<p style="orphans: 13">In order to improve static and dynamic type
+checking, variable type descriptions in the form of formal comments
+would be added to the language. 
+</p>
+<p style="orphans: 13"><a name="r"></a>Taking in account that control
+structures of RIGAL program are very close to input data structures,
+it seems promising to develop automatic and semiautomatic methods for
+test example generation for the given RIGAL program. 
+</p>
+<h2 class="western">References</h2>
+<p>[1] A.Aho, J.Ullman. The theory of parsing, translation and
 compiling// Prentice-Hall, Inc. Englewood Cliffs,N.J. 1972. -
-vol.1,2.
-  <p>  [2] S.C.Johnson. YACC - Yet  Another  Compiler  Compiler  //  Bell
-Laboratories, Murray Hill,N.J., 1978, A technical manual.
-  <p>  [3] C.H.Koster. Using the CDL Compiler Compiler// Lecture  Notes
-in Computer Science , Vol.21, Springer-Verlag, Berlin, 1977.
- <p>   [4] I.R.Agamirzyan. Compiler Design Technological Support System SHAG. // Space
-mechanics algorithms, Leningrad, vol. 79,1985, pp. 1-53.,(in Russian)
-  <p>  [5] D.E.Knuth. Semantics of context-free languages//  Mathematical
-Systems Theory, 2, 2, 1968, pp.127-146.
- <p>   [6] V.A.Serebryakov. Methods of Attribute Translation.// In:
-Programming Languages, Moscow, "Nauka", 1985, pp. 47-79,(in Russian).
- <p>   [7] A.O.Vooglaid, M.V. Lepp, D.B.Lijb. Input Languages of the
-ELMA System. // Proceedings of the Tallin Polytechnical Institute,
-(in Russian).
- <p>   [8] The intermediate language DIANA : Design and Implementation //Lecture 
-Notes in Computer Science, Vol.180, Springer-Verlag,
-Berlin, 1984.
-  <p>  [9] R.Vilhelm. Presentation of the compiler generation system MUG2: 
-Examples, global flow analysis and optimization// Le point
-sur la compilation, INRIA, 1978, à.307-336.
-  <p>  [10] Basic REFAL and its implementation on computers.// CNIPIASS,
+vol.1,2. 
+</p>
+<p>[2] S.C.Johnson. YACC - Yet Another Compiler Compiler // Bell
+Laboratories, Murray Hill,N.J., 1978, A technical manual. 
+</p>
+<p>[3] C.H.Koster. Using the CDL Compiler Compiler// Lecture Notes in
+Computer Science , Vol.21, Springer-Verlag, Berlin, 1977. 
+</p>
+<p>[4] I.R.Agamirzyan. Compiler Design Technological Support System
+SHAG. // Space mechanics algorithms, Leningrad, vol. 79,1985, pp.
+1-53.,(in Russian) 
+</p>
+<p>[5] D.E.Knuth. Semantics of context-free languages// Mathematical
+Systems Theory, 2, 2, 1968, pp.127-146. 
+</p>
+<p>[6] V.A.Serebryakov. Methods of Attribute Translation.// In:
+Programming Languages, Moscow, &quot;Nauka&quot;, 1985, pp. 47-79,(in
+Russian). 
+</p>
+<p>[7] A.O.Vooglaid, M.V. Lepp, D.B.Lijb. Input Languages of the ELMA
+System. // Proceedings of the Tallin Polytechnical Institute, (in
+Russian). 
+</p>
+<p>[8] The intermediate language DIANA : Design and Implementation
+//Lecture Notes in Computer Science, Vol.180, Springer-Verlag,
+Berlin, 1984. 
+</p>
+<p>[9] R.Vilhelm. Presentation of the compiler generation system
+MUG2: Examples, global flow analysis and optimization// Le point sur
+la compilation, INRIA, 1978, Ã .307-336. 
+</p>
+<p>[10] Basic REFAL and its implementation on computers.// CNIPIASS,
 Moscow, 1977, (in Russian). 
-  <p>  [11] P.Lucas. Formal definition of programming languages and
-systems // IFIP Congress, 1971.
-  <p>  [12] M.Ganapatti, C.N.Fisher, J.L.Hennessy. Retargetable  compiler
-code generation// ACM Computing Survays, 14(4), 1982.
-  <p>  [13]  J.Barzdin,  A.Kalnins,  M.Auguston,  SDL  tools  for   rapid
-prototyping and testing.// in SDL'89 : The language  at  work,
-ed.  O.Faergemand  and   M.M.Marques,   North-Holland,   1989,
-pp.127-133.
- <p>   [14] R.Herndon, V.Berzins, The realizable benefits of  a  language
-prototyping  language.//   IEEE   Transactions   on   Software
-Engineering , vol.14, No 6, June 1988, pp.803-809
+</p>
+<p>[11] P.Lucas. Formal definition of programming languages and
+systems // IFIP Congress, 1971. 
+</p>
+<p>[12] M.Ganapatti, C.N.Fisher, J.L.Hennessy. Retargetable compiler
+code generation// ACM Computing Survays, 14(4), 1982. 
+</p>
+<p>[13] J.Barzdin, A.Kalnins, M.Auguston, SDL tools for rapid
+prototyping and testing.// in SDL'89 : The language at work, ed.
+O.Faergemand and M.M.Marques, North-Holland, 1989, pp.127-133. 
+</p>
+<p>[14] R.Herndon, V.Berzins, The realizable benefits of a language
+prototyping language.// IEEE Transactions on Software Engineering ,
+vol.14, No 6, June 1988, pp.803-809 
+</p>
+</body>
+</html>
