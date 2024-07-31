@@ -1,0 +1,54 @@
+-- Tree traverse examples
+-- They work with trees with arbitrary selectors.
+-- Values under selectors must bee numbers or trees.
+-- Rule #num calculates number of leaves ($n) in the tree.
+-- Rule #sum1 adds $n to each leaf. It actually constructs
+-- a new tree.
+-- Rule #sum2 does the same "at place". 
+
+#main
+$tree:=<.A:1,B:5,C:<.a:2,b:7.>.>;
+PRINT $tree;
+$n:=#num($tree);
+PRINT $n;
+$tree1:=#sum1($n $tree);
+PRINT $tree;
+PRINT $tree1;
+#sum2($n $tree1);
+PRINT $tree1;
+#sum3($tree1);
+PRINT $tree1;
+##
+#num
+   <* $m:($N/$eq+:=1/ ! $eq+:=#num)*>/RETURN $eq/
+##
+#sum1   $EQ
+   <*$m:
+      ($N /$tr++:=<.$m:$N+$EQ.>/ 
+       -- $N in pattern accepts only numerical atom.
+       -- $N+$EQ creates new numeric atom. $N does not
+       -- change.
+       !
+       $a /$tr++:=<.$m:#sum1($EQ $a).>/) 
+   *>
+ /RETURN $tr/ 
+##
+#sum2   $EQ
+   <*$m:($N/$N+:=$EQ
+           -- This incremention is made "at place"
+           / !
+         $a /#sum2($EQ $a)/
+        ) *>
+##
+#sum3 <* $m : ($N / $N+:=LAST #main $n 
+    -- Similar to #sum2, but we dont pass $EQ each time,
+    -- and simply take it from #main. 
+                  / !
+               #sum3
+               ) *>
+##
+ 
+             
+
+ 
+

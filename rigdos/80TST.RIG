@@ -1,0 +1,171 @@
+-- tests all details of USE80.PAS implemantation
+#W
+$A:=#F('4.0');
+$B:=#F('0.1');
+PRINT (. $A $B .);
+PRINT #CALL_PAS(80 '*' $A $B);
+#CALL_PAS(1);
+$F:=#TEST1(); -- returns 123.456
+
+ #TEST2($F[1]);
+ #TEST3( $F);
+ #TEST4( $F);
+ #TEST5();
+##
+
+
+#TEST2  $F
+ /
+  PRINT (. 'printout in exponential forms:' .);
+  PRINT (. print $F .);
+  PRINT (. explode #EXPLODE($F) .);
+  PRINT (. implode #IMPLODE($F) .);
+  OPEN D ' ';
+  D<< '<<-output ' $F;
+  CLOSE D/
+##
+
+
+#TEST3 $F
+ / $XX:=#CALL_PAS(80 S '123.456');
+  PRINT (. '80-S:good' $XX .);
+  PRINT (. '80-s:NULL' #CALL_PAS(80 S '-1E77') .);
+  PRINT (. '80-i:integer' #CALL_PAS(80 I 123)  .);
+  PRINT (. 'digits for 123.456 ' #CALL_PAS(80 D $F[1]) .);
+  PRINT (. 'digits for 123E+12 ' #CALL_PAS(80 D $F[3]) .);
+  PRINT (. 'digits for my-num=null ' #CALL_PAS(80 D $XX) .) ;
+
+  $X:=$F[1];
+  $D:=#CALL_PAS(80 D $X);
+  IF $D AND ($D[1]+$D[2]>0) ->
+   $REZ:=#CALL_PAS(80 Z $X ($D[1]+$D[2]+1)*100+$D[2])
+  ELSIF T->
+   $REZ:=#CALL_PAS(80 V $X)
+  FI;
+  PRINT(. 'doctest=123.456=' $REZ .);
+  #CALL_PAS(1 'test3 ended');
+/
+##
+
+#F $S / RETURN #CALL_PAS(80 S $S) / ##
+
+#TEST4
+ / 
+PRINT (. 'T-good' #CALL_PAS(80 T #F('2.14E+9')) .);
+PRINT (. 'T-bad ' #CALL_PAS(80 T #F('2.15E+9')) .);
+PRINT (. 'T-good' #CALL_PAS(80 T #F('-2.14E+9')) .);
+PRINT (. 'T-bad ' #CALL_PAS(80 T #F('-2.15E+9')) .);
+PRINT (. 'Z-expo 7.7e+00 ' #CALL_PAS(80 Z #F('7.7') (-1) ) .);
+PRINT (. 'Z-expo 7.7e+00 ' #CALL_PAS(80 Z #F('7.7') (799) ) .);
+PRINT (. 'Z-expo 7.70e+00 ' #CALL_PAS(80 Z #F('7.7') (899) ) .);
+PRINT (. 'Z-expo  8 ' #CALL_PAS(80 Z #F('7.7') (0) ) .);
+PRINT (. 'Z-expo *8 ' #CALL_PAS(80 Z #F('7.7') (1000) ) .);
+#CALL_PAS(1);
+PRINT (. 'Z-expo  7.7 ' #CALL_PAS(80 Z #F('7.7') (1) ) .);
+PRINT (. 'Z-expo *7.7 ' #CALL_PAS(80 Z #F('7.7') (801) ) .);
+PRINT (. 'Z-expo *7,70' #CALL_PAS(80 Z #F('7.7') (802) ) .);
+PRINT (. 'R 23.14000'    #CALL_PAS(80 R #F('23.138') 2 ) .);
+PRINT (. 'R 23.14000'    #CALL_PAS(80 R #F('23.144') 2 ) .);
+PRINT (. 'R 23.00000'    #CALL_PAS(80 R #F('23.138') 0 ) .);
+PRINT (. 'R 23.00000'    #CALL_PAS(80 R #F('23.138') (-2)) .);
+PRINT (. 'R -23.14000'    #CALL_PAS(80 R #F('-23.138') 2 ) .);
+PRINT (. 'R -23.14000'    #CALL_PAS(80 R #F('-23.144') 2 ) .);
+PRINT (. 'R -23.00000'    #CALL_PAS(80 R #F('-23.138') 0 ) .);
+PRINT (. 'R -23.00000'    #CALL_PAS(80 R #F('-23.138') (-2)) .);
+PRINT (. 'R null    '    #CALL_PAS(80 R #F('23.138') 42) .);
+#CALL_PAS(1 'test4 ended' );
+/##
+
+#TEST1
+-- Part 1 reading float number from the lexical analyser
+
+
+/
+OPEN D '80TST.LST';
+D<<' 123.456    7.33333333333333333333333333333333333333333333333333';
+D<<' 123E+12 123E-12 123.456E+12 123.456E12 123. ';
+D<<' .56';
+$V:=(.F K F F F F F A N K F F F .);
+D<<' 7777777777777777777777777777777777777.88'; --39
+D<<' 777777777777777777777777777777777777.88'; --38
+D<<' 77777777777777777777777777777777777.88'; --37
+D<<' 7777777777777777777777777777777777.88';  --36
+CLOSE D;
+$A:=#CALL_PAS(35 '80TST.LST');
+FORALL $E IN $A DO
+ IF #FATOM($E) -> $M:='F'
+ ELSIF #_KEYWORD ($E) -> $M:='K'
+ ELSIF #NUMBER($E) ->  $M:='N'
+ ELSIF #ATOM($E)    -> $M:='A';
+ ELSIF T-> $M:='X';
+ FI;
+ $MA!.:=$M;
+OD;
+PRINT (. really   $MA .);
+PRINT (. expected $V .);
+#CALL_PAS(1);
+RETURN $A;
+/##
+
+#TEST5/
+ $A:=#F('-1E20');
+ $B:=#F('1.2E20');
+ $C:=#F('-1.2E-20');
+ $N:=#F('0');
+ PRINT (. a b $A $B .);
+ PRINT(.  '+ good'  #CALL_PAS(80 '+' $A $B) .);
+ PRINT(.  '- good'  #CALL_PAS(80 '-' $A $B) .);
+ PRINT(.  '* good'  #CALL_PAS(80 '*' $A #F('1e10')) .);
+ PRINT(.  '* good'  #CALL_PAS(80 '*' #F('1e10') $B) .);
+ PRINT(.  '/ good'  #CALL_PAS(80 '/' $A #F('1e10')) .);
+ PRINT(.  '/ good'  #CALL_PAS(80 '/' #F('1e10') $B) .);
+ PRINT(.  '* bad '  #CALL_PAS(80 '*' $A $B) .);
+ PRINT(.  '* bad '  #CALL_PAS(80 '*' $C $C) .);
+ PRINT(.  '/ bad '  #CALL_PAS(80 '/' $A $C) .);
+ PRINT(.  '/ bad '  #CALL_PAS(80 '/' $C $A) .);
+ PRINT(.  '/ bad '  #CALL_PAS(80 '/' $B $N) .);
+ #CALL_PAS(1); 
+ PRINT(.  '+ good'  #CALL_PAS(80 '+' $A $N) .);
+ PRINT(.  '+ good'  #CALL_PAS(80 '+' $N $A) .);
+ PRINT(.  '+ good0' #CALL_PAS(80 '+' $N $N) .);
+ PRINT(.  '- good'  #CALL_PAS(80 '-' $A $N) .);
+ PRINT(.  '- good'  #CALL_PAS(80 '-' $N $A) .);
+ PRINT(.  '- good0' #CALL_PAS(80 '-' $N $N) .);
+ PRINT(.  '* good0' #CALL_PAS(80 '*' $A $N) .);
+ PRINT(.  '* good0' #CALL_PAS(80 '*' $N $A) .);
+ PRINT(.  '* good0' #CALL_PAS(80 '*' $N $N) .);
+ PRINT(.  '/ good0' #CALL_PAS(80 '/' $N $A) .);
+ PRINT(.  '/ bad '  #CALL_PAS(80 '/' $A $N) .);
+ PRINT(.  '/ bad '  #CALL_PAS(80 '/' $N $N) .);
+ #CALL_PAS(1); 
+/##
+
+#TEST4x
+/ OPEN S ' ';
+ $E:=#CALL_PAS(80 S '5.0');
+  $E:=NULL;
+PRINT (.$E<0 $E>0 $E+0=0 $E=COPY($E).);
+ $E1:=#CALL_PAS(80 S '4.0');
+ S<<' to screen ' $E1 $E;
+ PRINT (. $E1 $E .);
+  $E:=COPY($E1);
+#CALL_PAS(1);
+ PRINT #CALL_PAS(80 '+' $E $E1);
+ PRINT #CALL_PAS(80 '*' $E $E1);
+ PRINT #CALL_PAS(80 '/' $E $E1);
+ PRINT #CALL_PAS(80 '/' $E #CALL_PAS(80 I 0));
+ $E:=$E1;
+ #CALL_PAS(1);
+ PRINT 'COMPARING';
+ PRINT #CALL_PAS(80 '<' $E $E1);
+ PRINT #CALL_PAS(80 '>' $E $E1);
+ PRINT #CALL_PAS(80 '<=' $E $E1);
+ PRINT #CALL_PAS(80 '>=' $E $E1);
+ PRINT #CALL_PAS(80 '=' $E $E1);
+PRINT #CALL_PAS(80 '<>' $E $E1);
+PRINT #CALL_PAS(80 'T' $E1 );
+PRINT #CALL_PAS(80 'Z' $E1 2505);
+ $E:=#CALL_PAS(80 I  994);
+ PRINT $E;
+  #CALL_PAS(1);
+/##

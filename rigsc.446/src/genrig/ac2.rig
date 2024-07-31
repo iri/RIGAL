@@ -1,0 +1,286 @@
+#ZZZ $E:=5 ##
+#GEN_TREE_ELT
+        $OLDPL  $NPL
+        $FAC:: (.   $Nmetki
+                    ( ( $NACONST
+                        / $OLDLABEL:= LAST #G_SIMPLE
+                        $metka_wyhoda_po_neuspehu;
+                          LAST #G_SIMPLE
+                        $metka_wyhoda_po_neuspehu:=
+                                $Nmetki /) !
+                        / $NACONST:= $Nmetki/ )
+                 / LAST #G_PATTERN2
+                               $acnst_LIST!.:= $NACONST;
+              -- corrected from #G_PATTERN 20.2.90
+                   GEN<<  @ 'selop(acnst[' $NACONST
+                   '],false,0L,pl' $OLDPL '.cel,&rez1);pl'
+               $NPL '.cel=rez1;';
+                   GEN<<@ '   if( rez1==NULL ) { success1=false;goto _L'
+                        LAST #G_SIMPLE -- B/false/E dobawleno 26.i`lq.1988.
+                          $metka_wyhoda_po_neuspehu ';};'/
+
+                (* ( #G_PATTERN ! #G_STMT ) *)  .)
+                / IF $FAC -> GEN <<@ '_L' $Nmetki
+                                    ':success1=true;';
+                        LAST #G_SIMPLE
+               $metka_wyhoda_po_neuspehu:= $OLDLABEL FI/
+##
+---------------------------------------------------------
+#GEN_TREE_LOOP
+        $OLDPL  $NPL    $acnst_LIST
+        (. $VAR  / #G_wyravenie( $VAR);
+                   GEN<< @ 'first(pl' $OLDPL '.cel,&pl'
+                        $NPL ');while(pl' $NPL
+                        '.nel!=0)   { ';
+                   IF $acnst_LIST -> #GEN_acnst_COND
+                                 ( $NPL $acnst_LIST) FI;
+                 GEN<< @ 'mkatom(pl' $NPL '.UU.U1.arc,idatom,&'
+                        $VAR.mesto '.sa);' /
+
+                (* ( #G_PATTERN ! #G_STMT ) *) .)
+        /IF $acnst_LIST -> GEN<< ';};' FI;
+        GEN<< @ 'next(&pl' $NPL ') ;};' /
+##
+--------------------------------------------------------
+#GEN_acnst_COND
+        $NPL
+        (.  $N1 /GEN<< @ 'if( (pl' $NPL
+                          '.UU.U1.arc!=acnst[' $N1 '])' /
+             (* $N1 /GEN<< @ '&&(pl' $NPL
+                        '.UU.U1.arc!=acnst[' $N1 '])'/  *) .)
+        / GEN<< ' ) {'/
+##
+-------------------------------------------------------
+#G_NAME_CHECK
+        /GEN<< '/* prowerka imeni */'/
+        ATOM::(. $A .)
+           /GEN<< 'success1=eqatom(x.smld->name,acnst[' $A ']);';
+            GEN<<@ 'if( ! success1 ) { rez1=NULL;goto _L'
+                LAST #G_SIMPLE $metka_wyhoda_po_neuspehu
+                ';};' / ;;
+
+        NUM:: (. $A .)
+               /GEN<<@ 'success1=eqnum(x.smld->name,' $A
+          'L);';
+               GEN<<@ 'if( ! success1 ) { rez1=NULL;goto _L'
+                LAST #G_SIMPLE $metka_wyhoda_po_neuspehu
+                ';};' / ;;
+
+-- added (whole branch) 23-01-92 due to pattern NULL::<.A:B.>
+-- see also in PATTERN.RIG
+        'NULL'
+      / GEN<< ' success1=(x.smld->name ==NULL) ; ';
+        GEN<<@ 'if( ! success1 ) { rez1=NULL;goto _L'
+             LAST #G_SIMPLE $metka_wyhoda_po_neuspehu
+             ';};' / ;;
+
+        $E
+           /#G_wyravenie( $E);
+            GEN<< $E.mesto '.sa=x.smld->name;' /
+##
+---------------------------------------------------------------------------------
+-------------------------
+-------------------------
+--------------------------------------------------------------------------------
+#G_CALL
+        #G_CALL_PAS ;; -- dobavleno 18.4.1989
+        CALL::<. NAME: $ID
+                    / GEN<< '/* CALL #L */'/,
+                 PL: $NPL ,
+                 mesto: $WRK,
+                 FLAG: $B,
+                 [ ARGS: $E ]
+              .>
+-- optimized for calls with <= 4 arguments .. 23-JUL-91
+ /
+IF $E AND (#LEN( $E) <=4) ->
+     $E1:=#obqzatelxno_obxekt( $E[1]);
+     GEN<< @ 'pl' $NPL '.ptrtype=packedlist;'
+             'pl' $NPL '.nel=1;pl' $NPL '.cel=' $E1 ';' ;
+     $I:=2;
+     LOOP
+      IF $I > #LEN ($E) -> BREAK FI;
+      $E1:=#obqzatelxno_obxekt( $E[$I]);
+      GEN <<@ 'pl' $NPL '.UU.plistelt[ ' $I-2 ' ]=' $E1 ';' ;
+      $I+:=1;
+     END;
+     GEN <<@ 'pl' $NPL '.plistsize= ' #LEN ($E) ';';
+ELSIF $E -> GEN<< $WRK '.sa=NULL;' ;
+               #CONLIST( (. $WRK '.sa' .) $E ) ;
+               GEN<< @ 'first(' $WRK '.sa,&pl' $NPL ');'
+ELSIF  T -> GEN<< @ 'pl' $NPL '.ptrtype=ptrlist;'
+                    'pl' $NPL '.nel=0;pl' $NPL '.cel=NULL;';
+FI;
+$NUM:=LAST #C $RULENUM . $ID;
+ GEN<<@ 'r' $NUM '(&' $WRK '.sa,&flag' $B ',&pl' $NPL ');/* #';
+#Print_name($ID);
+GEN<]'*/'
+     /
+##
+-------------------------------------------------------
+#G_OPEN
+      'OPEN'::<. NAME: $ANOM,
+                 FILE_SPEC: $E := #obqzatelxno_obxekt .>
+        /GEN<< 'opn(acnst[' $ANOM '],' $E ')'/
+##
+-------------------------------------------------------
+#G_OUTXT
+        'PUT'::<. NAME: $ANOM,
+                  tip: $OP,
+                [ arg: (. (* (
+                   ( '@' /$NOBLANKS := NOT $NOBLANKS/) !
+
+                   ($E:=#ATOM
+                    / $I+:=1;
+                      GEN<<@'outatm(acnst[' $ANOM '],' #CALL_PAS(116 $E) ',';
+                  -- Changed in IBM/pc 29-JUL-1989
+                      IF ($I=1) AND ($OP='<<') ->
+                          GEN<]'true,'
+                      ELSIF T-> GEN<] 'false,' FI;
+                     IF $NOBLANKS -> GEN<]'false);'
+                     ELSIF T-> GEN<] 'true);' FI / ) !
+
+                   ( $E := #obqzatelxno_obxekt
+                        / $I+:=1;
+               GEN<< 'outxt(acnst[' $ANOM '],' $E ',' ;
+               IF ($I=1) AND ($OP ='<<') ->
+                        GEN<] 'true,'
+               ELSIF T -> GEN<] 'false,' FI;
+                IF $NOBLANKS -> GEN<] 'false);'
+                ELSIF T -> GEN<] 'true);' FI / ) )
+                        *) .) ] .>
+        /IF ($.arg= NULL) AND ($OP ='<<') ->
+                GEN<<'outxt(acnst[' $ANOM
+                              '],NULL,true,false)' FI/
+##
+-------------------------------------------------------
+#G_CLOSE
+        'CLOSE':: (. $ANOM .)
+                /GEN<<'clsfil(acnst[' $ANOM '])'/
+##
+-------------------------------------------------------
+#G_LOOP
+        'LOOP':: <. LABEL: $LABEL
+              /GEN<< '/*LOOP*/while (true) {';
+                $OLDBL:= LAST #G_programma $BREAK_LABEL;
+                LAST #G_programma $BREAK_LABEL:= $LABEL/,
+                    [ BODY: (. (* #G_STMT *) .) ] .>
+        / GEN<<@ ';};  _L' $LABEL ':/*END LOOP*/';
+        LAST #G_programma $BREAK_LABEL:= $OLDBL/   ;;
+
+        'FORALL':: <. LABEL: $LABEL
+                / GEN<< '/*FORALL-op.*/';
+                $OLDBL:= LAST #G_programma $BREAK_LABEL;
+                LAST #G_programma $BREAK_LABEL:= $LABEL/,
+
+                        PL: $NPL,
+                      [  VAR: $VAR /#G_wyravenie( $VAR)/ ],
+                      [  BRANCHES_VAR: $BVAR /#G_wyravenie( $BVAR)/ ],
+                        'IN': $E:= #obqzatelxno_obxekt
+                                -- mesto s .sa
+            /-- added 8.02.90 for FORALL IN not-list,not-tree
+             --       15.02.90 for FORALL IN NULL
+          GEN <<@ 'if( ' $E '==NULL ) goto _L' $LABEL ';';
+          GEN << 'pointr (' $E ',&x.sa); ';
+          GEN << 'if( (x.smld->dtype!=listmain)&&(x.smld->dtype!=treemain)';
+          GEN <<@ '  ) { er(24L);goto _L' $LABEL ';}; ';
+          GEN<< @ 'first(' $E ',&pl' $NPL ');';
+          GEN<< @ 'while (pl' $NPL '.nel!=0){';
+          GEN<< @ '    if( pl' $NPL '.ptrtype==ptrlist ) ';
+          IF $VAR AND NOT $BVAR -> GEN<< @ '{'  $VAR.mesto '.sa=pl' $NPL '.cel;} '
+          ELSIF T -> GEN<<@ '{ er(26L); goto _L' $LABEL ';}' FI;
+          GEN<< @ '   else {';
+          IF $VAR -> GEN<< @ '  mkatom(pl' $NPL '.UU.U1.arc,idatom,&'
+                                   $VAR.mesto '.sa);'FI;
+          IF $BVAR -> GEN<< @
+                     $BVAR.mesto '.sa=pl' $NPL '.cel 'FI;
+          GEN<<           ';};' /,
+
+                        [ BODY: (. (* #G_STMT *) .) ] .>
+        / GEN<< @  'next(&pl' $NPL  ') ;};'
+                '_L' $LABEL ':/*END FORALL*/' ;
+        LAST #G_programma $BREAK_LABEL:= $OLDBL /
+##
+--------------------------------------------------------
+#G_BREAK
+        'BREAK':: (. T .)
+        / IF LAST #G_programma $BREAK_LABEL ->
+                GEN<<@ '/*BREAK*/ goto _L'
+                  LAST #G_programma $BREAK_LABEL FI/
+##
+-------------------------------------------------------
+#G_BLTIN
+        BLTIN:: <. NOM: $N,
+                   ARG: $E:= #obqzatelxno_obxekt,
+                   mesto: $WRK,
+                   FLAG: $NFLAG .>
+        /GEN<< @ 'bltin(&' $WRK ',&flag' $NFLAG ',' $E ','
+                $N 'L)' / ;;
+
+        'IMPLODE':: <. PL: $NPL,
+                       mesto: $WRK,
+                       [ ARGS: $E
+                    /GEN<< $WRK '.sa=NULL;' ;
+                     #CONLIST( (. $WRK '.sa' .) $E)/]
+                        .>
+        /IF $E -> GEN<< @ 'first(' $WRK '.sa,&pl' $NPL
+                      ');implod(&pl' $NPL ',&' $WRK '.sa)'
+        ELSIF T -> GEN<< $WRK '.sa=NULL' FI/ ;;
+
+        'EXPLODE':: <. ARG: $E:= #obqzatelxno_obxekt,
+                       mesto: $WRK .>
+        /GEN<< 'if(' $E '==NULL )' $WRK
+               '.sa=NULL; else explod(' $E ',&' $WRK '.sa)' /
+##
+-------------------------------------------------------
+#G_CALL_PAS
+  CALL:: <. NAME : CALL_PAS
+               / GEN<< '/* CALL_PAS */'/,
+            PL : $NPL,
+            mesto : $WRK,
+            [ARGS : $E] .>
+  /IF $E -> #G_wyravenie ( $E[1] ) FI;
+   $T:=$E[1].tip;
+   $M:=$E[1].mesto;
+   IF ($T=~islo) AND #NUMBER($M) ->
+       $X:=$M
+   ELSIF $T=~islo ->
+       $X:=(. $M '.nu' .)
+   ELSIF $T OR ($M='NULL') -> $X:='0'
+   ELSIF $E[1] -> $X:=(. 'numval(' $M '.sa)' .)
+   ELSIF T -> $X:='0'
+   FI;
+
+   IF $X=99 ->
+     GEN<<'/* USER:*/' $E[2].VAL $E[3].VAL $E[4].VAL
+   ELSIF T->
+     $IND_E:=2;
+     LOOP
+      IF  $IND_E<=#LEN($E) -> $A!.:=#obqzatelxno_obxekt ( $E[$IND_E] );
+      ELSIF T              -> $A!.:='NULL'
+      FI;
+      IF $IND_E=4 -> BREAK FI;
+      $IND_E+:=1;
+     END;
+     GEN<<@ 'use_' $X '(' $A[1] ',' $A[2] ',' $A[3] ',&' $WRK '.sa);'
+   FI/
+
+--   IF #LEN ($E)=2 ->
+--    $E1 := #obqzatelxno_obxekt ( $E[2] );
+--    GEN<< @ 'WITH pl' $NPL @ ' DO {'; LIST=true;nel=1;CEL='
+--          $E1 ';CURFRAGMENT=CNST['
+--          #LEN( LAST #C $CONSTANT_LIST )+1
+--          '].sa  ;};'
+--   ELSIF #LEN($E)>2 ->
+--    GEN << $WRK '.sa=NULL;';
+--   #CONLIST ( (. $WRK '.sa' .) #TAIL ($E));
+--    GEN << @ 'first(' $WRK '.sa,&pl' $NPL ');'
+--  ELSIF T->
+--    GEN<< @ 'WITH pl' $NPL @ ' DO { LIST=true;nel=0;CEL=NULL ;};'
+--  FI;
+-- GEN<< @ 'USEPAS(' $X ',pl' $NPL ',' $WRK '.sa);'/
+##
+
+
+#TAIL (. $A (* $E !.:= $B *) .) / RETURN $E /
+##

@@ -1,0 +1,302 @@
+-- check phase
+-- file check.rig
+-------------------------
+#check
+  (. (* $name :: (. (*  #check_stmt  *) .) *) .)
+##
+--------------------------------------------
+#check_stmt
+  ASSGN::<. op: ':=',
+            lew: #check_expr,
+            praw: #check_expr  .> ;;
+
+  ASSGN::<. op: '!!',
+            lew: ( #no_list / #err(1)/ ! $E ),
+            praw: ( #no_list /#err(2)/ ! $E ) .>  ;;
+
+  ASSGN::<. op: '!.',
+            lew: ( #no_list /#err(1)/ ! $E ),
+            praw: #check_expr  .>  ;;
+
+  ASSGN::<. op: '++',
+            lew: ( #no_tree /#err(3)/ ! $E ),
+            praw: ( #no_tree /#err(4)/ ! $E ) .> ;;
+
+  ASSGN::<. op: '+',
+            lew: ( #no_num /#err(5)/ ! $E ),
+            praw: ( #no_num /#err(6)/ ! $E ) .> ;;
+
+  'PUT':: <. arg: (. (*  
+                /IF $$.type.tree -> #err(7 $$ ) FI /
+                #check_expr      *) .) .> ;;
+
+  <. FILE_SPEC: ( #no_atom /#err(8)/ ! $E ) .> ;;
+
+  <. ['IN': #check_expr
+                /$X:= $.'IN'.type;
+                 IF $X.num OR $X.id OR $X.sym -> #err(9) FI/],
+               BODY: (. (* #check_stmt *) .) .> ;;
+
+  (. #check_expr .)  ;;
+
+  'LOOP':: (. (* #check_stmt *) .)  ;;
+
+  'IF':: (. (* <. COND: #check_expr,
+                  BODY: (. (* #check_stmt *) .) .>
+            *) .)  ;;
+
+  'CALL':: <. ARGS: (. (* #check_expr *) .) .>  ;;
+
+  #check_bltin     ;;
+
+  #check_patt
+##
+------------------------------------------
+#check_patt
+  ALTERNATIVE:: (. (* (. (* #check_stmt *) .) *) .) ;;
+
+  TREE:: <. [BODY: (. (* (. (* #check_stmt *) .) *) .) ],
+            ['LOOP': (. (* #check_stmt *) .) ] .>  ;;
+
+  <. pat: #check_expr  .>  ;;
+
+  PATASSGN:: <. PAT: #check_patt .> ;;
+
+  $E
+##
+------------------------------------------
+#check_expr
+  VAR::<. NAME: $V .> /$++:= 
+            <. type: LAST #Lint $Tab . LAST #check $name .$V .>/;;
+
+  <. op: '!!',
+     ARG1: (#no_list /#err(10)/ ! $E),
+     ARG2: (#no_list /#err(11)/ ! $E)  .>  ;;
+
+  <. op: '!.',
+     ARG1: (#no_list /#err(10)/ ! $E),
+     ARG2: #check_expr .>    ;;
+
+  <. op: '++',
+     ARG1: (#no_tree /#err(12)/ ! $E ),
+     ARG2: (#no_tree /#err(13)/ ! $E ) .> ;;
+
+  <. op: ('+'!'-'!'*'!'DIV'!'MOD'!'>'!'<'!'>='!'<='),
+     ARG1: (#no_num /#err(14)/ ! $E ),
+     ARG2: (#no_num /#err(15)/ ! $E )  .> ;;
+
+  <. op: 'INDEX',
+     ARG1: (#no_list /#err(16)/ ! $E ),
+     ARG2: (#no_num /#err(17)/  ! $E ) .>  ;;
+
+  <. op: 'SELECTOR',
+     ARG1: (#no_tree /#err(18)/ ! $E),
+     ARG2: (#no_id /#err(19) / ! $E) .> ;;
+
+  CONLIST:: <. BODY: (. (* #check_expr *) .) .>  ;;
+
+  CONTREE:: <. BODY: (. (*  ( #no_id /#err(20)/ ! $E)
+                            #check_expr      *) .)  .>  ;;
+
+  CALL:: <. [ ARGS: (. (* #check_expr  *) .) ] .>  ;;
+
+  <. op: '::',
+     ARG1: (#no_atom /#err(21)/ ! $E ),
+     ARG2: (#no_aggregate /#err(22)/ ! $E) .>  ;;
+
+  <. ARG1: #check_expr,
+     ARG2: #check_expr   .>  ;;
+
+  un_op:: <. op: ('-' ! '+'),
+             ARG: (#no_num /#err(23)/ ! $E ) .> ;;
+
+  un_op:: <. ARG: #check_expr .> ;;
+
+  #check_bltin ;;
+
+  $E
+##
+----------------------------------------
+#no_list
+  #check_expr /FAIL/ ;;
+  <. type: <* [ T: T],
+              [ list: T],
+              $S: T /RETURN $S/ *> .> /FAIL/
+##
+#no_tree
+  #check_expr /FAIL/ ;;
+  <. type: <* [T: T],
+              [ tree: T],
+              $S: T /RETURN $S/ *> .> /FAIL/
+##
+#no_num
+  #check_expr /FAIL/ ;;
+  <. type: <* [T: T],
+              [ num: T],
+              $S: T /RETURN $S/ *> .> /FAIL/
+##
+#no_sym
+  #check_expr /FAIL/ ;;
+  <. type: <* [T: T],
+              [sym: T],
+              $S: T /RETURN $S/ *> .> /FAIL/
+##
+#no_id
+  #check_expr /FAIL/;;
+  <. type: <* [T: T],
+              [id: T],
+              $S: T /RETURN $S/ *> .> /FAIL/
+##
+#no_atom
+  #check_expr /IF $.type.list OR $.type.tree -> RETURN $ FI; FAIL / 
+##
+#no_aggregate
+  #check_expr /IF $.type.list OR $.type.tree -> FAIL FI; RETURN $/
+##
+------------------------------------------------
+#check_bltin
+  BLTIN :: <. NAME: 'IMPLODE',
+              ARGS: (. (* $E  /#check_expr($E);
+                       IF $E.type.tree -> #err(7 $E) FI/ *) .)
+                   .> ;;
+
+  BLTIN:: <. NAME: 'EXPLODE',
+             ARGS: (. ( #no_atom /#err(24 $.ARGS[1])/ ! $E ) .) .> ;;
+
+  BLTIN:: <. NAME: 'CHR',
+             ARGS: (. (#no_num /#err(23 $.ARGS[1])/ ! $E ) .) .> ;;
+
+  BLTIN:: <. NAME: 'ORD',
+             ARGS: (. $E  /#check_expr($E);
+                     $X := $E.type;
+                     IF $X.tree OR $X.list OR $X.num -> #err(25 $E)
+                     FI/ .) .> ;;
+
+  BLTIN:: <. ARGS: (. (* #check_expr *) .) .>
+##
+--------------------------------------------------
+#err
+  / LAST #Lint $err_count +:= 1;
+    err<< '---------------------------------------------';
+    err << '** Warning' $ '** in' @ 'rule #' LAST #check $name ':'/
+  ( ( 1 /$type:= list/ !
+      3 /$type:= tree / !
+      5 /$type:= number/ ) /$part:= left/ !
+    ( 2 /$type:= list/ !
+      4 /$type:= tree/ !
+      6 /$type:= number/ ) /$part:= right/ )
+  /err<< $part 'part of assignment may be not' $type ;
+   err<< 'in stmt';
+   #print_stmt( LAST #check_stmt $)/ ;;
+
+  7 /err<< expression/  #print_expr
+    /err<< 'may be of tree type in stmt';
+     #print_stmt(LAST #check_stmt $)/    ;;
+
+  8 /err<< 'not atomic file specification may occur in stmt';
+     #print_stmt(LAST #check_stmt $ )/ ;;
+
+  9 /err<< '"in"-expression may be of atomic type in stmt';
+     #print_stmt(LAST #check_stmt $)/ ;;
+
+   ( ((10!16) /$arg:= first/ ! 11 /$arg:= second/) /$type:= list/ !
+     ((12!18) /$arg:= first/ ! 13 /$arg:= second/ ) /$type:= tree/ !
+     (14 /$arg:=first/ ! (15!17) /$arg:= second/ )
+       /$type:= number/ )
+  /err<< $arg 'argument may be not' $type   'in expr';
+   #print_expr(LAST #check_expr $); err<< 'in stmt';
+   #print_stmt(LAST #check_stmt $)/  ;;
+
+  (19!20) /err<< 'selector may be not identifier in expr';
+   #print_expr(LAST #check_expr $); err<< 'in stmt';
+   #print_stmt(LAST #check_stmt $)/  ;;
+
+  (21 /$arg:= first; $type:= atom/ ! 22 /$arg:= second;
+                         $type:= 'list or tree'/)
+   /err<< $arg 'argument of "::" may be not' $type  'in expr';
+   #print_expr(LAST #check_expr $); err<< 'in stmt';
+   #print_stmt(LAST #check_stmt $)/    ;;
+
+  ( 23 /$BLT:= 'CHR'/ !
+    24 /$BLT:= 'EXPLODE'/ ! 25 /$BLT:= 'ORD'/ ) $E
+     /err<< 'type of argument of' $BLT 'bltin rule may be not correct';
+      err<<'in expr'; #print_expr($E);
+      err<< 'in stmt'; #print_stmt(LAST #check_stmt $)/  
+
+##
+----------------------------------------------
+#print_stmt
+  ASSGN::<. lew: #print_expr,
+            op: ( ':=' ! $op ) /err<] @ $op ':='/,
+            praw: #print_expr .>;;
+
+  'RETURN':: (. /err<] 'RETURN'/ #print_expr .) ;;
+
+-- load, save, open
+  $op::  <.  NAME: $S,
+             FILE_SPEC: / err<] $op; #print_expr( $S)/
+                     #print_expr .> ;;
+
+  $op::  <.  VAR: $S,
+             FILE_SPEC: / err<] $op; #print_expr( $S)/
+                     #print_expr .> ;;
+
+  PUT::<. NAME: $ID /err<] $ID /,
+          tip: $op /err<] $op/,
+          [ arg: (. (* #print_expr *) .) ] .> ;;
+
+  'PRINT':: (. /err<] 'PRINT'/ #print_expr .) ;;
+
+  'FORALL'::<. VAR: $S /err<] 'FORALL';#print_expr($S);err<] ' IN'/,
+               'IN': #print_expr /err<] ' DO...'/ .> ;;
+
+  'IF':: (. <. COND: /err<] 'IF'/ #print_expr /err<] '-> ...'/ .>
+           (* $E *) .) ;;
+
+  <. NAME: $S /err<] @ '#' $S '('/,
+     [ ARGS: (. (* #print_expr *) .) ] .> /err<] ' )'/;;
+
+  $pat:: <. pat: /err<] @ #EXPLODE($pat)[1]  #CHR(39) '('/
+                 #print_expr
+                 /err<] ')'/ .> ;;
+
+   PATASSGN:: <. VAR: #print_expr,
+                 op: (':=' ! $op ) /err<] @ $op ':= ...'/ .> ;;
+
+
+/err<] '***** not printed ***'/
+##
+----------------------------------------------
+#print_expr
+  CONSTANT:: <. VAL: $A .> /err<] $A/ ;;
+
+  'NULL':: <. mesto: $A .> /err<] 'NULL'/ ;;
+
+  VAR::<. NAME: $A .> /err<] @ '$' $A ' '/ ;;
+
+  'LAST':: <. RULE: /err<] 'LAST'/ $A /err<] @ '#' $A /,
+              VAR: $A /err<] @ ' $' $A ' '/ .> ;;
+
+  CONLIST:: <. BODY: (. /err<] '(.'/ (* #print_expr *) .) .> /err<] '.)'/ ;;
+
+  CONTREE:: <. BODY: (. /err<] '<.'/ (* #print_expr
+                              /err<] ':'/ #print_expr
+                        /IF $$ -> err<] ',' FI/  *) .) .>
+               /err<] '.>'/ ;;
+
+  <. NAME: $ID /err<] @ '#' $ID '('/,
+     [ ARGS: (. (* #print_expr *) .) ] .> /err<] ')'/ ;;
+
+  bin_op:: <. ARG1: #print_expr,
+              op: $op /IF $op = INDEX -> err<] '['
+                       ELSIF $op = SELECTOR -> err<] '.'
+                       ELSIF T ->  err<] $op FI/,
+              ARG2: #print_expr
+                /IF $op = INDEX -> err<] ']' FI/ .> ;;
+
+  un_op:: <. op: $op /err<] $op/,
+             ARG: #print_expr .> ;;
+
+/err<]'*** not printed expr ***'/
+##
+-----------------------------------------------

@@ -1,0 +1,159 @@
+---------------------------
+--      generaciq mehanizma shablonow
+--
+-----------------------------------------------------
+
+#G_PATTERN
+--      glob. perem.
+--         $acnst_LIST
+
+        / GEN << /
+-- ATOM
+        ATM :: <. mesto: $N .>
+        -- ne~islowoj atom
+             /GEN<<  '/* shablon atoma */'
+                   @ 'atmpat(acnst[' $N '],&pl'
+                   LAST #G_prawilo $tek_PL
+                   ',&rez1,&success1);' ;
+              #{14() /         ;;
+
+        ATM :: <. VAL: $N .>
+        -- ~islowoj atom
+        / GEN << '/* shablon ~islowogo atoma */';
+          #{9();
+          -- CHANGED 3-OCT-89 Due to SIGN Deleted
+          GEN<] '==number)';
+          GEN<< '    &&(x.snd->val==' $N ;
+          #{10() /              ;;
+
+-- NULL
+        'NULL':: (. T .)
+     /  GEN << '/* shablon NULL */'
+              @  'success1=(pl'
+              LAST #G_prawilo $tek_PL
+              '.cel==NULL)&&(pl'
+              LAST #G_prawilo $tek_PL
+        '.nel!=0);rez1=NULL;';
+        GEN<<'if( success1 ) { if( '
+          @  'pl' LAST #G_prawilo $tek_PL
+             '.ptrtype!=ptrtree ) next(&pl'
+                LAST #G_prawilo $tek_PL
+              ') ;}';
+        GEN<<'   else'
+          @ 'goto _L'
+           LAST #G_SIMPLE $metka_wyhoda_po_neuspehu
+           ';' /        ;;
+
+-- $E , $I , $N
+        'VAR':: <. NAME: $D .>
+        / #G_wyravenie( $);
+          -- teperx estx mesto
+         GEN<< '/* shablon peremennoj */';
+         $A := #EXPLODE( $D)[1];
+         IF    $A = I -> $TIP:= idatom
+         ELSIF $A = N -> $TIP:= number
+         FI;
+
+         IF $TIP -> GEN<< @ 'varpat(&pl'
+                        LAST #G_prawilo $tek_PL
+                        ',' $TIP ',&rez1,&success1);'
+         ELSIF  T     -> GEN << @
+                        'success1=(pl'
+                        LAST #G_prawilo $tek_PL
+                          '.nel!=0);'
+                        'rez1=pl'
+                        LAST #G_prawilo $tek_PL
+                           '.cel;';
+                      GEN<< @ 'if( (pl'
+                        LAST #G_prawilo $tek_PL
+                       '.ptrtype!=ptrtree) && success1 ) next(&pl'
+                        LAST #G_prawilo $tek_PL
+                          ');'
+         FI;
+         GEN << $.mesto '.sa=rez1;';
+         #{14() /     ;;
+
+-- alternative ( ... ! ... ! ... )
+   #G_alternative_pat ;;
+
+-- (. ... .)
+        LIST:: <. WORK_PL: $NPL
+                      /  #{11( listmain )/,
+
+                  [ NAME: #G_NAME_CHECK ],
+                       -- generaciq prowerki imeni
+                  BODY:
+                     / $OLDPL:= LAST #G_prawilo $tek_PL;
+                       LAST #G_prawilo $tek_PL := $NPL;
+                    LAST #G_SIMPLE $NEXTRET +:= 1;
+                    -- opredelqet glubinu |togo spiska dlq wozmovnogo
+                   --  generirowaniq sdwig NEXT( pl1) pri RETURN
+                       #{12(LAST #G_prawilo $tek_PL );
+                       #{17() /
+                        (. (* ( #G_PATTERN !
+                                #G_STMT ) *) .)
+                .>
+                  / GEN << ;
+                    GEN<<  @  'if( pl'
+                        $NPL '.nel !=0 )';
+                    LAST #G_SIMPLE $NEXTRET +:= -1;
+                    LAST #G_prawilo $tek_PL := $OLDPL;
+                    #{13() /    ;;
+
+-- #RULE
+        RULENAME:: (. $ID .)
+        /$N:=LAST #C $RULENUM .$ID;
+         GEN << '/* shablon prawila */' @ 'r' $N
+                '(&rez1,&success1,&pl'
+                LAST #G_prawilo $tek_PL
+                ');'  ;
+                #{14() /        ;;
+
+-- BUILTIN
+        BLTIN_NAME:: (. $N .)
+        /GEN<< @ 'bltin1(&rez1,&success1,&pl'
+                LAST #G_prawilo $tek_PL ',' $N 'L);' ;
+         #{14() / ;;
+
+-- IMPLODE
+        'IMPLODE':: (. T .)
+        /GEN<< @ 'implod(&pl'
+                LAST #G_prawilo $tek_PL
+                ',&rez1);success1=true;' / ;;
+
+-- EXPLODE
+        'EXPLODE':: (. T .)
+        /GEN<< @ 'explod(pl'
+                LAST #G_prawilo $tek_PL '.cel,&rez1);' ;
+        #{14() / ;;
+
+-- $X := shablon
+        ':=':: <. VAR: $D / #G_wyravenie( $D);
+                           GEN<< $D.mesto '.sa=NULL;'/,
+                  PAT: $P / #G_PATTERN( $P);
+                           GEN<< $D.mesto '.sa=rez1;'/
+               .>       ;;
+
+        '!.:=':: <. VAR: $D / #G_wyravenie( $D)/,
+                    PAT: $P / #G_PATTERN( $P);
+                              GEN<< 'lconc(&' $D.mesto
+                                '.sa,rez1);' /
+                .>      ;;
+
+        '!!:=':: <. VAR: $D / #G_wyravenie( $D)/,
+                    PAT: $P / #G_PATTERN( $P);
+                        GEN<< 'concop(&' $D.mesto
+                                '.sa,rez1);' / .> ;;
+
+        '++:=':: <. VAR: $D / #G_wyravenie( $D)/,
+                    PAT: $P / #G_PATTERN( $P);
+                        GEN<< 'addtre(&' $D.mesto
+                                '.sa,rez1);'/ .> ;;
+
+        '+:=' :: <. VAR: $D /#G_wyravenie( $D)/,
+                    PAT: $P / #G_PATTERN( $P);
+                     GEN<< 'addnum(&' $D.mesto
+                       '.sa,numval(rez1));' / .> ;;
+#G_PATTERN2 ##
+
+-------------------------------------------------

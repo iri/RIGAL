@@ -1,0 +1,92 @@
+This directory contains programs and documents
+related to the programming language RIGAL,
+a tool for compiler writing.
+
+This directory is available by anonymous FTP 
+ ftp.ida.liu.se //info/ftp/pub/labs/pelab/rigal
+
+Rigal home page
+   http://www.ida.liu.se/~vaden/rigal.html
+is under construction.
+
+
+-rw-r--r--  1 vaden       32106 May 27 15:25 nwper94rigal.ps.gz
+ Paper about RIGAL implementation and how it has been used
+ in industry, as well as
+ introduction of an advanced type system into RIGAL.
+ Presented at Nordic Workshop on Programming Environments,
+ Lund, June  1-3, 1994.  
+    
+
+-rw-r--r--  1 vaden      123793 May 27 10:43 rigdm218.zip
+ Demo for MS-DOS. Includes animated demonstration
+ of the environment and the language. Running environment
+ (without the compiler), examples, language description.   
+
+-rw-r--r--  1 vaden      805824 Jum 16 14:42 rigdos.zip
+ Complete environment for MS-DOS. Running environment,
+ with compiler Rigal->Pascal, examples, language distribution.
+ Note: for compilation Turbo Pascal 6.0 file TPC.EXE is
+ necessary !
+
+-rw-r--r--  1 vaden      572139  Feb 22 19:34 rigsc.445.tar.Z
+-rw-r--r--  1 vaden      ......  ............ rigsc.445.*.tar.Z
+ RIGAL for UNIX. Source code in C. Includes RIGAL to C compiler, examples,
+ detailed language description and user guide.
+
+ The BUGs fixed (in 445, after 444)
+  -  capitalisation  of characters in the scaner.
+  -  more options added to #CALL_PAS(80). See 80.txt for description.
+
+ 445.1  - Fixed bug in scaner, the problem was with the last line
+          if it has no end-of-line character
+  
+ 445.2  - Fixed bug in PRINT statement. When compiled it worked
+          differently with and without -p flag
+        - $rig/rc <program> -c  -P -DXX
+          gives the trace for compiled task, similar to
+          interpreter produces.
+
+ 446   - Fixed bug in the A[i]!!:=X and A[i]++:=X statements.
+         (Earlier they had no effect if A[i]==NULL and X is
+          a variable).
+       - option  "P" added to   #CALL_PAS(80). See 80.txt.
+
+ 446a  - Fixed a very rare bug with ley_.c , Rigal scaner.
+         It had strange code fragment for reading strings,
+         I removed it.
+         Fixed the case when "!." did not work after "COPY".
+         Applies to c2.c, erm.c,  functions "copyop()".
+
+-rw-r--r--  1 vaden        9875 Mar  8 11:25 rigal.man
+ RIGAL for UNIX: Manual page
+
+-rw-r--r--  1 vaden       .................. README
+ This file
+
+-rw-r--r--  1 vaden       34134 Jul  1 18:05  examp1.tar.Z
+ Main set of examples. Toy compilers and interpreters.
+ (for UNIX variant) 
+
+-r--r--r--  1 vaden        5844 Jun  7 14:27 examples.zip
+ More examples (for DOS variant) 
+
+-rw-r--r--  1 vaden        6942 Jun  7 14:26 examples.tar.Z
+ More examples (for UNIX variant)
+
+IF YOU WANT TO BE INFORMED EACH TIME 
+WHEN NEW FILES AND NEW VERSIONS
+ARE UPLOADED, PLEASE SEND E-MAIL TO Vadim Engelson,
+vaden@ida.liu.se
+
+IF YOU HAVE NEW EXAMPLES, you are also very welcome.
+
+More products and information available from Vadim Engelson,
+Dept. of Computer and Information Science,
+Linkoping University, S-58183, Linkoping, Sweden,
+tel. 46 13 28 1979
+E-mail vaden@ida.liu.se
+
+
+
+

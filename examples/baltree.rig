@@ -1,0 +1,61 @@
+-- Balanced tree
+-- This program takes list of numbers, produced by random
+-- number generator and puts them to balanced tree. 
+-- Then it traverses the balanced tree and outputs the
+-- numbers in increasing order.
+#MAIN
+ $limit:=50;
+ $numlist:=#gen_random_list($limit);
+ $baltree:=#list_2_bal_tree($numlist);
+ $ordered_list:=#bal_tree_2_list($baltree);
+ PRINT $numlist;
+ PRINT $ordered_list;
+##
+
+#gen_random_list $limit
+-- $limit - how many numbers to generate
+/#CALL_PAS(19); -- Randomize. Sets internal random generator
+                -- to seed depending on currernt time.
+ LOOP
+   IF $limit<=0 -> RETURN $res FI;
+   $res!.:=#CALL_PAS(20 100); -- returns random integer in 0..99
+   $limit+:=-1; -- normal way how to do FOR-loops in Rigal
+ END / 
+##
+
+#list_2_bal_tree 
+ (. $first
+    / $tree:=<. 'val': $first .> /
+    (* $other / #insert ( $tree $other ) /
+     *)
+  .)
+/ RETURN $tree /
+##
+
+#insert $tree $newval
+-- $tree - a balanced tree node. It cannot be NULL.
+-- $newval - value added to the tree.
+
+ / IF $newval=$tree.val -> RETURN t FI;
+   -- if duplicates come, they are ignored
+   IF $newval<$tree.val ->
+      IF $tree.left -> #insert($tree.left $newval)
+      ELSIF T -> $tree ++:=<. left: <. val: $newval .> .>
+      FI
+   ELSIF T ->
+      IF $tree.right -> #insert($tree.right $newval)
+      ELSIF T -> $tree ++:=<. right: <. val: $newval .> .>
+      FI
+   FI / 
+##
+
+#bal_tree_2_list        
+ <.  [ left : $list!!:=#bal_tree_2_list ],     
+       val   : $list !.:=$the_val,
+     [ right : $list!!:=#bal_tree_2_list ]     
+ .>
+ /RETURN $list/
+##         
+    
+
+  

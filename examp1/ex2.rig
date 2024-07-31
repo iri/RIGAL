@@ -1,0 +1,48 @@
+ -- Example of RIGAL program.
+ -- Takes input from file EX.TXT
+ -- Performs simple arithmetical expression parsing.
+ -- Expression tree is returned.
+ -- Polish Postfix Form is printed out.
+#MAIN
+ OPEN S ' ';        -- Opens file S for output to the screen
+ $E:=#CALL_PAS(3 'EX.TXT'); -- Scanner takes input from file EX.TXT
+ S<<$E;             -- Prints the input text
+ $T:=#ANALYSE($E);  -- Calls expression analysis
+ PRINT $T;          -- Prints expression tree
+ #CALL_PAS(13 $T);  -- Prints expression tree in graphical form
+ S<<;
+ #PRINT_POLISH($T); -- Calls Polish  Postfix Form printing
+##
+
+#ANALYSE -- Traverses token list
+ (. $E:=#EXPRESSION .)   / RETURN $E /
+##
+                                                  --      BNF form :
+#EXPRESSION                                      -- expression ::=
+ $A1:=#ADDITIVE_EL                               --  add_el
+ (* $OP := ( '+' ! '-' )  $A2:=#ADDITIVE_EL      --  ( ('+'!'-') add_el )*
+  / $A1 := <. OP:$OP, ARG1:$A1 , ARG2:$A2 .> / *)
+  / RETURN $A1 /
+##
+
+#ADDITIVE_EL                                     --  add_el ::=
+ $A1:=#TERM                                      --    term
+ (* $OP := ( '*' ! '/' ) $A2 :=#TERM             --   ( ('*'!'/') term )*
+  / $A1 := <. OP:$OP, ARG1:$A1 , ARG2:$A2 .> / *)
+  / RETURN $A1 /
+##
+
+#TERM                                            -- term ::=
+ $A := ( $ID ! $NUM )    / RETURN $A / ;;        --  (identifier ! number !
+
+ '(' $A:=#EXPRESSION ')' / RETURN $A /           --    '(' expression ')' )
+##
+
+#PRINT_POLISH
+ <. ARG1 : #PRINT_POLISH,       -- Trees are traversed recursively
+    ARG2 : #PRINT_POLISH,
+    OP : $OP .>
+   / S<] $OP / ;;
+
+  $EL / S<] $EL /               -- Leaves are printed immediately
+##

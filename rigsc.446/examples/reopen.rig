@@ -1,0 +1,15 @@
+#C
+ $A:=<. A:B,C:DDDD,E:FFFFFFFF,G:TTTTTTTTTT.>;
+ PRINT $A;
+ LOAD $A 'anrig.rsc';
+ SAVE $A 'E.E';
+ LOAD $A 'E.E';
+ PRINT $A;
+    PRINT 'Compiler reopen';
+    $A:=#CALL_PAS(45 $A);
+    #CALL_PAS(99 'acon(); ');
+  PRINT $A;
+##
+#S
+ $E
+ ##

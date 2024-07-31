@@ -1,0 +1,45 @@
+-- parsing of Prof. Blikle small language
+--
+-- file ANALYSE.RIG
+--
+#analyse_program
+     (. (* $rez !.:= #analyse_stmt  * ';' )  [ ';' ]  .)
+     / RETURN $rez /  ##
+
+#analyse_stmt
+    $rez := ( #assignment  !  #while_op  ) / RETURN $rez/ ;;
+
+    (* $R !.:= S'( $$ <> ';' ) *)
+    / report << unrecognised statement $R ; FAIL /
+##
+
+#assignment
+    $var := #variable  ':=' $E := #expression  V'( $$ = ';' OR $$ = 'od')
+    / RETURN 'assignment_op' :: <. left_part: $var,
+                                   right_part: $E   .> /  ##
+
+#while_op
+    'while'  $E := #expression  'do'
+             (* $body !.:= #analyse_stmt * ';' )
+                                'od'
+     / RETURN 'while_op' :: <. condition: $E,
+                               body:   $body  .> /   ##
+
+#expression
+     $a1 := #arithm_expr
+     [  '<'  $a2 := #arithm_expr
+          / RETURN '<' :: <. arg1: $a1,  arg2: $a2 .>/ ]
+     / RETURN $a1 /   ##
+
+#arithm_expr
+    $a1 := #term   / RETURN $a1 / ;;
+
+    '('  $a1 := #arithm_expr  '+' $a2 := #arithm_expr  ')'
+       / RETURN '+' :: <. arg1: $a1, arg2: $a2 .> /  ##
+
+#term
+    $NUM  / RETURN  $NUM /  ;;
+    $rez :=   #variable    /RETURN $rez /  ##
+
+#variable
+    $R := ( w ! v ! x ! y ! z ) / RETURN $R /  ##

@@ -1,0 +1,90 @@
+#DICTIONARY
+-- This test shows use of traditional tree and of atomic table utility
+-- It creates dictionary of all words in given file
+-- and removes all words which appear more than once.
+-- Information comes through parameters of task or interactively;
+$B:=#PARM(T);
+OPEN S ' ';
+$MEMORY:=$B[1];
+IF NOT $MEMORY ->
+  LOOP
+    $MEMORY:=
+               #CALL_PAS(1 'Enter size of the table {elements, <=total / 5} ');
+                  -- 21=VAL       1=WRITE/READ
+    IF $MEMORY>0 -> BREAK FI;
+  END;
+FI;
+
+$TAB:=#CALL_PAS(61 $MEMORY); -- create
+$TAB2:=#CALL_PAS(61 $MEMORY); -- create
+IF ($TAB<=0)OR($TAB2<=0)
+    -> #CALL_PAS( 1 'STOP ! ERROR IN CREATION ');FI;
+
+
+$FILE:=$B[2];
+IF NOT $FILE ->
+  $FILE:=#CALL_PAS(1 'Enter file name ');
+FI;
+
+$LIST:=#CALL_PAS(3 $FILE);    -- Pascal scanner
+
+S<<' Tree creation ';
+FORALL $E IN $LIST  DO
+  IF #IDENT($E) ->
+     IF $DICT.$E -> $DICT.$E+:=1
+     ELSIF     T -> $DICT++:=<.$E:1.>
+     FI;
+  FI;
+OD;
+
+S<<' Tree copy    ';
+$DICT1:=COPY($DICT);
+
+S<<' Tree  update ';
+FORALL $E IN $DICT DO
+   IF $DICT.$E>1 -> $DICT1.$E:=NULL FI;OD;
+
+S<<' Table creation ';
+FORALL $E IN $LIST DO
+  IF #IDENT($E) ->
+    $V:=#CALL_PAS(63 $TAB $E);          -- get n
+    IF $V->#CALL_PAS(62 $TAB $E $V+1)   -- put n+1
+    ELSIF T-> #CALL_PAS(62 $TAB $E 1)   -- put 1
+    FI;
+  FI;
+OD;
+
+S<<' Table copy ';
+$TABCOPY:=#CALL_PAS(65 $TAB);           -- unpack
+          #CALL_PAS(66 $TAB2 $TABCOPY); -- pack
+
+S<<' Table update ';
+$I:=1;
+$ENDLOOP:=#CALL_PAS(64 $TAB);  -- card
+LOOP
+  $SEL:=#CALL_PAS(67 $TAB $I);  -- num to sel
+  $VAL:=#CALL_PAS(63 $TAB $SEL); -- get
+  IF $VAL>1 -> #CALL_PAS(62 $TAB2 $SEL NULL); -- put null
+  FI;
+  IF $I=$ENDLOOP -> BREAK; FI;
+  $I+:=1;
+END;
+
+S<<' End of work ; test for correctness:';
+
+IF $DICT=#CALL_PAS(65 $TAB) ->      -- card
+   S<< SOURCES ARE EQUAL
+ELSIF T->
+   S<< SOURCES ARE DIFFERENT;
+FI;
+
+IF $DICT1=#CALL_PAS(65 $TAB2) ->     -- card
+   S<< RESULTS ARE EQUAL
+ELSIF T->
+   S<< RESULTS ARE DIFFERENT;
+FI;
+
+S<< 'TOTAL WORDS=' #CALL_PAS(64 $TAB)
+    ' ONCE OCCURED=' #CALL_PAS(64 $TAB2) ;
+##
+

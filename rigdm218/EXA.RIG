@@ -1,0 +1,14 @@
+--  FILE   EXA.RIG
+--  This example illustrates how to program
+-- TAIL and HEAD functions in RIGAL.
+#MAIN
+ $E:= (. ALFA BETA GAMMA DELTA LAMBDA .) ; 
+ PRINT $E;
+ PRINT #HEAD($E);
+ PRINT #TAIL($E);
+##
+
+#HEAD
+ (. $E   (*  $A *) .)   / RETURN $E / ##
+#TAIL
+ (. $A   (* $L !.:= $E *) .) / RETURN $L / ## 

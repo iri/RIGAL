@@ -1,0 +1,209 @@
+ -- test for debugging PAT.RIG alternative optimizations
+ --
+#M
+PRINT
+(. #A1 () = (.2 NULL.)
+   #A1 (Z) =  (.2 Z.)
+   #A1 (A) =  (.1 NULL.)
+   #A1 (A B) = (.1 B .)
+.) ;
+
+PRINT (.
+   #A2 () = (. 2 NULL .)
+   #A2 (Z) = (. 2 Z .)
+   #A2 (A) = (. 1 NULL .)
+   #A2 (A Z) = (. 1 Z .)
+   #A2 (B)  =   (. 1 NULL .)
+   #A2 (B Z) =  (. 1 Z.)
+ .);
+
+PRINT (.
+  #A3 () = (. 2 NULL .)
+  #A3 (Z) = (. 2 Z .)
+  #A3 (A) = (.1 NULL .)
+  #A3 (A Z) = (. 1 Z.)
+  #A3 (B)  = (. 1 NULL .)
+  #A3 (B Z) = (. 1 Z .)
+  #A3 (C)   = (. 1 NULL .)
+  #A3 ( C Z) = (. 1 Z.)
+ .);
+
+PRINT (.
+  #A4 ( ) = (.2 NULL NULL.)
+  #A4 (Z ) = (.1 NULL Z.)
+  #A4 (A ) = (.1 NULL NULL  .)
+  #A4 (Z X ) = (.1 X Z  .)
+  #A4 (A X ) = (.1 X NULL  .)
+  .);
+PRINT (.
+  #A5 ( ) = (.2 NULL NULL.)
+  #A5 (Z ) = (.1 NULL Z.)
+  #A5 (A ) = (.1 NULL NULL  .)
+  #A5 (B )  = (. 1 NULL NULL .)
+  #A5 (Z X ) = (.1 X Z  .)
+  #A5 (A X ) = (.1 X NULL .)
+  #A5 (B X )  = (. 1 X NULL .)
+  .);
+PRINT (.
+  #A6 ( ) = (.2 NULL NULL   NULL .)
+  #A6 (Z ) = (.1 NULL Z  NULL .)
+  #A6 (A ) = (.1 NULL NULL  NULL  .)
+  #A6 (B )  = (. 1 NULL NULL  NULL .)
+  #A6 (Z X ) = (.1 X Z   NULL .)
+  #A6 (A X ) = (.1 X NULL   NULL .)
+  #A6 (B X )  = (. 1 X NULL  NULL .)
+  .) ;
+PRINT
+(. #A7 () = (.2 NULL.)
+   #A7 (Z) =  (.2 Z.)
+   #A7 (A) =  (.1 NULL.)
+   #A7 (A B) = (.1 B .)
+.) ;
+PRINT (.
+   #A8 () = (. 2 NULL .)
+   #A8 (Z) = (. 2 Z .)
+   #A8 (A) = (. 1 NULL .)
+   #A8 (A Z) = (. 1 Z .)
+   #A8 (B)  =   (. 1 NULL .)
+   #A8 (B Z) =  (. 1 Z.)
+ .);
+#S2();
+
+##
+
+
+#S2
+/
+PRINT (.
+   #A9 () = (. 2 NULL .)
+   #A9 (Z) = (. 2 Z .)
+   #A9 (A) = (. 1 NULL .)
+   #A9 (A Z) = (. 1 Z .)
+   #A9 (B)  =   (. 1 NULL .)
+   #A9 (B Z) =  (. 1 Z.)
+ .);
+PRINT (.
+  #A10( ) = (.2 NULL NULL.)
+  #A10(Z ) = (.1 NULL Z.)
+  #A10(A ) = (.1 NULL NULL  .)
+  #A10(B )  = (. 1 NULL NULL .)
+  #A10(Z X ) = (.1 X Z  .)
+  #A10(A X ) = (.1 X NULL  .)
+  #A10(B X )  = (. 1 X NULL .)
+  .)  ;
+PRINT (.
+  #A11( ) = (.1 NULL 2.)
+  #A11(Z ) = (.1 Z    2.)
+  #A11(A ) = (.1 NULL NULL.)
+  #A11(Z X ) = (.1 Z 2  .)
+  #A11(A X ) = (.1 X NULL.)
+  .) ;
+PRINT (.
+  #A12( ) = (.2 NULL NULL.)
+  #A12(Z ) = (.2 Z    NULL.)
+  #A12(A ) = (.1 NULL 2     .)
+  #A12(B )  = (. 1 NULL 3 .)
+  #A12(Z X ) = (.2 Z NULL .)
+  #A12(A X ) = (.1 X 2  .)
+  #A12(B X )  = (. 1 X 3 .)
+  .)  ;
+
+PRINT (.
+  #A13( ) = (.2 NULL NULL.)
+  #A13(Z ) = (.1 NULL 4.)
+  #A13(A ) = (.1 NULL 2     .)
+  #A13(B )  = (. 1 NULL 3 .)
+  #A13(Z X ) = (.1 X 4 .)
+  #A13(A X ) = (.1 X 2  .)
+  #A13(B X )  = (. 1 X 3 .)
+  .)  ;
+PRINT
+(. #A14() = (.2 NULL.)
+   #A14(Z) =  (.2 Z.)
+   #A14(Z X)= (.2 Z.)
+   #A14(A  ) = (.2 A .)
+   #A14(A B) = (.2 A .)
+   #A14(A A1) = (.1 NULL .)
+   #A14(A A1 Z ) = (.1 Z .)
+.) ;
+
+
+PRINT #A16A( A Z);
+PRINT (.
+  #A16A(A A1) = (.1 NULL.)
+  #A16A(A A1 Z) = (.1 Z.)
+  #A16A(A Z ) = (.2 A.)   -- bad in compiler = (. 2 Z .)
+  #A16A(A A2) = (.1 NULL.)
+  #A16A(A A2 Z ) = (.1 Z .)
+  #A16A(B Z ) = (.2 B.)
+  #A16A(B B1 Z ) = (.1 Z.)
+  #A16A(Z Z1 ) = (.2 Z.)
+                      .);
+
+
+PRINT #A16E ( A Z);
+PRINT (.
+  #A16E (A A1) = (.1 NULL.)
+  #A16E(A A1 Z) = (.1 Z.)
+  #A16E(A Z ) = (.2 A.)   -- bad in compiler = (. 2 Z .)
+  #A16E(A A2) = (.1 NULL.)
+  #A16E(A A2 Z ) = (.1 Z .)
+  #A16E(B Z ) = (.2 B.)
+  #A16E(B B1 Z ) = (.1 Z.)
+  #A16E(Z Z1 ) = (.2 Z.)
+                      .)
+/
+##
+
+
+
+
+#A0  ()
+ /RETURN (.1 $$.) / ONFAIL RETURN (.2 $$.)    ##
+#A1 (A)
+ /RETURN (.1 $$.) / ONFAIL RETURN (.2 $$.)    ##
+#A2 (A!B)
+ /RETURN (.1 $$.) / ONFAIL RETURN (.2 $$.)    ##
+#A3 (A!B!C)
+ /RETURN (.1 $$.) / ONFAIL RETURN (.2 $$.)    ##
+#A4 (A!$E)
+ /RETURN (.1 $$ $E.) / ONFAIL RETURN (.2 $$ $E.) ##
+#A5 (A!B!$E)
+ /RETURN (.1 $$ $E.) / ONFAIL RETURN (.2 $$ $E.) ##
+#A6 (A!B!$E!$F)
+ /RETURN (.1 $$ $E $F.) / ONFAIL RETURN (.2 $$ $E $F.)    ##
+#A7 (A!A)
+ /RETURN (.1 $$.) / ONFAIL RETURN (.2 $$.)    ##
+#A8 (A!B!A)
+ /RETURN (.1 $$.) / ONFAIL RETURN (.2 $$.)    ##
+#A9 (A!B!A!B)
+ /RETURN (.1 $$.) / ONFAIL RETURN (.2 $$.)    ##
+#A10 (A!B!A!$E)
+ /RETURN (.1 $$ $E.) / ONFAIL RETURN (.2 $$ $E.)    ##
+#A11 (A!/$M:=2/)
+ /RETURN (.1 $$ $M.) / ONFAIL RETURN (.2 $$ $M.)    ##
+#A12 (A /$M:=2/ ! B /$M:=3/)
+ /RETURN (.1 $$ $M.) / ONFAIL RETURN (.2 $$ $M.)    ##
+#A13 (A /$M:=2/ ! B /$M:=3/! $Z /$M:=4/)
+ /RETURN (.1 $$ $M.) / ONFAIL RETURN (.2 $$ $M.)    ##
+#A14 (A A1)
+ /RETURN (.1 $$.) / ONFAIL RETURN (.2 $$.)    ##
+#A15 ((A A1 ) ! ( B B1))
+ /RETURN (.1 $$.) / ONFAIL RETURN (.2 $$.)    ##
+
+#A16A ((A A1 ) ! (B B1) ! ( S'($$=A) A2))
+ /RETURN (.1 $$.) / ONFAIL RETURN (.2 $$.)    ##
+
+#A16E ((A A1 ) ! (B B1) ! ( A A2))
+ /RETURN (.1 $$.) / ONFAIL RETURN (.2 $$.)    ##
+
+
+
+#A17 (A!(B C))
+ /RETURN (.1 $$.) / ONFAIL RETURN (.2 $$.)    ##
+
+#A18 ((A B) C)
+ /RETURN (.1 $$.) / ONFAIL RETURN (.2 $$.)    ##
+
+#A19
+ /RETURN (.1 $$.) / ONFAIL RETURN (.2 $$.)    ##

@@ -1,0 +1,30 @@
+Changes in version 2.41
+
+1. #EXPLODE explodes to 1-letter TEXTUAL ATOMS, it
+   never explodes to NUMBERS
+2. UPPERCASE,LOWERCASE support German letters in Windows table
+   (i.e.#CALL_PAS 85,86) 
+3. UPPERCASE,LOWERCASE,SUBSTR always return TEXTUAL atoms,
+not numbers.
+   (i.e.#CALL_PAS 85,86,87) 
+4. When #CALL_PAS(16 'File') reads lines, every line always
+is TEXTUAL atom.
+
+In other cases there no changes:
+(Textual or numeric atom can be returned:)
+1. #PARM(T)       Parameters of command line
+2. #CALL_PAS(83)  Windows input box
+3. #CALL_PAS(1)   Input from standard input
+4. #CALL_PAS(108) Environment variable value
+
+Changes in version 2.44
+
+No limits for number of textual constants in the program.
+
+Changes in version 2.46
+
+Windows Environment allows to set compilation "without PRINT
+statements". These statements are surrounded with conditional compilation
+directives. They are not included in EXE module.
+/PRINT #A(T)/ , #A is not called.
+

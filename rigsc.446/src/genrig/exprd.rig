@@ -1,0 +1,372 @@
+--      generaciq   wyravenij
+--
+--------------------------------------------------
+#G_wyravenie
+
+-- VARIABLE
+        VAR:: <. NAME: $ID .>
+        / $X := LAST #C $LAST_VARIABLES .
+                LAST #G_programma $imq . $ID;
+          IF $X ->  $mesto := #IMPLODE( glob
+                      LAST #C $RULENUM .
+                         LAST #G_programma $imq '_' $X)
+          ELSIF T -> $mesto := #IMPLODE( loc
+                LAST #C $TAB . LAST #G_programma $imq
+                                             .$ID )
+          FI;
+          $ ++:= <. mesto: $mesto .> /  ;;
+
+-- CONSTANT
+        CONSTANT:: <. [ VAL: $X ] .> ;;
+
+-- LAST
+        'LAST':: <. RULE: $ID,
+                    VAR:  $ID1 .>
+        / $mesto:= #IMPLODE( glob
+                        LAST #C $RULENUM .$ID '_'
+                   LAST #C $LAST_VARIABLES .$ID .$ID1 );
+          $ ++:= <. mesto: $mesto .> /  ;;
+
+-- (. ... .)
+        CONLIST:: <. mesto: $REZ
+                     / $REZ := (. $REZ '.sa' .);
+                       GEN<< $REZ '=NULL;'/,
+                    [ BODY: $X /#CONLIST( $REZ $X)/]
+                   .>    ;;
+
+-- <. ... .>
+        CONTREE:: <. mesto: $REZ
+                        /$REZ:= (. $REZ '.sa' .);
+                         GEN<< $REZ '=NULL;' /,
+                     [ BODY: (. (*
+                        $E1:= #ACONST_ili_obxekt
+                        $E2:= #obqzatelxno_obxekt
+                 /GEN<< 'addel(' $E1 $E2 ',&' $REZ ');' /
+                        *) .) ] .>  ;;
+
+-- INDEX L[ X]
+        INDEX:: <. ARG1: $E1 /$E1 :=
+                               #obxekt_ili_NULL( $E1)/,
+                   ARG2: $E2 /$E2 :=
+                            #INTEGER_ili_obxekt( $E2)/,
+                   mesto: $WRK .>
+        / GEN<< 'indxop(' $E2  $E1 ',&' $WRK '.sa);' /
+                ;;
+
+-- SELECTOR
+        SELECTOR:: <. ARG1: $E1:= #obxekt_ili_NULL,
+                      ARG2: $E2:= #ACONST_ili_obxekt,
+                      mesto: $WRK .>
+        /GEN<< 'selop(' $E2 $E1 ',&' $WRK '.sa);'/ ;;
+
+-- =  <>
+        #G_EQOP ;;
+
+-- CALL #L  , BLTIN
+        ( #G_CALL ! #G_BLTIN )
+        /GEN<] ';'/        ;;
+
+-- NOT
+        'NOT'::<. ARG: $E /#G_wyravenie( $E)/,
+                  mesto: $WRK .>
+        / GEN<< $WRK '.bo=';
+        IF $E.tip = log -> GEN<] '!(' $E.mesto '.bo);'
+        ELSIF $E.tip    -> GEN<] 'false;'
+        ELSIF $E.mesto= 'NULL' -> GEN<] 'true;'
+        ELSIF   T       -> GEN<] $E.mesto '.sa==NULL;'
+        FI /    ;;
+
+-- AND OR
+         ( #G_AND ! #G_OR ) ;;
+-- !.
+        '!.':: <. ARG1: $E1:= #obxekt_ili_NULL,
+                  ARG2: $E2:= #obqzatelxno_obxekt,
+                  mesto: $WRK .>
+        /GEN<< $WRK '.sa=' $E1 ';'
+                'lconc(&' $WRK '.sa,' $E2 ');' /   ;;
+
+-- !!
+        '!!':: <. ARG1: $E1:= #obxekt_ili_NULL,
+                  mesto: $WRK
+                        /GEN<< $WRK '.sa=' $E1 ';'/,
+
+                  ARG2: ( CONLIST:: <. BODY:
+                       (. $EL:= #obqzatelxno_obxekt
+               /GEN<< 'lconc(&' $WRK '.sa,' $EL ');'/
+                         (* $EL:= #obqzatelxno_obxekt
+                /GEN<< 'if(' $WRK '.sa!=NULL ) lconc(&'
+                        $WRK '.sa,' $EL ');' /
+                          *) .)      .>     !
+                                             -- skobki ubrany
+                         $E22/$E2:= #obqzatelxno_obxekt($E22)/
+                          /GEN<< 'concop(&' $WRK '.sa,'
+                                   $E2 ');' /
+                          ) .>
+----#vyr2 ##
+   ;;
+-----#vyr2
+-- ++
+        '++'::<. ARG1: $E1:= #obxekt_ili_NULL,
+                 mesto: $WRK
+                        /GEN<< $WRK '.sa=' $E1 ';'/,
+                ARG2: ( ( CONTREE:: <. [ BODY: (. (*
+                        $EL:= #ACONST_ili_obxekt
+                        $EL2:= #obqzatelxno_obxekt
+              /GEN<< 'addel(' $EL $EL2 ',&' $WRK '.sa);'/
+                             *) .) ] .>
+                     /GEN<< 'if(' $E1 '!=NULL ) {'
+                        'pointr(' $E1 ',&x.sa);'
+                       'if( x.smtd->dtype!=treemain )'
+                        $WRK '.sa=NULL ;};'/)  !
+                                 -- skobki ubrany 21.7.88
+                         $E22/$E2:= #obqzatelxno_obxekt($E22)/
+                 /GEN<< 'addtre(&' $WRK '.sa,' $E2 ');'/)
+                    .>  ;;
+
+-- NULL
+        'NULL'::<. mesto: $X.> ;;
+
+-- + - * DIV MOD > < >= <=   for numeric and arbitrary atoms
+        $OP::<. ARG1: $E1 ,
+                ARG2: $E2 ,
+                tip: $tip,
+                mesto: $WRK .>
+
+       /IF ($OP<>'+') AND ($OP<>'-') AND
+            ($OP<>'*') AND ($OP<>'DIV') AND
+            ($OP<>'MOD') AND ($OP<>'>') AND
+            ($OP<>'<') AND ($OP<>'>=') AND
+            ($OP<>'<=')   -> FAIL FI;
+
+        IF  ($E1.tip= ~islo) OR ($E2.tip= ~islo) OR
+            ($OP = '+') OR ($OP = '-') OR ($OP = '*') OR
+            ($OP = 'DIV') OR ($OP = 'MOD')  ->
+                              #G_wyravenie( $E1);
+                              #G_wyravenie( $E2);
+                              GEN<< $WRK ;
+                         IF $tip= ~islo -> GEN<] '.nu='
+                         ELSIF T ->  GEN<] '.bo=' FI;
+
+                         IF $OP='DIV' -> $OP:='/'
+                         ELSIF $OP='MOD' -> $OP:='%'
+                         FI;
+
+                         GEN<] #~islo_ili_0( $E1) $OP
+                               #~islo_ili_0( $E2)  ';'
+
+        ELSIF  T ->   --compare anonimous or non numeric
+                $E11:= #obqzatelxno_obxekt($E1);
+                $E22:= #obqzatelxno_obxekt($E2);
+                GEN<< $WRK '.bo=compare(';
+                IF $OP ='>'  -> GEN<] '3L'
+                ELSIF $OP ='>='  -> GEN<] '4L'
+                ELSIF $OP ='<'  -> GEN<] '1L'
+                ELSIF $OP ='<='  -> GEN<] '2L'  FI;
+                GEN<] ',' $E11 ',' $E22 ');'
+        FI/;;
+
+-- unarn. -
+        '-':: <. ARG: $E /#G_wyravenie( $E)/,
+                 mesto: $WRK .>
+        / GEN<< $WRK '.nu=-'
+                  #~islo_ili_0( $E) ';' / ;;
+
+-- $$
+        '$$'::<. mesto: $WRK .>
+                /GEN<< @ $WRK '.sa=pl'
+                LAST #G_prawilo $tek_PL '.cel;'/ ;;
+
+-- ::
+        '::'::<. ARG1: $E1:= #obqzatelxno_obxekt,
+                 ARG2: $E2 /#G_wyravenie( $E2)/,
+                 mesto: $WRK  .>
+        / GEN<<'/* operaciq :: */' $WRK '.sa=NULL;';
+        IF ($E2.tip =NULL) AND ($E2.mesto<> 'NULL')->
+                GEN<< 'if(' $E2.mesto
+                 '.sa!=NULL ) { points('
+                 $E2.mesto  '.sa,&x.sa);';
+                IF NOT #IS_CONSTRUCTOR( $E2) ->
+                   GEN<<
+'if( (x.smld->dtype==treemain)||(x.smtd->dtype==listmain)) {'
+                FI;
+                GEN<< 'x.smtd->name='
+                        $E1 ';' $WRK '=' $E2.mesto ;
+                IF NOT #IS_CONSTRUCTOR( $E2) ->
+                   GEN<] ';}' FI;
+                GEN<] ';};'
+        FI /  ;;
+
+-- COPY
+        'COPY':: <. ARG: $E:= #obqzatelxno_obxekt,
+                    mesto: $WRK .>
+                /GEN<< 'copyop(' $E ',&' $WRK '.sa);'/;;
+
+       $E
+  / GEN << '/* GENEXPR: operaciq ne realizowana !!! */'/
+##
+
+#G_AND
+        'AND'::<. mesto: $WRK,
+                  ARG1: $E1 / #G_wyravenie( $E1);
+           $tip:= $E1.tip;
+           $mesto:= $E1.mesto;
+           IF   $tip= log -> GEN<< 'if( !(' $mesto
+                 '.bo ))' $WRK '.bo=false; else {'
+           ELSIF $tip OR $E1.VAL -> GEN<<
+           ELSIF $mesto = 'NULL' -> GEN<< $WRK
+                              '.bo=false;'; RETURN NULL
+           ELSIF   T      -> GEN<< 'if(' $mesto
+            '.sa==NULL )' $WRK '.bo=false; else {'
+           FI / ,
+                   ARG2: $E2 /#G_wyravenie( $E2);
+           $tip2:= $E2.tip;
+           $mesto2:= $E2.mesto;
+           IF $tip2 = log  -> GEN<] $WRK '=' $mesto2
+           ELSIF $tip2 OR $E2.VAL -> GEN<] $WRK
+                                             '.bo=true'
+           ELSIF $mesto2 = 'NULL' -> GEN<] $WRK
+                                            '.bo=false'
+           ELSIF   T    -> GEN<] $WRK '.bo='
+                                     $mesto2 '.sa!=NULL'
+           FI;
+            IF $tip = log -> GEN <]';}/*log*/;'
+            ELSIF $tip OR $E1.VAL -> GEN<] ';'
+            ELSIF T -> GEN<] ';};' FI  /   .>  ##
+
+#G_OR
+        'OR':: <. mesto: $WRK,
+                  ARG1: $E1 /#G_wyravenie( $E1);
+          $tip:= $E1.tip;
+          $mesto:= $E1.mesto;
+          IF $tip= log -> GEN<< 'if(' $mesto '.bo )'
+                $WRK '.bo=true; else {'
+          ELSIF $tip OR $E1.VAL -> GEN<< $WRK
+                             '.bo=true;'; RETURN NULL
+          ELSIF $mesto= 'NULL' -> GEN<<
+          ELSIF   T   -> GEN<< 'if(' $mesto
+            '.sa!=NULL )' $WRK '.bo=true; else {'
+          FI / ,
+                  ARG2: $E2 /#G_wyravenie( $E2);
+          $tip2:= $E2.tip;
+          $mesto2:= $E2.mesto;
+          IF $tip2 = log -> GEN<] $WRK '=' $mesto2
+          ELSIF $tip2 OR $E2.VAL -> GEN<] $WRK
+                                            '.bo=true'
+          ELSIF $mesto2 = 'NULL' -> GEN<] $WRK
+                                           '.bo=false'
+          ELSIF   T   -> GEN<] $WRK '.bo=' $mesto2
+                                '.sa!=NULL'
+          FI;
+             IF $mesto = 'NULL' -> GEN<] ';'
+             ELSIF T -> GEN<] ';};' FI / .> ##
+
+-------------------------------------------------------
+#IS_CONSTRUCTOR
+        $OP:: <. mesto: $R .>
+        / RETURN $OP = 'CONLIST' OR $OP = 'CONTREE' /
+##
+-------------------------------------------------------
+#CONLIST
+        $REZ
+        (. (* $E:= #obqzatelxno_obxekt
+              / GEN<< 'lconc(&' $REZ ',' $E ');'/
+         *) .)
+##
+------------------------------------------------
+#G_EQOP
+        $OP::<. ARG1: $E1
+                  /IF $OP<>'=' AND $OP<>'<>' -> FAIL FI;
+                   #G_wyravenie( $E1);
+                   $tip:= $E1.tip; $mesto:= $E1.mesto/ ,
+
+                ARG2: $E2
+                   /#G_wyravenie( $E2);$tip2:= $E2.tip/,
+
+                mesto: $WRK .>
+        /GEN<< '/* operaciq' $OP '*/'  $WRK '.bo=' ;
+IF ( $tip = ~islo AND $tip2 = log) OR
+   ( $tip = NULL AND $tip2 ) OR
+   ( $mesto = 'NULL' AND $tip2 = NULL ) ->
+        -- pomenqtx mestami $E1 i $E2
+                $E:= $E1; $E1:= $E2; $E2:= $E    FI;
+
+$tip:= $E1.tip;  $mesto:= #mesto( $E1);
+$tip2:= $E2.tip;  $mesto2:= #mesto( $E2);
+
+IF $tip AND $tip = $tip2 ->
+     IF $OP='=' -> $OP:='==' ELSIF T-> $OP:='!=' FI;
+     GEN<] $mesto $OP $mesto2
+ELSIF $tip = log ->
+                IF $E2.ACONST =1 ->
+                        IF $OP ='=' -> GEN<] $mesto
+                        ELSIF T   -> GEN<] '!(' $mesto ')'
+                        FI
+                ELSIF $E2.ACONST >1 ->
+                        IF $OP ='=' -> GEN<] false
+                        ELSIF T     -> GEN<] true   FI
+                ELSIF $mesto2 = 'NULL' ->
+                       IF $OP ='=' -> GEN<] '!(' $mesto ')'
+                        ELSIF T -> GEN<] $mesto FI
+                ELSIF $tip2 = NULL ->
+                        IF $OP= '<>' -> GEN<] '!' FI;
+                        GEN<] '((' $mesto '&& eqop(0L,'
+                          $mesto2 ',cnst[1].sa))||(!('
+                        $mesto ')&&(' $mesto2 '==NULL)))'
+                ELSIF T ->
+                        IF $OP ='=' -> GEN<] false
+                        ELSIF T -> GEN<] true FI
+                FI
+ELSIF $tip= ~islo AND $tip2 =NULL AND $E2.ACONST =NULL ->
+                IF $OP ='<>' -> GEN<] '!' FI;
+                IF #NUMBER($mesto2)->$mesto2:=#IMPLODE($mesto2 L) FI;
+                IF #NUMBER($mesto)->$mesto:=#IMPLODE($mesto L) FI;
+                GEN<] 'eqnum(' $mesto2 ',' $mesto ')'
+
+ELSIF $mesto ='NULL' AND $mesto2='NULL' ->
+                IF $OP='=' -> GEN<] true
+                ELSIF T -> GEN<] false FI
+
+ELSIF $tip = NULL ->
+                IF $mesto2 ='NULL' ->
+                      IF $OP ='=' ->GEN<] $mesto '==NULL'
+                     ELSIF T -> GEN<] $mesto '!=NULL' FI
+                ELSIF $E2.ACONST ->
+                        IF $OP='<>' -> GEN<] '!' FI;
+                        GEN<] 'eqatom(' $mesto ',acnst['
+                                $E2.ACONST '])'
+                ELSIF T ->
+                        IF $OP= '<>' -> GEN<] '!' FI;
+                    GEN<] 'eqop(0L,' $mesto ',' $mesto2 ')'
+                FI
+ELSIF T ->
+        IF $OP ='=' -> GEN<] false
+        ELSIF T -> GEN<] true FI
+FI;
+   GEN<] ';' /
+##
+-------------------------------------------------------
+#mesto
+        <. tip: log,
+           mesto: $M .> /RETURN (. $M '.bo' .)/ ;;
+
+        $C::<. tip: ~islo,
+               mesto: $M .>
+        /IF $C = CONSTANT -> RETURN $M
+        ELSIF T -> RETURN (. $M '.nu' .) FI/ ;;
+
+        <. mesto: 'NULL' .> /RETURN 'NULL'/ ;;
+
+        <. mesto: $M .> /RETURN (. $M '.sa' .)/
+##
+-------------------------------------------------------
+#~islo_ili_0
+        <. tip: ~islo,
+           VAL: $N .>   /RETURN #IMPLODE($N 'L')/ ;;
+
+        <. tip: ~islo,
+           mesto: $WRK .> /RETURN (. $WRK '.nu' .)/ ;;
+
+    /IF $.tip  OR $.mesto='NULL'  -> RETURN '0L'
+    ELSIF T -> RETURN (. 'numval(' $.mesto '.sa)' .) FI/
+##
+-------------------------------------------------------

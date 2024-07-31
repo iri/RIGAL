@@ -1,0 +1,75 @@
+
+=== PROGRAMMING IN RIGAL ===
+        Short guide
+      by Vadim Engelson
+    Last revision 29-May-92
+
+1.  RIGAL LEXIC
+===============
+LETTER is [A..Z,a..z,_,{,},`,|,~,Chr(128)..Chr(255)]
+SYMBOL is LETTER or [0..9]
+Variables are $ SYMBOLS, Rules are # SYMBOLS
+Identifiers are  LETTER SYMBOLS
+Numbers are from 0 to 2**31-1
+Comments - after -- in string
+Character strings are  ' ANY_CHARACTERS '
+    To use single quote - write twice : ''
+Including files - (no inside #rule text)
+    %INCLUDE  filename with extension
+    (no anything more till the end of this line)
+(!) ALL RIGAL KEYWORDS MUST BE WRITTEN IN UPPERCASE (CAPITAL
+      LETTERS)
+      (load - wrong , LOAD - right)
+(!) Rules, identifiers, variables in UPPERCASE & LOWERCASE
+     are different
+      ( $SOMETHING <> $something )
+    and using here Chr(128)-Chr(255) not recommeded
+
+2.  LEXIC OF BUILT-IN SCANNER
+=============================
+ We have built-in scanner to read text file and transform
+it to the list of atoms.
+ Using:
+    $E:=#CALL_PAS(35 'filename');
+    (35 is built-in function number)
+
+"SYMBOL" "LETTER" - same as in Rigal lexic.
+Identifiers are  LETTER SYMBOLS
+   but { and } are not allowed !
+Numbers are from 0 to   2147483647  ( 2**31-1 )
+                 $0 to $7FFFffff
+                 #0 to #2147483647
+Comments are (*  *) or {  }
+One-character elements include  # & ! ? ^ @
+Character strings are  ' ANY_CHARACTERS '
+    To use single quote - write twice : ''
+(!) ALL KEYWORDS may be WRITTEN IN any case ,but
+     they are capitalized automatically.
+
+3.OTHER SUBROUTINES
+===================
+   The scanners and special subroutines are called in the form
+  #CALL_PAS ( <number>   <parameters  ...>  )
+    1.  If the first parameter  is given, the option writes it  on
+the  screen.  The  option  waits  for  the  user's  answer (Pascal
+READLN(STRING) executes).  When the  user presses  ENTER key,  the
+option returns the atom containing the string.
+     $E:=#CALL_PAS(1 'Enter Y or N ');
+     IF $E ->
+        IF ($E=Y)OR($E=y)-> $REZ:=T;BREAK;FI;
+        IF ($E=N)OR($E=n)-> $REZ:=NULL;BREAK;FI;
+     FI;
+   12.  Parameter  is  any  object. Object is printed out to the
+PRINT  file  using  pseudo  graphic  characters of extended ASCII
+code.
+   Tree                  List
+  ÄÄÄÂÄname::         ÄÄÄÄÒÄname::
+     ÃÄarc1-el1           ÇÄel1
+     ÀÄarc2-el2           ÓÄel2
+   13.  Parameter  is  any  object. Object is printed out to the
+screen using pseudo graphic characters of extended ASCII code.
+   16.  Parameter  must  be existing file name. All the lines of
+the  file  are  read  and appended to the list of atoms (one atom
+corresponds to one line).
+   35. The first parameter must be file name. The atoms are read
+from  file.

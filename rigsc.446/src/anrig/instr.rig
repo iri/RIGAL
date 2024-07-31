@@ -1,0 +1,90 @@
+#TAB
+-- zanesenie w $TAB
+        $imq_prawila
+        /$T := LAST #C $TAB. $imq_prawila;
+         IF NOT $T ->
+  --     IF $T = NULL ->
+ LAST #C $TAB ++:=
+                 <. $imq_prawila : <. '_':0 .> .>
+         FI/
+        [ $imq_peremennoj
+        / $T := LAST #C $TAB.$imq_prawila;
+          $NOM := $T . $imq_peremennoj;
+          IF $NOM = NULL -> $T ++:=
+                <. $imq_peremennoj : #LEN( $T) .> FI/
+        ]
+
+##
+----------------------------------------------------
+#LASTTAB
+-- zanesenie w $LAST_VARIABLES
+        $imq_prawila    $imq_peremennoj
+        / $T := LAST #C $LAST_VARIABLES . $imq_prawila;
+          $NOM := $T . $imq_peremennoj;
+          IF $T = NULL -> LAST #C $LAST_VARIABLES ++:=
+                        <. $imq_prawila :
+                           <. $imq_peremennoj : 1 .> .>
+          ELSIF  $NOM = NULL -> $T ++:=
+                   <. $imq_peremennoj :  #LEN($T) +1 .>
+        FI/
+##
+------------------------------------------------------
+#GETWRK
+        / LAST #programma $WRKNOM +:=1;
+          IF LAST #programma $MAXWRKNOM <
+             LAST #programma $WRKNOM    ->
+             LAST #programma $MAXWRKNOM +:=1 FI;
+          RETURN COPY( LAST #programma $WRKNOM) /
+##
+-------------------------------------------------------
+#GETCNST
+-- zanesenie w spisok $CONSTANT_LIST, wozwra}aet
+-- nomer konstanty w |tom spiske
+        $C      /$N :=1 /
+    $L:=(. (* $E
+              / IF $E = $C -> RETURN $N FI;
+                $N +:= 1 /
+            *) .)
+        / $L !.:= $C;
+          RETURN $N /
+##
+-----------------------------------------------------
+#GET_WORK_PL
+        / LAST #programma $tek_PL +:=1;
+          IF LAST #programma $MAX_PL <
+              LAST #programma $tek_PL  ->
+                LAST #programma $MAX_PL +:=1 FI;
+          RETURN COPY(LAST #programma $tek_PL) /
+##
+-----------------------------------------------------
+#GET_FLAG
+        / LAST #programma $tek_FLAG +:=1;
+         IF LAST #programma $MAX_FLAG <
+                LAST #programma $tek_FLAG ->
+            LAST #programma $MAX_FLAG +:=1 FI;
+         RETURN COPY( LAST #programma $tek_FLAG) /
+##
+-----------------------------------------------------
+#NEW_LABEL
+        /LAST #programma $LABEL +:=1;
+        RETURN COPY( LAST #programma $LABEL)/ 
+##
+------------------------------------------- 
+#RULENUM
+        / $N :=1/ 
+         $E 
+               / FORALL $imq IN $E DO 
+                  $R ++:= <. $imq :  $N .>; 
+                  $N := $N +1 
+                  OD ;
+                 RETURN $R/ 
+##
+--------------------------------------------------
+#CROSS $R -- dobawlenie w CROSS-tablicu imen wyzywaemyh prawil
+ / $C := LAST #prawilo $imq;
+   IF NOT $C -> $C := LAST #glawnoe_prawilo $imq FI;
+   $T := LAST #C $CROSS;
+   IF $T.$C -> $T.$C ++:=<. $R : T .>
+   ELSIF $T -> $T ++:= <. $C : <. $R : T .>.>
+   ELSIF T -> LAST #C $CROSS:= <. $C: <.$R:T.>.>
+   FI / ##

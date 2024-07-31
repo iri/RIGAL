@@ -1,0 +1,31 @@
+-- Stack in RIGAL
+#STACK2
+ -- stacks are modelled by lists.
+ -- The only problem is removing elements from the end.
+ -- "Base" RIGAL does not support this operation and you
+ -- have either to store "current length" of the stack in a separate
+ -- numeric variable, ( see "stack.rig") or
+ -- make copy of the list (it is very expensive).
+ 
+ -- However ther is a wayaround in the internals of Rigal
+ -- descriptors:
+ $ST:=(. 2 3 .);
+ $ST1:=#POP($ST);  -- changes $ST to (.2.) and returns it
+ PRINT (.$ST $ST1.);
+
+  -- There is, however, problem with "empty" stack, represented by NULL.
+  -- The #POP operation cannot assign NULL to argument, so then NULL
+  -- is only returned. 
+
+ $ST2:=#POP($ST1); -- leaves $ST1 as (.2.) and returns NULL
+ PRINT (.$ST1 $ST2.);
+##  
+#POP $ST
+ / IF #LIST($ST) AND (#LEN($ST)>1)->
+      #CALL_PAS(91 $ST); RETURN $ST;
+   ELSIF T->
+      RETURN NULL
+   FI;
+ /
+##
+      

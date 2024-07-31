@@ -1,0 +1,35 @@
+            Latvia University
+Institute of Mathematics and Computer Science
+            RIGAL system group       
+Contact:   Mikhail Auguston (or Vadim Engelson)
+   room 418 (420),Institute of Math. and Comp. Sci.,
+   Latvian University, Rainis blvd. 29,SU-226250 Riga , Latvia
+   Telex 161172 TEMA SU, Phone (0132)224363 (or (0132)226997)
+   E-MAIL:  auguston@lumii.lat.su   vadim@lumii.lat.su
+
+  Given version of the RIGAL system consists of [yes/no]
+   Integrated environment (version A)
+                          (version B)
+   Language description 
+   User's guide
+   Demo film with Rigal examples
+   Source Pascal codes
+   Source Rigal codes
+--------------------------------------------------------
+ RIG.EXE version (MM-DD-YY) HH:MM=
+                  length in bytes=
+                          version=  
+---------------------------------------------------------
+ This system copy (version B) is given for non commercial
+ use ONLY and WITHOUT rigths for further distribution.
+ Demonstration version is free available in SoftPanorama
+ (February, 1991), Kiew.
+--------------------------------------------------------
+ Date
+ Name of user
+
+ Address for contact
+
+
+
+---------------------------------------------------------

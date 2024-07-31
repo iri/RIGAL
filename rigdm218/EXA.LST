@@ -1,0 +1,29 @@
+ 
+     (.  'ALFA' 'BETA' 'GAMMA' 'DELTA'
+         'LAMBDA'
+     .) 
+    
+
+=>>>CALLS RULE #HEAD IN STATEMENT
+  1-ST ARGUMENT($):  
+     (.  'ALFA' 'BETA' 'GAMMA' 'DELTA'
+         'LAMBDA'
+     .) 
+    
+<<<=EXITS FROM RULE #HEAD: SUCCESS
+RESULT= 'ALFA' 'ALFA'
+
+=>>>CALLS RULE #TAIL IN STATEMENT
+  1-ST ARGUMENT($):  
+     (.  'ALFA' 'BETA' 'GAMMA' 'DELTA'
+         'LAMBDA'
+     .) 
+    
+<<<=EXITS FROM RULE #TAIL: SUCCESS
+RESULT= 
+     (.  'BETA' 'GAMMA' 'DELTA' 'LAMBDA'
+     .) 
+     
+     (.  'BETA' 'GAMMA' 'DELTA' 'LAMBDA'
+     .) 
+    

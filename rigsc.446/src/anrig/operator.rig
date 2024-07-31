@@ -1,0 +1,118 @@
+#operator2
+
+-- RETURN , PRINT 
+        V'(($$ = 'RETURN') OR ($$ = 'PRINT')) 
+        $OP:= #_KEYWORD 
+        $E := #wyravenie
+         / IF $OP= 'RETURN'  -> 
+                #sozdatx_mesto2( $E)
+           FI;
+          RETURN $OP :: (. $E .) / ;; 
+
+-- FORALL 
+        V'( $$ = 'FORALL')
+        #_KEYWORD 
+        / $NPL:= #GET_WORK_PL()/
+      [  [ V'( $$ = 'SELECTORS')
+          #_KEYWORD ]
+        $VAR := #_VARNTOATM 
+      /#ADD_USEVAR($VAR);
+       #TAB (LAST #programma $tek_prawilo  $VAR)/ ]
+
+       [ V'( $$ = 'BRANCHES')
+         #_KEYWORD
+        $BVAR := #_VARNTOATM 
+      /#ADD_USEVAR($BVAR);
+       #TAB (LAST #programma $tek_prawilo  $BVAR)/ ]
+
+        V'( $$ = 'IN')
+        #_KEYWORD 
+        $E := #wyravenie
+        V'($$ = 'DO') 
+        #_KEYWORD 
+        (*  $OPS !. := #operator * #SEMICOLON ) 
+                [ #SEMICOLON ]
+        V'($$ = 'OD') 
+        #_KEYWORD 
+        / LAST #programma $tek_PL:= 
+              LAST #programma $tek_PL -1; 
+          RETURN 'FORALL' :: <. LABEL: #NEW_LABEL(),
+                                PL: $NPL, 
+                                VAR: VAR::<.NAME: 
+                                             $VAR .>, 
+                                BRANCHES_VAR: VAR::<.NAME: 
+                                             $BVAR .>, 
+                                'IN' : $E,
+                                BODY: $OPS .>/ ;; 
+
+-- LOOP 
+        V'($$ = 'LOOP') 
+        #_KEYWORD 
+        (* $OPS !.:= #operator * #SEMICOLON ) 
+                [ #SEMICOLON ] 
+        V'($$ = 'END')
+        #_KEYWORD 
+        / RETURN 'LOOP' :: <. LABEL: #NEW_LABEL(),
+                              BODY:  $OPS .>  /    ;; 
+
+-- BREAK, FAIL
+        V'(( $$ = 'BREAK')  OR ( $$ = 'FAIL'))
+        $OP:= #_KEYWORD 
+        / RETURN $OP ::  (. T .) /
+##
+--------------------------------
+#operator3
+
+-- RULE CALL
+        $ID := #_RULETOATM
+        V'( $$ = '(') 
+        #_KEYWORD 
+        / $R := #BUILTIN( $ID)/ 
+         ( V'($R) / $BLTIN:= BLTIN/ ! 
+           V'( $ID= 'EXPLODE') / $BLTIN:= $ID/ )
+            $E:= #wyravenie /#sozdatx_mesto2( $E)/
+            V'($$= ')') #_KEYWORD 
+            / IF $R= 15 -> $tip:= ~islo FI; -- #LEN 
+              $FLAG:= #GET_FLAG();
+              LAST #programma $tek_FLAG :=
+                LAST #programma $tek_FLAG -1; 
+              RETURN $BLTIN:: <. NOM: $R, 
+                                 ARG: $E, 
+                                 mesto: #IMPLODE( wrk
+                                    #GETWRK()), 
+                                 tip: $tip, 
+                                 FLAG: $FLAG .> / ;;
+
+        $ID := #_RULETOATM
+        V'( $$ = '(' )    #_KEYWORD 
+        ( V'($ID = 'IMPLODE') / $CALL:= 'IMPLODE'/ !
+          / $CALL:= CALL / )
+        / $N:= #GET_WORK_PL();
+          $FLAG:= #GET_FLAG()/
+        (* $E1:= #wyravenie 
+               / #sozdatx_mesto2( $E1); 
+                 $E !.:= $E1/ *)
+        V'($$ = ')')
+        #_KEYWORD 
+        / LAST #programma $tek_FLAG :=
+             LAST #programma $tek_FLAG -1;
+          LAST #programma $tek_PL :=
+            LAST #programma $tek_PL  - 1; 
+          #CROSS($ID);
+          RETURN $CALL :: <. NAME: $ID, 
+                             PL: $N,
+                             mesto: #IMPLODE( wrk 
+                                            #GETWRK()), 
+                             FLAG: $FLAG, 
+                             ARGS: $E .>/   ;;
+
+-- := 
+        $LEFT := #wyravenie 
+        $OP := #ASS_SYMBOL
+        $RIGHT := #wyravenie
+         /#sozdatx_mesto2( $RIGHT); 
+          RETURN ASSGN :: <. op: $OP, 
+                              praw: $RIGHT, 
+                              lew: $LEFT   .>/
+##
+----------------------------------------------------

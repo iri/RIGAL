@@ -1,0 +1,99 @@
+-------------------------------------------------
+--        ANALYSIS.RIG
+-------------------------------------------------
+#program
+(.
+  [ $name := #_RULETOATM
+   / LAST #Lint $Rules := <. $name: <. T:T .> .>/
+   (* $E !.:= #operator  * ';' )  [ ';' ]
+   V' ($$='##')  #_KEYWORD
+   / $E1 !.:= $name :: $E;
+     Display << @ 'Analyzing main rule #' $name / ]
+            (* #ATOM *)  -- for scanner's include names
+  (* $name := #_RULETOATM
+     / LAST #Lint $Rules ++:= <. $name: <. T:T .> .>;
+       Display << @ 'Analyzing rule #' $name;
+       $E := NULL /
+       (* $E !!:= #PLO
+          [ V'( $$ = 'ONFAIL') #_KEYWORD 
+            (* $E !.:= #operator  *) ]
+          [ V'( $$ = ';;' ) #_KEYWORD ]  *)
+      V'($$ ='##')  #_KEYWORD
+             (* #ATOM *) -- for scanner's include names
+    / $E1 !.:= $name :: $E /   *)
+.)
+   / RETURN $E1 /
+##
+----------------------------------------------------- 
+#PLO
+-- PATTERN LIST OR OPERATOR
+-- wozwra}aet spisok
+          ( $E !! := #dejstwiq  ! 
+            $E !. := #|l_t_posled_{ablonow )
+        /RETURN $E /
+##
+------------------------------------------------------
+#dejstwiq 
+        (+  V'( $$ = '/')    #_KEYWORD 
+        (*  $E !. := #operator
+                        * ';' )  [ ';' ]
+            V'( $$ = '/' )   #_KEYWORD
+        +)
+        / RETURN $E / 
+##
+----------------------------------------- 
+#operator 
+     $X:= ( #operator1 ! #operator2  )  /RETURN $X/ 
+##
+--------------------------------------------
+#operator1
+-- IF 
+        V'( $$ = 'IF')   #_KEYWORD 
+        $COND := #wyravenie 
+        V'( $$ = '->')   #_KEYWORD
+        (* $OPS !. := #operator * ';' )  [ ';' ]
+        / $R !. := <. COND: $COND,
+                      BODY: $OPS  .>/ 
+
+        (* V'($$ = 'ELSIF')   #_KEYWORD
+           $COND := #wyravenie
+           V'($$ = '->')      #_KEYWORD
+           / $OPS := NULL / 
+           (* $OPS !. := #operator * ';' ) [ ';' ]
+           / $R !. := <. COND: $COND, 
+                         BODY: $OPS .>/ 
+        *)
+        V'($$ = 'FI' )       #_KEYWORD 
+        /RETURN 'IF' :: $R / ;;
+
+-- LOAD , SAVE
+        V'(( $$ = 'LOAD') OR ($$ = 'SAVE'))   $OP:= #_KEYWORD 
+        $VAR := #_VARNTOATM 
+        $FSPEC := #wyravenie
+        / RETURN $OP :: <. VAR: $VAR ,
+                           FILE_SPEC: $FSPEC .>/ ;; 
+
+-- OPEN 
+        V'($$ = 'OPEN')      #_KEYWORD 
+        $ID 
+        $FSPEC := #wyravenie
+        / RETURN 'OPEN' ::<. NAME:  $ID,
+                             FILE_SPEC: $FSPEC .>/ ;; 
+
+-- << i <]
+        $ID
+        V'(($$ = '<<') OR ($$ = '<]'))
+        $OP:= #_KEYWORD 
+        (* (( V'($$ ='@')  #_KEYWORD ) !  $E!.:= #wyravenie )
+        *)
+        / RETURN 'PUT'::<. NAME:  $ID,
+                           tip : $OP, 
+                           arg: $E .>/ ;; 
+
+-- CLOSE
+        V'($$ = 'CLOSE')    #_KEYWORD 
+        $ID 
+        / RETURN 'CLOSE' /
+##
+----------------------------------------------------
+

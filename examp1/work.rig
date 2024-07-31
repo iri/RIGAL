@@ -1,0 +1,38 @@
+-- This is file WORK.RIG
+-- You can try  examples 
+--  EX1.RIG - how to take Tail and Head of list
+--  EX2.RIG - how to analyse and print polish form of arithmetic expression
+--  GRAM2.RIG - small language (SL) source syntax grammar
+--  GRAM1.RIG - tree abstract grammar for SL
+--  INTER.RIG - interpreter of SL
+--  BCOMP.RIG - compiler of SL to Pascal
+--  EX1.txt   - input text in SL
+
+-- THIS IS SIMPLE PROGRAM ; TRY press F6 and then F7; Exit ALT+X
+#START 
+  OPEN S ' ';
+  S<<FFFFF;
+  
+   $E:=2000000001;
+   PRINT (. #NUMBER($E)   $E DIV 5   $E DIV 100 .);
+   $N:=3;
+   $A:=<. AA : $E , BB : $N .>;
+   #CALL_PAS(13 $A);
+   #CALL_PAS(12 $A);
+-- $S:=$E[4];
+##  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

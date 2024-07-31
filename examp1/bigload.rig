@@ -1,0 +1,21 @@
+--
+#MAIN
+OPEN S ' ';
+ LOOP
+  LOOP
+    $I+:=1;
+    $E!.:=(.A B C F D J K L N M B G H .);
+    IF $I=300 -> PRINT $J;$I:=0; $J+:=1;BREAK;FI;
+  END;
+  IF $J=300 -> BREAK FI; 
+ END;
+  S<<#LEN($E);
+  SAVE $E 'E.SS';
+  S<< $E[-1];
+  LOAD $Q 'E.SS';
+  S<< $Q[-1];
+   
+    
+  #CALL_PAS(1 'End?');
+ ##
+   

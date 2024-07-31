@@ -1,0 +1,59 @@
+RIGAL/DEMO  V.2.18 
+==================
+   May 29, 1992
+
+This version of Rigal is non commercial 
+and useful only for demonstration and simple examples.
+
+For IBM/PC/XT, IBM/PC/AT, IBM/PS-2 and compatible,
+ under MS-DOS with any colour graphic card.
+Hard disc is not used for DEMO execution.
+
+DEMO package may be moved to another hard or floppy disc. 
+Not copy-protected. Free available.
+
+WHAT TO DO
+==========
+1. Insert this floppy disk to drive and close disk drive door.
+ ( for example, drive  A: )
+2. Press    A:  and "ENTER" key.
+3. Press    DEMO and "ENTER" key
+4. Watch demo package - about 20 minutes (in default mode )
+5. Open disk drive door and take out this floppy disc.
+
+
+DEMONSTRATION
+=============
+  Press DEMO 
+
+  Press DEMO 10 for fast show,
+        DEMO 300 for low speed.
+    (default is DEMO 100)   
+  
+RUNNING RIGAL
+=============
+ Press RIG [ file_name ] in this directory  
+       
+ RIG.EXE includes
+           Built-in Text Editor, Checker and Interpreter.
+           Default work file is WORK.RIG.
+           You can call RIG.EXE from ANY directory too.
+           You can give it one parameter - file name without .RIG
+
+      Documents in English
+
+README   1ST  - this file
+HELP     TXT  - small help about scanners
+RIGAL    DOC  - short description of RIGAL language
+
+      Examples
+
+WORK     RIG   - printnig small tree
+EXA      RIG   - used for DEMO.
+EX1      RIG   - takes Head and Tail of list ( like EXA.RIG)
+EX2      RIG   - Analyses arithm. expression
+EX       TXT   - example of expression
+*        RIG  - small language example
+
+      All other files are necessary for running DEMO
+      ( or are generated during running DEMO or RIG )

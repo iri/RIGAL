@@ -1,0 +1,19 @@
+-- source grammar for SL
+#program
+        (. (* #stmt * ';' ) .)  ##
+#stmt
+     ( #assignment ! #while_op )   ##
+#assignment
+           $Id  ':='  #expression   ##
+#while_op
+         'while'  #expression 'do'
+                  (* #stmt  * ';' )  'od'  ##
+#expression
+           #arithm_expr  [ '<'  #arithm_expr ]  ##
+#arithm_expr
+           #term   ;;
+        '(' #arithm_expr   '+'  #arithm_expr ')'  ##
+#term
+     ( 1 ! #variable )  ##
+#variable
+         ( w ! v ! x ! y ! z )   ##

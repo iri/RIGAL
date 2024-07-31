@@ -1,0 +1,71 @@
+-- interpreter for Prof. Blikle small language (SL)
+-- written in Riga 13.10.1989
+--     takes input from file EX1.TXT
+--
+#main
+     $token_list := #CALL_PAS(35  'ex1.txt' );
+-- reads token list
+   OPEN report ' ';
+   $abstract_syntax := #analyse_program( $token_list );
+   IF $abstract_syntax -> report <<' no errors in program ... ';
+                          #interpret_program ( $abstract_syntax )
+   ELSIF   T           -> report << 'an error is found ...' FI  
+##
+
+%INCLUDE analyse.rig
+#interpret_program
+-- has global variable $state
+     / $state := <. W: 1, V: 1, X: 1, Y: 1, Z: 1 .>/
+-- assigns initial values to variables
+      #interpret_stmt_list
+      / report << 'end of interpretation, the state is:';
+        PRINT $state /
+##
+
+#interpret_stmt_list
+         (. (* #interpret_stmt 
+--/ PRINT LAST #interpret_program $state /
+            *) .)  ##
+
+#interpret_stmt
+         ( #interpret_assignment  !  #interpret_while )  ##
+
+#interpret_assignment
+        'assignment_op' ::
+               <.  left_part: $var,
+                   right_part: $rez := #eval_expr .>
+        / LAST #interpret_program $state ++:=
+                         <. $var :  $rez .> /  ##
+
+#interpret_while
+        'while_op' ::
+               <.  condition: $rez := #eval_expr .>
+         / IF $rez = tt  ->  #interpret_stmt_list( $. body);
+                             #interpret_while( $)
+           ELSIF  $rez = ff  ->  RETURN finished
+           ELSIF  $rez = err  OR  #NUMBER( $rez) ->
+                  LAST #interpret_program $state . X := err
+           FI /   ##
+
+#eval_expr
+     $NUM  / RETURN $NUM / ;;
+
+     $Id / RETURN LAST #interpret_program $state . $Id /;;
+
+     '+' :: <. arg1: $val1 := #eval_expr,
+               arg2: $val2 := #eval_expr .>
+        / IF $val1 = err OR $val2 = err ->  RETURN err
+          ELSIF  NOT ( #NUMBER( $val1) AND #NUMBER( $val2) ) ->
+                     RETURN err
+          ELSIF $val1 + $val2 > 100 -> RETURN err
+          ELSIF  T  ->  RETURN $val1 + $val2
+          FI  / ;;
+
+     '<' :: <. arg1: $val1 := #eval_expr,
+               arg2: $val2 := #eval_expr .>
+        / IF $val1 = err OR $val2 = err ->  RETURN err
+          ELSIF  NOT ( #NUMBER( $val1) AND #NUMBER( $val2) ) ->
+                     RETURN err
+          ELSIF $val1 < $val2  -> RETURN tt
+          ELSIF  T  ->  RETURN ff        FI  /
+##

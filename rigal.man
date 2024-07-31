@@ -1,0 +1,264 @@
+
+
+
+RIGAL(1)                 USER COMMANDS                   RIGAL(1)
+
+
+
+NAME
+      rc - checks and compiles RIGAL file
+      ic - interprets intermediate RIGAL code
+      v - viewer for RIGAL data saved in file
+      rig_crf  -  RIGAL cross-referencer
+      rig_lint - RIGAL Lint (data type checker)
+
+SYNOPSIS
+      rc  _f_i_l_e_n_a_m_e  [-c] [-D] [-P  parameter]...
+      ic _c_o_d_e_f_i_l_e_n_a_m_e  [-p _p_r_i_n_t_f_i_l_e_n_a_m_e] [-d][ parameter...]
+      v  _f_i_l_e_n_a_m_e
+      rig_crf  _f_i_l_e_n_a_m_e
+      rig_lint  _f_i_l_e_n_a_m_e
+      _e_x_e_c_u_t_a_b_l_e  [-p _p_r_i_n_t_f_i_l_e_n_a_m_e] [ parameter...]
+       (!)  the options and parameters must be separated  by  one
+     or more spaces.
+
+COMPILATION TARGET (Pascal and C)
+          There  are  two  variants  of   RIGAL   implementation:
+     RIGAL/Pascal  in  UNIX  Pascal  and  RIGAL/C in UNIX C.  The
+     differences between them are mentioned below.
+
+DESCRIPTION OF rc
+       rc  _f_i_l_e_n_a_m_e  [-c] [-D] [-P  parameter]...
+       rc - checks source file written  in  RIGAL  language.  The
+     source  code file  must have suffix .rig, but in the command
+     _f_i_l_e_n_a_m_e is specified without the suffix.
+       rc reports error messages if any appear; file  name,  row,
+     column and message text are  reported to standard output.
+       rc creates intermediate code  _f_i_l_e_n_a_m_e.rsc  which  can  be
+     used for interpretation.
+
+OPTIONS
+     -c   creates an executable file _f_i_l_e_n_a_m_e  (without  suffix).
+          In  RIGAL/Pascal variant an intermediate Pascal code is
+          generated and then Pascal compiler (pc) and linker  are
+          invoked.   In RIGAL/C variant an intermediate C code is
+          generated and then  C  compiler  (cc)  and  linker  are
+          invoked.   Some  intermediate  files, among them script
+          file xd, also appear.
+
+     -D   does not remove intermediate files after  the  compila-
+          tion.
+
+     -P _p_a_r_a_m_e_t_e_r
+          passes option to Pascal or C compiler. You can  use  -P
+          several times or use  -P  '_p_a_r_a_m_1 _p_a_r_a_m_2'  syntax. Typ-
+          ically you may  be  need  to  compile  with  statically
+          linked  standard  libraries, e.g.  $rig/rc rigcrf -c -P
+          -Bstatic
+
+
+
+
+
+Sun Release 4.1Last change: 7.7.1993, Linkoping Univ             1
+
+
+
+
+
+
+RIGAL(1)                 USER COMMANDS                   RIGAL(1)
+
+
+
+DESCRIPTION OF _e_x_e_c_u_t_a_b_l_e file (compilation result)
+          _e_x_e_c_u_t_a_b_l_e [-p _p_r_i_n_t_f_i_l_e_n_a_m_e] [parameter...]
+         The parameters are passed to RIGAL program  and  can  be
+     received  through  #PARM built-in rule which returns list of
+     parameters. The execution is identical  to  the  interpreted
+     program.
+
+OPTION
+        -p _p_r_i_n_t_f_i_l_e_n_a_m_e   - name of  file  for  statement  PRINT
+     output.  By default output is written to standard output.
+
+DESCRIPTION OF ic
+      ic _c_o_d_e_f_i_l_e_n_a_m_e [-p _p_r_i_n_t_f_i_l_e_n_a_m_e] [-d] [parameter...]
+      ic   - interprets the intermediate code,  created  by   rc.
+     The intermediate code must have suffix .rsc, but in the com-
+     mand it is specified without the  suffix.  Other  parameters
+     are  passed  to  RIGAL  program  and can be received through
+     #PARM built-in rule which  returns  list  of  parameters.The
+     execution is identical to the compiled program.
+
+OPTIONS
+     -p _p_r_i_n_t_f_i_l_e_n_a_m_e
+          name of file for statement  PRINT  output.  By  default
+          output is written to standard output.
+
+     -d   tracing mode is turned on. Trace of rules and branches,
+          rule  arguments and success/unsuccess messages is writ-
+          ten to file specified by -p option and  is  mixed  with
+          output  from  PRINT  statements. If -p option is absent
+          trace is written to standard output.
+
+DESCRIPTION of v
+      v _f_i_l_e_n_a_m_e
+      v    writes the contents of RIGAL code  saved  in  file  to
+     standard  output.  The  structure  of  code  is written with
+     indentation, in well-readable form. If  the  depth  of  some
+     element of the structure is more than 15 levels, then  char-
+     acters '..' appear instead of the element.
+        The _f_i_l_e_n_a_m_e must contain data saved by RIGAL statement
+               SAVE $_v_a_r  '_f_i_l_e_n_a_m_e'
+
+DESCRIPTION of rig_crf
+      rig_crf _f_i_l_e_n_a_m_e
+      rig_crf creates cross reference table for given RIGAL  pro-
+     gram  _f_i_l_e_n_a_m_e. The program file  must have suffix .rig, but
+     in the command _f_i_l_e_n_a_m_e is specified without the suffix. The
+     result  is  written to file _f_i_l_e_n_a_m_e.crf. For every rule the
+     following is reported: rules calling this one, rules  called
+     by this one, variables, use of global variables.
+
+DESCRIPTION of rig_lint
+      rig_lint _f_i_l_e_n_a_m_e
+
+
+
+Sun Release 4.1Last change: 7.7.1993, Linkoping Univ             2
+
+
+
+
+
+
+RIGAL(1)                 USER COMMANDS                   RIGAL(1)
+
+
+
+       rig_lint   creates warning table for given  RIGAL  program
+     _f_i_l_e_n_a_m_e.  The  program  file  must have suffix .rig, but in
+     the command _f_i_l_e_n_a_m_e is specified without  the  suffix.  The
+     result is written to file _f_i_l_e_n_a_m_e.lnt.
+        rig_lint checks type compatibility and cases when  values
+     of different types can be assigned to the same variable.
+
+ERROR MESSAGES
+       Error in file _f_i_l_e_n_a_m_e Line=_n_n  Message=_t_e_x_t Column=_m_m
+      - checker found syntax error in your RIGAL file. Intermedi-
+     ate code is not created, compilation failed.
+
+       *** ERROR  _n_n _x_x_x
+      - runtime warnings about dangerous manipulations with RIGAL
+     data structures or runtime input/output errors.
+
+       rig:undefined variable
+       pc:command not found
+       - see ENVIRONMENT  section of this manual
+
+        ERROR:COMPILATION ERROR IN RIGAL, rule #_n_a_m_e
+         -  internal  compilation  message,  normally  does   not
+     appear; try to simplify this rule.
+
+         ld() errors  or warnings
+         - try command
+            ranlib $rig/lib/riglib.a
+           to remove errors.
+
+ENVIRONMENT
+        For running RIGAL/Pascal you must have Sun Pascal release
+     2.1 (or higher). Command pc (Pascal compiler) must be avail-
+     able.
+        For running RIGAL/C  you must have a C compiler  (command
+     cc) available.
+        You must have environment variable rig set to the name of
+     directory where RIGAL system binary files are located.
+        You can set it by command
+             setenv rig _f_u_l_l__p_a_t_h/bin
+        in your .login file
+        It is recommended to include this directory at the  start
+     of path list by command
+           set path=( $rig ... )
+        in your .login file. Then you can use RIGAL commands  rc,
+     ic etc. from any directory.
+
+INSTALLATION of RIGAL from sources
+        All files are packed and compressed in file
+       rigs_v_a_r_i_a_n_t._s_y_s_t_e_m__v_e_r_s_i_o_n.tar.Z  (e.g.  rigsp.444.tar.Z).
+     Here rigsp denotes Pascal sources, rigsc - C sources.
+      uncompress  file   (without suffix .Z)
+      tar -xvf   file
+
+
+
+Sun Release 4.1Last change: 7.7.1993, Linkoping Univ             3
+
+
+
+
+
+
+RIGAL(1)                 USER COMMANDS                   RIGAL(1)
+
+
+
+      execute instructions in ENVIRONMENT section.
+
+      Go to RIGAL source directory (/src)  and execute  make ; it
+     takes  3-5  minutes  to  compile all sources  by Sun  Pascal
+     (or C) compiler and perform  self-test.  The  result  is  in
+     /bin
+
+FILES
+       bin/rc, bin/ic, bin/rig_crf, bin/rig_lint,  bin/v    basic
+     RIGAL system executable files
+       lib/riglib.a         RIGAL compiler  runtime  library.  If
+     you  move  it from one directory to another, execute command
+     ranlib _n_e_w__d_i_r_e_c_t_o_r_y/riglib.a
+       include/_f_i_l_e.inc,  include/_f_i_l_e.h m include files for com-
+     pilation
+       bin/anrig, bin/genrig     parts of RIGAL compiler
+       doc/rigal.1              this manual
+       doc/langdesc.txt         RIGAL language description
+       doc/impl.txt             User's guide
+      _f_i_l_e.rig  source programs in RIGAL
+      _f_i_l_e.rsc intermediate code for interpreter
+      xcrg*.pas, _f_i_l_e.RC2, _f_i_l_e.RC4, _f_i_l_e.TMP intermediate files,
+     appear and by default are removed during compilation.
+
+PRINTED DOCUMENTATION
+         The documentation is in doc subdirectory.
+         Use
+         troff -man -t rigal.1 | lpr -h -t        to print manual
+     page
+         nroff -man -t  rigal.1  >  rigal.man         to  prepare
+     readable manual page file
+         troff -ms -t  langdesc.txt  |  lpr  -h  -t     to  print
+     language description
+         troff -ms -t impl.txt | lpr -h -t         to  print  the
+     programmer's guide
+
+
+AUTHORS
+      Mikhail Auguston and Vadim Engelson,  Inst.  of  Math.  and
+     Comp.Sci,  University  of Latvia, Rainis blvd. 29, Riga, LV-
+     1459, Latvia (Lettland). Currently (1994-1995) Vadim  Engel-
+     son  is  at  IDA,  S-58183, Linkoping University, Linkoping,
+     Sweden.  e-mail:  vadim@mii.lu.lv , vaden@ida.liu.se.
+
+     Some info  and   pointers  to  papers  are   available  from
+     http://www.ida.liu.se/labs/pelab/members/vaden/rigal.html
+
+     Rigal and papers about it available by  ftp   ftp.ida.liu.se
+     /pub/labs/pelab/rigal
+
+
+
+
+
+
+Sun Release 4.1Last change: 7.7.1993, Linkoping Univ             4
+
+
+

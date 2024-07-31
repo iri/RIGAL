@@ -1,0 +1,88 @@
+---------------------------------------------
+--            OPERATOR.RIG
+---------------------------------------------
+#operator2
+
+-- RETURN , PRINT 
+        V'(($$ = 'RETURN') OR ($$ = 'PRINT')) 
+        $OP:= #_KEYWORD 
+        $E := #wyravenie
+         / IF $OP= 'RETURN'  -> 
+                   LAST #Lint $Rules . LAST #program $name ++:= $E.type;
+           FI;
+           RETURN $OP :: (. $E .)  / ;; 
+
+-- FORALL 
+        V'( $$ = 'FORALL')    #_KEYWORD 
+        $VAR := #_VARNTOATM 
+        / $item := #TAB (LAST #program $name  $VAR)/
+        V'( $$ = 'IN')        #_KEYWORD 
+        $E := #wyravenie
+        V'($$ = 'DO')         #_KEYWORD 
+          (*  $OPS !. := #operator * ';' )  [ ';' ]
+        V'($$ = 'OD')         #_KEYWORD 
+        / RETURN 'FORALL' :: <. VAR: VAR::<. NAME: $VAR,
+                                             type: $item .>,
+                                'IN' : $E,
+                                BODY: $OPS .>/ ;; 
+
+-- LOOP 
+        V'($$ = 'LOOP')       #_KEYWORD 
+        (* $OPS !.:= #operator * ';' ) [ ';' ]
+        V'($$ = 'END')        #_KEYWORD 
+        / RETURN 'LOOP' ::   $OPS   /    ;; 
+
+-- BREAK, FAIL
+        V'(( $$ = 'BREAK')  OR ( $$ = 'FAIL'))
+        $OP:= #_KEYWORD 
+        / RETURN $OP  /  ;;
+
+-- RULE CALL
+
+        $ID := #_RULETOATM
+        V'( $$ = '(' )    #_KEYWORD
+         / IF #BUILTIN( $ID ) ->  $CALL := BLTIN
+           ELSIF  T           ->  $CALL := CALL   FI /
+        (* $E !.:= #wyravenie  *)
+        V'($$ = ')')      #_KEYWORD 
+        / RETURN $CALL :: <. NAME: $ID, 
+                             ARGS: $E .>/   ;;
+
+-- var := expr
+        $Id := #_VARNTOATM
+        / $type := #TAB ( LAST #program $name $Id )/
+             ( $OP:= ':=' !
+               $OP := ( '!.' ! '!!' ) / $type ++:=<. list: T .>/ !
+               ( $OP := '++' ':=') / $type ++:= <. tree : T .>/ !
+               ( $OP := '+' ':=') /  $type ++:= <. num : T .> / )
+        $RIGHT := #wyravenie
+        / IF $OP = ':=' -> $type ++:= $RIGHT .type FI;
+          RETURN ASSGN:: <. op: $OP,
+                            praw: $RIGHT,
+                            lew: VAR:: <. NAME: $Id,
+                                          type: $type .> .>/ ;;
+-- LAST lll var := expr
+        V'( $$= 'LAST')  #_KEYWORD
+        $Id := #_RULETOATM
+        $E  := #_VARNTOATM  / $type := #TAB( $Id $E)/
+        ( $OP := ':=' !
+          $OP := ( '!.' ! '!!' ) /$type++:= <. list: T .>/ !
+          ( $OP := '++' ':=' ) /$type++:= <. tree : T .>/ !
+          ( $OP := '+' ':=' ) /$type++:= <. num : T.>/ )
+        $RIGHT := #wyravenie
+        / IF $OP = ':=' -> $type ++:= $RIGHT . type FI;
+          RETURN ASSGN:: <. op: $OP,
+                            praw: $RIGHT,
+                            lew: 'LAST':: <. RULE: $Id,
+                                             VAR: $E,
+                                             type: $type .> .>/;;
+
+-- := 
+        $LEFT := #wyravenie 
+        $OP := ( ':=' ! '!.' ! '!!' ! '++' ! '+' ) [ ':=' ]
+        $RIGHT := #wyravenie
+         / RETURN ASSGN :: <. op: $OP, 
+                              praw: $RIGHT, 
+                              lew: $LEFT   .>/
+##
+----------------------------------------------------
