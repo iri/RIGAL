@@ -1,0 +1,1115 @@
+<html><head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1257">
+
+<meta name="Generator" content="Microsoft Word 10 (filtered)">
+
+<title>Notes on Using Rigal</title>
+
+
+
+<style>
+
+<!--
+
+ /* Style Definitions */
+
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+
+	{margin:0in;
+
+	margin-bottom:.0001pt;
+
+	font-size:12.0pt;
+
+	font-family:"Times New Roman";}
+
+h1
+
+	{margin-top:12.0pt;
+
+	margin-right:0in;
+
+	margin-bottom:3.0pt;
+
+	margin-left:0in;
+
+	page-break-after:avoid;
+
+	font-size:16.0pt;
+
+	font-family:Arial;}
+
+h2
+
+	{margin-top:12.0pt;
+
+	margin-right:0in;
+
+	margin-bottom:3.0pt;
+
+	margin-left:0in;
+
+	page-break-after:avoid;
+
+	font-size:14.0pt;
+
+	font-family:Arial;
+
+	font-style:italic;}
+
+p.MsoMacroText, li.MsoMacroText, div.MsoMacroText
+
+	{margin-top:0in;
+
+	margin-right:0in;
+
+	margin-bottom:0in;
+
+	margin-left:1.0in;
+
+	margin-bottom:.0001pt;
+
+	font-size:12.0pt;
+
+	font-family:"Courier New";
+
+	letter-spacing:-.25pt;}
+
+@page Section1
+
+	{size:8.5in 11.0in;
+
+	margin:1.0in 1.25in 1.0in 1.25in;}
+
+div.Section1
+
+	{page:Section1;}
+
+-->
+
+</style>
+
+
+
+</head>
+
+
+
+<body lang="EN-US">
+
+
+
+<div class="Section1">
+
+
+
+<h1>Notes on Using Rigal</h1>
+
+
+
+<h2>Introduction</h2>
+
+
+
+<p class="MsoNormal">Rigal is available on either Solaris/SPARC or Linux/x86
+
+platforms. In order to use either one you must set the <span style="font-size:
+
+11.0pt;font-family:&quot;Courier New&quot;">rig</span> environment variable:</p>
+
+
+
+<p class="MsoNormal"><span style="font-family:&quot;Courier New&quot;;letter-spacing:-.25pt">setenv
+
+rig /home/unsupported/solaris/rsys</span><span style="font-size:11.0pt;
+
+font-family:&quot;Courier New&quot;"> </span>gives access to the Solaris version</p>
+
+
+
+<p class="MsoNormal"><span style="font-family:&quot;Courier New&quot;;letter-spacing:-.25pt">setenv
+
+rig /home/uni1/jeffery/rigal/bin</span><span style="font-size:11.0pt;
+
+font-family:&quot;Courier New&quot;"> </span>gives access to the Linux version (courtesy
+
+of Dr. Jeffery)</p>
+
+
+
+<p class="MsoNormal">Here is my .rigal file (you could put this into .cshrc if
+
+you wish)</p>
+
+
+
+<p class="MsoMacroText">if (`uname -s` == "SunOS") then</p>
+
+
+
+<p class="MsoMacroText">echo Solaris</p>
+
+
+
+<p class="MsoMacroText">&nbsp; setenv rig /home/unsupported/solaris/rsys</p>
+
+
+
+<p class="MsoMacroText">else if (`uname -s` == "Linux") then</p>
+
+
+
+<p class="MsoMacroText">&nbsp; echo Linux</p>
+
+
+
+<p class="MsoMacroText">&nbsp; setenv rig /home/uni1/jeffery/rigal/bin</p>
+
+
+
+<p class="MsoMacroText">else if</p>
+
+
+
+<p class="MsoMacroText">&nbsp; echo "What OS is this?"</p>
+
+
+
+<p class="MsoMacroText">endif</p>
+
+
+
+<p class="MsoMacroText">alias rc $rig/rc</p>
+
+
+
+<p class="MsoMacroText">alias ic $rig/ic</p>
+
+
+
+<p class="MsoMacroText">set path = ($path $rig)</p>
+
+
+
+<p class="MsoNormal">This will enable you to run the compiler (rc) and the
+
+interpreter (ic) from any directory.</p>
+
+
+
+<h2>What is a Rigal program?</h2>
+
+
+
+<p class="MsoNormal">Rigal programs consist of a single file of any number of
+
+rule (function) definitions. Each rule is introduced by a # sign followed by an
+
+identifier that is the name of the rule. It is terminated by a double # (Note:
+
+Identifiers are case sensitive):</p>
+
+
+
+<p class="MsoNormal">&nbsp;</p>
+
+
+
+<p class="MsoMacroText">#Rule1</p>
+
+
+
+<p class="MsoMacroText">�</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoMacroText">#Rule2</p>
+
+
+
+<p class="MsoMacroText">�</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoMacroText">�</p>
+
+
+
+<p class="MsoNormal">The first rule is the first called when the interpreter runs
+
+the file (like �main� in C). Any rule can call any other � they do not have to
+
+be �declared� before they are used.</p>
+
+
+
+<h2>Data types in Rigal</h2>
+
+
+
+<p class="MsoNormal">Basic data are atoms which can either be symbols
+
+(identifiers) or numbers (integers only).</p>
+
+
+
+<p class="MsoNormal">e.g. <span style="font-family:&quot;Courier New&quot;;letter-spacing:
+
+-.25pt">X, anAtom, 32, -124</span> are all atoms.</p>
+
+
+
+<p class="MsoNormal">&nbsp;</p>
+
+
+
+<p class="MsoNormal">Structured types are the list and the tree.</p>
+
+
+
+<p class="MsoNormal">&nbsp;</p>
+
+
+
+<p class="MsoNormal">A list is recursively defined as a sequence of either atoms
+
+or lists (or trees � see below) and is represented by the brackets (. and .)
+
+surrounding the sequence separated by spaces. Thus <span style="font-family:
+
+&quot;Courier New&quot;">(. a b c .)</span> is a list of three atoms, and <span style="font-family:&quot;Courier New&quot;">(. (.a .) (.b.) (.c.).)</span> is a list
+
+consisting of three lists, each of which contains one atom. Lists may be
+
+arbitrarily complex.</p>
+
+
+
+<p class="MsoNormal">&nbsp;</p>
+
+
+
+<p class="MsoNormal">A tree is like a list in that it can contain arbitrarily
+
+nested subtrees, and the leaves of the tree are atoms. The differences are that
+
+subtree branches must be uniquely labeled, the brackets are <span style="font-family:&quot;Courier New&quot;;letter-spacing:-.25pt">&lt;.</span> and <span style="font-family:&quot;Courier New&quot;;letter-spacing:-.25pt">.&gt;</span> and the
+
+sequence of subtrees are separated by commas. Thus <br>
+
+<span style="font-family:&quot;Courier New&quot;;letter-spacing:-.25pt">&lt;. L1 : a, L2
+
+: b, L3 : c .&gt;</span> is a tree consisting of three leaves, and</p>
+
+
+
+<p class="MsoNormal"><span style="font-family:&quot;Courier New&quot;;letter-spacing:-.25pt">&lt;.
+
+S1 : &lt;. L1 : a .&gt;, S2 : &lt;. L2 : b .&gt;.&gt;</span> is a tree with two
+
+branches labeled S1 and S2 leading to two subtrees consisting of a single leaf.
+
+In pictures, these two trees are:</p>
+
+
+
+<p class="MsoNormal"><span style="position:relative;z-index:1;left:-12px;
+
+top:3px;width:364px;height:91px">
+
+
+
+<table cellspacing="0" cellpadding="0" align="left">
+
+ <tbody><tr>
+
+  <td width="0" height="0"></td>
+
+  <td width="112"></td>
+
+  <td width="116"></td>
+
+  <td width="136"></td>
+
+ </tr>
+
+ <tr>
+
+  <td height="2"></td>
+
+  <td colspan="2"></td>
+
+  <td rowspan="3" valign="top" align="left"><img src="image001.gif" width="136" height="88"></td>
+
+ </tr>
+
+ <tr>
+
+  <td height="73"></td>
+
+  <td valign="top" align="left"><img src="image002.gif" width="112" height="73"></td>
+
+ </tr>
+
+ <tr>
+
+  <td height="13"></td>
+
+ </tr>
+
+</tbody></table>
+
+
+
+</span>&nbsp;</p>
+
+
+
+<p class="MsoNormal">&nbsp;</p>
+
+
+
+<h2>&nbsp;</h2>
+
+
+
+<h2>&nbsp;</h2>
+
+
+
+<br clear="ALL">
+
+
+
+<p class="MsoNormal">In addition, nodes can be labeled. So <span style="font-family:&quot;Courier New&quot;;letter-spacing:-.25pt">N::&lt;. � .&gt;</span>
+
+labels the subtree (not just the branch leading to it) with <span style="font-family:&quot;Courier New&quot;;letter-spacing:-.25pt">N</span>.</p>
+
+
+
+<h2>What is a rule?</h2>
+
+
+
+<p class="MsoNormal">A rule has a name, following the initial # sign, any number
+
+of parameters (or alternative parameter sets � see below) and executable code
+
+which consists of a sequence of assignments and/or I/O statements, separated by
+
+semi-colons. Variables, including those in parameter specifications are
+
+identifiers that start with a $ sign. Thus the rule:</p>
+
+
+
+<p class="MsoNormal">&nbsp;</p>
+
+
+
+<p class="MsoMacroText">#R1</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; $X := 3;</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; PRINT $X</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoNormal">&nbsp;</p>
+
+
+
+<p class="MsoNormal">assigns 3 to the variable X and then prints this value. When
+
+there are parameters, these are written after the rule name and any executable
+
+code must be placed between slashes:</p>
+
+
+
+<p class="MsoNormal">&nbsp;</p>
+
+
+
+<p class="MsoNormal">&nbsp;</p>
+
+
+
+<p class="MsoMacroText">#Go</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #R2(a b)</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoMacroText">#R2 $X $Y</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /PRINT $X;</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PRINT $Y/</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoMacroText">&nbsp;</p>
+
+
+
+<p class="MsoNormal">Note that a rule must call R2 and pass arguments to it. All
+
+variables have local scope, and are dynamically typed, i.e. they can pick up
+
+the type of whatever is assigned to them without declarations being necessary:</p>
+
+
+
+<p class="MsoMacroText">#Go</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #R3(a)</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoMacroText">#R3 $X</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / $X := 1;</p>
+
+
+
+<p class="MsoMacroText" style="margin-left:1.5in;text-indent:.5in">PRINT $X;</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; $Y := (. a b c .)</p>
+
+
+
+<p class="MsoMacroText" style="margin-left:1.5in;text-indent:.5in">PRINT $Y /</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoMacroText">&nbsp;</p>
+
+
+
+<p class="MsoNormal">This program prints<span style="font-family:&quot;Courier New&quot;;
+
+letter-spacing:-.25pt"> 1</span>, followed by the list <span style="font-family:
+
+&quot;Courier New&quot;;letter-spacing:-.25pt">(. a b c .)</span>; the argument passed to
+
+<span style="font-family:&quot;Courier New&quot;;letter-spacing:-.25pt">R2</span> is
+
+overwritten by the assignment of <span style="font-family:&quot;Courier New&quot;;
+
+letter-spacing:-.25pt">1</span> to <span style="font-family:&quot;Courier New&quot;;
+
+letter-spacing:-.25pt">$X</span>.</p>
+
+
+
+<p class="MsoNormal">&nbsp;</p>
+
+
+
+<p class="MsoNormal">Code may also be embedded between parameters:</p>
+
+
+
+<p class="MsoMacroText">&nbsp;</p>
+
+
+
+<p class="MsoMacroText">#Go</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #R4(a)</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoMacroText">#R4 $X / $X := 1 / $Y / $Z := $X + $Y; PRINT $Z /</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoMacroText">&nbsp;</p>
+
+
+
+<p class="MsoNormal"><span style="font-family:&quot;Courier New&quot;;letter-spacing:-.25pt">$X</span>
+
+and <span style="font-family:&quot;Courier New&quot;;letter-spacing:-.25pt">$Y</span> are
+
+the parameters. This prints <span style="font-family:&quot;Courier New&quot;;letter-spacing:
+
+-.25pt">3</span> because the value passed to <span style="font-family:&quot;Courier New&quot;;
+
+letter-spacing:-.25pt">R4</span> through <span style="font-family:&quot;Courier New&quot;;
+
+letter-spacing:-.25pt">$X</span> is overwritten with <span style="font-family:
+
+&quot;Courier New&quot;;letter-spacing:-.25pt">1</span>.</p>
+
+
+
+<p class="MsoNormal">&nbsp;</p>
+
+
+
+<p class="MsoNormal">Rules can be called recursively. The base case can be
+
+distinguished by a conditional test using the IF form:</p>
+
+
+
+<p class="MsoNormal">&nbsp;</p>
+
+
+
+<p class="MsoMacroText">#Go</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; #R5(0)</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoMacroText">#R5 $N</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; /PRINT $N;</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; IF $N &lt; 10 -&gt; #R5($N + 1) FI/</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoNormal">This program prints the sequence<span style="font-family:
+
+&quot;Courier New&quot;;letter-spacing:-.25pt"> 0</span> through <span style="font-family:
+
+&quot;Courier New&quot;;letter-spacing:-.25pt">10</span>.</p>
+
+
+
+<p class="MsoNormal">&nbsp;</p>
+
+
+
+<h2>Operations</h2>
+
+
+
+<p class="MsoNormal">Rigal has a standard set of arithmetic operations: +, -, *,
+
+/. It also has a number of operations to support list and tree processing.
+
+Adding an item to the end of a list is done with <span style="font-family:&quot;Courier New&quot;;
+
+letter-spacing:-.25pt">!.</span> and appending two lists together is done with <span style="font-family:&quot;Courier New&quot;;letter-spacing:-.25pt">!!</span>:</p>
+
+
+
+<p class="MsoNormal">&nbsp;</p>
+
+
+
+<p class="MsoMacroText">#Go</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; #R6( (. a b c .) )</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoMacroText">#R6</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; $L / $M := $L !. d; $N := $M !! (. e f .); PRINT $N/</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoNormal">&nbsp;</p>
+
+
+
+<p class="MsoNormal">This prints the list <span style="font-family:&quot;Courier New&quot;;
+
+letter-spacing:-.25pt">(. a b c d e f .)</span></p>
+
+
+
+<p class="MsoNormal"><span style="font-family:&quot;Courier New&quot;;letter-spacing:-.25pt">&nbsp;</span></p>
+
+
+
+<p class="MsoNormal">Trees can be concatenated with the operation ++:</p>
+
+
+
+<p class="MsoMacroText">#Go</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; #R7 ( &lt;. B1:&lt;. L1 : a, L2 : b .&gt; .&gt; )</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoMacroText">#R7</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; $T </p>
+
+
+
+<p class="MsoMacroText" style="margin-left:1.5in">/ $U := $T ++ &lt;. B2:&lt;. L1
+
+: c, L2 : d .&gt; .&gt;; PRINT $U/</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoNormal">This prints the tree </p>
+
+
+
+<p class="MsoNormal"><span style="font-family:&quot;Courier New&quot;;letter-spacing:-.25pt">&lt;.
+
+B1 : &lt;.L1 : a ,L2 : b .&gt;, B2 : &lt;.L1 : c ,L2 : d .&gt; .&gt;</span></p>
+
+
+
+<h2>Pattern parameters</h2>
+
+
+
+<p class="MsoNormal">Rigal can also pass arguments to rules via pattern parameters,
+
+that specify the structure of the argument. A pattern can be a simple variable,
+
+which matches anything. Thus all the above examples pass their arguments
+
+through a simple variable pattern. A pattern can be a constant, and then the
+
+argument is expected to be that constant value. Thus:</p>
+
+
+
+<p class="MsoMacroText" style="margin-left:1.5in">#Go</p>
+
+
+
+<p class="MsoMacroText" style="margin-left:1.5in">&nbsp;&nbsp;&nbsp;&nbsp; #R8 (1 a 2)</p>
+
+
+
+<p class="MsoMacroText" style="margin-left:1.5in">##</p>
+
+
+
+<p class="MsoMacroText" style="margin-left:1.5in">#R8</p>
+
+
+
+<p class="MsoMacroText" style="margin-left:1.5in">&nbsp;&nbsp;&nbsp;&nbsp; $n1 a $N2</p>
+
+
+
+<p class="MsoMacroText" style="margin-left:1.5in">&nbsp;&nbsp;&nbsp;&nbsp; /PRINT �Matched�/</p>
+
+
+
+<p class="MsoMacroText" style="margin-left:1.5in">##</p>
+
+
+
+<p class="MsoNormal">prints �Matched� since 1 matches with $N1, a matches with a
+
+and 2 matches with $N2. If any argument fails to match, the rule returns NULL.
+
+Alternative matches can be specified separated by <span style="font-family:
+
+&quot;Courier New&quot;;letter-spacing:-.25pt">;; </span>:</p>
+
+
+
+<p class="MsoMacroText">#Go</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; #R8 (1 b 2)</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoMacroText">#R9</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; $N1 a $N2</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; /PRINT 'Matched with a'/ ;;</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; $N1 b $N2</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; /PRINT 'Matched with b'/</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoNormal">prints <span style="font-family:&quot;Courier New&quot;;letter-spacing:
+
+-.25pt">'Matched with b'</span> since the first set of patterns fails. Patterns
+
+can also specify lists or trees, and these can contain variables and/or
+
+constants as necessary. The following set of rules illustrates some examples.</p>
+
+
+
+<p class="MsoMacroText">#Go</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; #R10( (. a b c .) );</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; #R11( (. a (. b .) c .) )</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; #R12( &lt;. l1 : a, l2 : 2 .&gt; )</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; #R13 ( &lt;. l1 : &lt;. l1 : a, l2 : b .&gt;, l2 :
+
+&lt;. l1 : a .&gt; .&gt; )</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoMacroText">#R10</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; (. a $L $M .)</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; /PRINT $L; PRINT $M/</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoMacroText">#R11</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; (. a $L c .)</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; /PRINT $L/</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoMacroText">#R12</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; &lt;. l1 : a, l2 : $T .&gt;</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; /PRINT $L; PRINT $T/</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoMacroText">#R13</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; &lt;. l1 : &lt;. l1 : $V1 / PRINT $V1/,</p>
+
+
+
+<p class="MsoMacroText" style="text-indent:.5in">&nbsp;&nbsp; l2 : $V2 /PRINT $V2/ .&gt;,
+
+l2 : $T1 .&gt;</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /PRINT $T1/</p>
+
+
+
+<p class="MsoMacroText">## </p>
+
+
+
+<p class="MsoNormal">Note that a tree pattern can only have variables in the node
+
+(subtree) positions, not in the labels on those subtrees.</p>
+
+
+
+<p class="MsoNormal">&nbsp;</p>
+
+
+
+<p class="MsoNormal">Special forms are available for matching with lists and
+
+trees of arbitrary size. In each case, a sequence of items in a list or
+
+subtrees in a tree can be specified. The form <span style="font-family:&quot;Courier New&quot;;
+
+letter-spacing:-.25pt">(* � *)</span> means&nbsp; match with a list of any length,
+
+including zero (the empty list). The form<span style="font-family:&quot;Courier New&quot;;
+
+letter-spacing:-.25pt"> (+ � +)</span> means there must be at least one item.
+
+Similarly,<span style="font-family:&quot;Courier New&quot;;letter-spacing:-.25pt"> &lt;*
+
+� *&gt;</span> is a tree with any number of subtrees, and <span style="font-family:&quot;Courier New&quot;;letter-spacing:-.25pt">&lt;+ � +&gt;</span> is
+
+a tree with at least one subtree. The following examples illustrate these. Note
+
+that executable code can be embedded in these patterns.</p>
+
+
+
+<p class="MsoMacroText">#Go</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #R14( (. a b c .) );</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #R15( (. d e f .) );</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #R16(g h i)</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoMacroText">#R14</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (. (* $Item /PRINT $Item/ *) .)</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoMacroText">#R15</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (. d (+ $Item /PRINT $Item/ +) .)</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoMacroText">#R16</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (* $Item /PRINT $Item/ *)</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoNormal">Note the special form for matching a sequence of arguments
+
+to a rule (R16).</p>
+
+
+
+<p class="MsoMacroText">#Go</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; #R17( &lt;. L1: a, L2: b, L3: c .&gt; );</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; #R18(&lt;. L1:&lt;.L2:&lt;.L3:a.&gt;.&gt;.&gt; )</p>
+
+
+
+<p class="MsoMacroText">##<br>
+
+#R17</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; &lt;* L1:$V1 /PRINT $V1/,</p>
+
+
+
+<p class="MsoMacroText" style="text-indent:.5in">&nbsp;&nbsp; $Lab:$VS /PRINT $Lab; PRINT
+
+$VS .&gt;</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoMacroText">#R18</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; &lt;* $Lab /PRINT $Lab/ : #R18 *&gt; ;;</p>
+
+
+
+<p class="MsoMacroText">&nbsp;&nbsp;&nbsp;&nbsp; $leaf</p>
+
+
+
+<p class="MsoMacroText">##</p>
+
+
+
+<p class="MsoNormal">R18 is an example of a recursive rule call which will fail
+
+when it is passed a leaf node. The alternative �catches� the leaf and stops the
+
+recursion. The labels are printed in reverse order (L3, L2, L1) when the
+
+recursion is unwound.</p>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+</body></html>
