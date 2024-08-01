@@ -6,38 +6,38 @@
 
 /* ******************* rclib ******************** */
 
-#define filemax         3   /* ~islo wlovenij dlq include */
+#define filemax         3   /* chislo wlovenij dlja include */
 #define bufmaxlen       10   /* dlina malogo bufera , kak minimum - 8 */
-#define rulemaxnum      400   /* ~islo prawil w programme     */
-#define two_char_sym_max  50   /* maks. ~islo dwuhbajtowyh simwolow */
+#define rulemaxnum      400   /* chislo prawil w programme     */
+#define two_char_sym_max  50   /* maks. chislo dwuhbajtowyh simwolow */
 
 
 
 typedef char keyint;
-   /* nomer kl`~ewogo slowa, ograni~en dlq case */
+   /* nomer kljuchewogo slowa, ogranichen dlja case */
 
 
 
 a m1[150], etalon[150];
-/* massiwy, postoqnnye dlq poddervki
-          prikreplennyh cepo~ek w prostranstwah */
+/* massiwy, postojannye dlja poddervki
+          prikreplennyh cepochek w prostranstwah */
 long varn_desks;
 filespecification curfile_name;
-a currulename;   /* adres w sp2 imeni teku{ego prawila */
-ptr_ l;   /* pojnter dlq whodnogo spiska ~ekera w sp1 */
-ptr_ r;   /* ob{ego nazna~eniq pojntery */
-long errmuch;   /* ~islo o{ibok */
+a currulename;   /* adres w sp2 imeni tekushchego prawila */
+ptr_ l;   /* pojnter dlja whodnogo spiska chekera w sp1 */
+ptr_ r;   /* obshchego naznachenija pojntery */
+long errmuch;   /* chislo oshibok */
 
 boolean bspi;   /* we are within v' or S' */
 a ass_1;   /* special variable $ */
-a saveladr;   /* sohranqemyj dlq el/val adres */
-keyint saveelkey;   /* sohraneqemyj nomer. kl. slowa el/val */
+a saveladr;   /* sohranjaemyj dlja el/val adres */
+keyint saveelkey;   /* sohranejaemyj nomer. kl. slowa el/val */
 a tabv[rulemaxnum], tabn[rulemaxnum], tabflags[rulemaxnum];
 aa tabfiles[rulemaxnum];
 word tabcord[rulemaxnum];
 
 
-/* tablica adresow spiskow peremennyh, imen prawil i flagow dlq nee */
+/* tablica adresow spiskow peremennyh, imen prawil i flagow dlja nee */
 
 /* source list */
 /* result code */
@@ -45,22 +45,22 @@ word tabcord[rulemaxnum];
 extern Void che11 PP((long chein, long *rezche, Char *main_name,
               error_rec_type *error_rec_rw,int an_argc,char *an_argv[]));
 
-/* ukazatelx |l-ta spiska */
-/* nowyj |l-t */
+/* ukazatelj el-ta spiska */
+/* nowyj el-t */
 extern Void push PP((ptr_ *pp, long adr));
 
-/* dobawlqet |lement k spisku */
+/* dobawljaet element k spisku */
 extern Void newlist PP((ptr_ *pp));
 
-/* nowyj ukazatelx spiska */
+/* nowyj ukazatelj spiska */
 /* sozdaet nowyj spisok */
-/* ukazatelx spiska */
-/* imq */
+/* ukazatelj spiska */
+/* imja */
 extern Void namelist PP((ptr_ pp, long name));
 
-/* priswaiwaet imq spisku */
-/* gde izmenitx */
-/* na ~to */
+/* priswaiwaet imja spisku */
+/* gde izmenitj */
+/* na chto */
 extern Void changeelement PP((ptr_ *pp, long adr));
 
 
@@ -75,17 +75,17 @@ boolean er;
                    as last, var- paramerter */
 extern Void err PP((long err_num));
 
-/* wydaet soob{eniq ob o{ibkah rigal-teksta */
+/* wydaet soobshchenija ob oshibkah rigal-teksta */
 extern Void tabrule PP((long av, long ar));
 
-/* sozdaet nowoe imq peremennoj av prawila ar w
+/* sozdaet nowoe imja peremennoj av prawila ar w
  tablice prawil w sp2 , adresa iz sp2 */
 extern Void dul PP((long *ad));
 
 /* beret l.cel iz sp1 i dubliruet w ad w sp2 */
 extern Void pushl PP((ptr_ *m));
 
-/* kak push(m,l.cel) ,no iz sp1 w sp2 */
+/* kak push(m,l.cel) , no iz sp1 w sp2 */
 extern char des PP((ptr_ g));
 
 extern Void nextl PV();
@@ -257,7 +257,7 @@ ptr_ *v;
     next(v);
   }
   /*1*/
-  /* prowerka na nali~ie w tablice neopredelennyh prawil */
+  /* prowerka na nalichie w tablice neopredelennyh prawil */
   nb = 1;
   while (tabn[nb - 1] != 0 && nb != rulemaxnum)   /*while*/
   {  /*1*/
@@ -310,7 +310,7 @@ keyint ki;
 struct LOC_chepro *LINK;
 {
   /* nomer k-ty */
-  /* sozdaet w sp1 konstantu, berq ee iz bufrec */
+  /* sozdaet w sp1 konstantu, berja ee iz bufrec */
   long q;
   a a1, aadr;
   mpd x;
@@ -334,8 +334,8 @@ struct LOC_chepro *LINK;
   }
   for (q = 0; q <= 9; q++)
     LINK->bufrec.b10[q] = ' ';
-  m1[ki] = a1;   /* zakreplqet adres */
-  etalon[ki] = aadr;   /* zakreplqet a-adres */
+  m1[ki] = a1;   /* zakrepljaet adres */
+  etalon[ki] = aadr;   /* zakrepljaet a-adres */
   /*==$ifdef harddebug*/
   /*      if bb7 then
           writeln('razm. ', str80[1], str80[2], str80[3], ki: 3,
@@ -345,7 +345,7 @@ struct LOC_chepro *LINK;
 
 
 Void chepro()
-{  /* inicializaciq peremennyh */
+{  /* inicializacija peremennyh */
   struct LOC_chepro V;
   Char onechar_array[12];
   c2 twochar_symbols[29];
@@ -355,11 +355,11 @@ Void chepro()
   ptr_ f1;
 
 
-  errmuch = 0;   /* ~islo o{ibok */
+  errmuch = 0;   /* chislo oshibok */
   /* nomera prostranstw i konstanty */
-  for (i = 0; i <= 149; i++)   /* o~istka */
+  for (i = 0; i <= 149; i++)   /* ochistka */
     m1[i] = 0;
-  for (i = 0; i < rulemaxnum; i++)   /* o~istka */
+  for (i = 0; i < rulemaxnum; i++)   /* ochistka */
     tabv[i] = 0;
   memcpy(tabn, tabv, rulemaxnum * sizeof(long));
   memcpy(tabflags, tabv, rulemaxnum * sizeof(long));
@@ -470,8 +470,8 @@ Void chepro()
   ass_1 = etalon[73];
   /* this is used after maxkey and necessary for
      $ - variable name is '_' */
-  /* na~inaq s nomera 76 - |talony imen wstroennyh prawil */
-  /* nomer prawila wy~islqetsq w programme bltn :  i-75  */
+  /* nachinaja s nomera 76 - etalony imen wstroennyh prawil */
+  /* nomer prawila wychisljaetsja w programme bltn :  i-75  */
   memcpy(V.bufrec.b7, "IMPLODE", 7L);
   makekey(76, &V);   /* 1 */
   memcpy(V.bufrec.b7, "EXPLODE", 7L);
@@ -532,10 +532,10 @@ Void chepro()
   varn_desks = (1L << ((long)variable)) | (1L << ((long)idvariable)) |
 	       (1L << ((long)fvariable)) | (1L << ((long)nvariable));
   newlist(&f1);
-  /* nowyj spisok - dlq tablicy prawil */
+  /* nowyj spisok - dlja tablicy prawil */
   /*m2[1] := f1.mainadr;*/
   push(&f1, 0L);
-  bspi = false;   /* dlq $$ w s' */
+  bspi = false;   /* dlja $$ w s' */
   saveladr = 512;   /* any impossible address */
   /* with */
 }
@@ -616,7 +616,7 @@ char *an_argv[];
   error_rec_ch_adr = 0;
   sprintf(error_rec_ch_mainstr, "%s.rig", main_name);
 
-  chepro();   /* prolog of checker , makes deskriptrs  */
+  chepro();   /* prolog of checker , makes descriptors  */
 
 
   if (V.batfile != NULL)
@@ -663,7 +663,7 @@ char *an_argv[];
     goto _L77;
   }
   next(&l);
-  push(&rrr, 0L);   /* razdelitelx */
+  push(&rrr, 0L);   /* razdelitelj */
   /*  write('Rule 1:');
     pointr(currulename,x.sa);
     writeln('#',aa_str(x.srd^.name));*/
@@ -810,7 +810,7 @@ struct LOC_expr *LINK;
   mpd x;
   char TEMP;
 
-  /* wyraveniq samogo nizkogo urownq */
+  /* wyravenija samogo nizkogo urownja */
 
 
   TEMP = des(l);
@@ -831,7 +831,7 @@ struct LOC_expr *LINK;
 
   if (des(l) == rulename) {
     bltn(l.cel, &a1);
-    if (a1 == 0) {   /* pome{{aetsq nomer prawila */
+    if (a1 == 0) {   /* pomechaetsja nomer prawila */
       pushl(p);
       tabrule(0L, p->cel);
     } else  /* wyzow wstroennoj f-ii */
@@ -899,7 +899,7 @@ struct LOC_expr *LINK;
 	  expr(p, true);
 	  if (er)
 	    goto _L99;
-	  /* imq wetwi derewa - wyravenie */
+	  /* imja wetwi derewa - wyravenie */
 	  if (el(colon_sign))
 	    nextl();
 	  else
@@ -936,7 +936,7 @@ struct LOC_expr *LINK;
 	err(301L);
 	goto _L99;
       }
-      /* oby~nye skobki */
+      /* obychnye skobki */
       nextl();
       break;
 
@@ -996,7 +996,7 @@ struct LOC_expr *LINK;
       break;
       /* if not(bspi) then err(307);*/
       /* commented 30-aug-89 */
-      /* tolxko w  s'..*/
+      /* toljko w  s'..*/
 
 
 
@@ -1004,7 +1004,7 @@ struct LOC_expr *LINK;
       err(323L);
       nextl();
       goto _L99;   /* else */
-      /* neovidannyj keyword wnutri wyraveniq */
+      /* neovidannyj keyword wnutri wyravenija */
       break;
     }/*case*/
   }  /* if/keyword */
@@ -1263,7 +1263,7 @@ boolean bigexpr_;
   /*-$ifdef harddebug*/
   /*   if bb3 then writeln('*EXPR*', valc(l));*/
   /*-$endif*/
-  if (V.bigexpr) {   /* esli nastoq{ee wyravenie */
+  if (V.bigexpr) {   /* esli nastojashchee wyravenie */
     expr8(p, &V);
     if (er)
       goto _L1;
@@ -1948,7 +1948,7 @@ ptr_ *m_;
     nextl();
     expr(&V.p, true);
     break;
-    /* oformleniq spiskow dlq razn. tipow operatora */
+    /* oformlenija spiskow dlja razn. tipow operatora */
 
   case open_key:
     oplist(10752L, &V);
@@ -2100,7 +2100,7 @@ ptr_ *m_;
 	err(225L);
 	goto _L1;
       }
-      /* li{nie simwoly posle operatora-wyzowa prawila */
+      /* lishnie simwoly posle operatora-wyzowa prawila */
       namelist(V.p, V.p.cel);
     } else {
       TEMP3 = des(l);
@@ -2142,7 +2142,7 @@ ptr_ *m_;
       } else {  /* priswaiwanie */
 	newlist(&V.p);
 	push(V.m, V.p.UU.U1.mainadr);
-	expr(&V.p, false);   /* lewaq ~astx prisw. */
+	expr(&V.p, false);   /* lewaja chastj prisw. */
 	if (er)
 	  goto _L1;
 	push(&V.p, 5632L);
@@ -2183,12 +2183,12 @@ ptr_ *m_;
 	  goto _L1;
 	}
 	nextl();   /* propuskaem znak ":=" */
-	namelist(V.p, a1);   /* tip priswaiwaniq -> w imq */
-	expr(&V.p, true);   /* prawaq ~astx prisw. */
+	namelist(V.p, a1);   /* tip priswaiwanija -> w imja */
+	expr(&V.p, true);   /* prawaja chastj prisw. */
       }  /* priswaiwanie */
     }
     break;
-  }/* bolxoj case/valc */
+  }/* boljoj case/valc */
 _L1: ;
 
 
@@ -2248,7 +2248,7 @@ long *siz, *act;
   *act = 0;   /* counter of non-empty actions */
   specoperator = false;   /* net operatora */
   agregname = false;   /* net agregata */
-  pattern = true;   /* w na~ale ovidaetsq shablon,a ne operator */
+  pattern = true;   /* w nachale ovidaetsja shablon,a ne operator */
 
   do {
 
@@ -2277,9 +2277,9 @@ long *siz, *act;
 	newlist(&z);
 	push(m, z.UU.U1.mainadr);
 	namelist(z, (long)se);   /* se - standart */
-	push(&z, 5120L);   /* net ograni~itelq w "( *"-konstr. */
+	push(&z, 5120L);   /* net ogranichitelja w "( *"-konstr. */
 	z1 = z;   /* movet-budet */
-	pict(&z, &s1, &ac1);   /* rekursiwno wyzow posledowatelxnosti */
+	pict(&z, &s1, &ac1);   /* rekursiwno wyzow posledowateljnosti */
 	if (er)
 	  goto _L1;
 
@@ -2298,7 +2298,7 @@ long *siz, *act;
 	    err(71L);
 	    goto _L1;
 	  }
-	  /* estx ograni~itelx */
+	  /* estj ogranichitelj */
 	  dul(&limiter);   /* l.cel -> w sp2 po adresu limitera*/
 	  if (des(l) == rulename) {
 	    bltnvar(l.cel, &a_bltnvar);
@@ -2312,7 +2312,7 @@ long *siz, *act;
 	  changeelement(&z1, limiter);
 	  /* perewod w sp2 w mesto z1 iz l-spiska */
 	  nextl();
-	  /* skobka posle ograni~itelq */
+	  /* skobka posle ogranichitelja */
 	  if (!el(rpar)) {
 	    err(72L);
 	    goto _L1;
@@ -2333,9 +2333,9 @@ long *siz, *act;
 	newlist(&z);
 	push(m, z.UU.U1.mainadr);
 	namelist(z, (long)ps);   /*  ps - standart */
-	push(&z, 5120L);   /*  net ograni~itelq w "(+"-konstr. */
+	push(&z, 5120L);   /*  net ogranichitelja w "(+"-konstr. */
 	z1 = z;   /* movet-budet */
-	pict(&z, &s1, &ac1);   /* rekursiwno wyzow posledowatelxnosti */
+	pict(&z, &s1, &ac1);   /* rekursiwno wyzow posledowateljnosti */
 	if (er)
 	  goto _L1;
 
@@ -2354,7 +2354,7 @@ long *siz, *act;
 	    err(74L);
 	    goto _L1;
 	  }
-	  /* estx ograni~itelx */
+	  /* estj ogranichitelj */
 	  dul(&limiter);   /* perewod w sp2 w mesto z1 iz l-spiska*/
 	  if (des(l) == rulename) {
 	    bltnvar(l.cel, &a_bltnvar);
@@ -2367,7 +2367,7 @@ long *siz, *act;
 	    goto _L1;
 	  changeelement(&z1, limiter);
 	  nextl();
-	  /* skobka posle ograni~itelq */
+	  /* skobka posle ogranichitelja */
 	  if (!el(rpar)) {
 	    err(75L);
 	    goto _L1;
@@ -2388,7 +2388,7 @@ long *siz, *act;
 	nextl();
 	newlist(&z);
 	push(m, z.UU.U1.mainadr);
-	namelist(z, (long)fa);   /*  fakulxtatiw - standart */
+	namelist(z, (long)fa);   /*  fakuljtatiw - standart */
 	pict(&z, &s1, &ac1);
 	if (er)
 	  goto _L1;
@@ -2405,11 +2405,11 @@ long *siz, *act;
       }
 
       specoperator = false;
-      /* estx li dop.
+      /* estj li dop.
                               operator
-                              priswaiwaniq */
+                              priswaiwanija */
       agregname = false;
-      /* ukazano li imq
+      /* ukazano li imja
                            agregata */
 
 
@@ -2417,11 +2417,11 @@ long *siz, *act;
       /******************************    assign variable $x:=   ****/
 
       if (((1L << ((long)TEMP)) & varn_desks) != 0) {
-	dul(&a_varname);   /* zdesx imq peremennoj*/
+	dul(&a_varname);   /* zdesj imja peremennoj*/
 	tabrule(a_varname, currulename);
 	if (er)
 	  goto _L1;
-	l1 = l;   /* sohranim na slu~aj, esli dalee ne operator */
+	l1 = l;   /* sohranim na sluchaj, esli dalee ne operator */
 	nextl();
 	/* added 17-jan-1990 for (+ $e $r + tt ) difference from
 	                              $r + := tt */
@@ -2442,16 +2442,16 @@ long *siz, *act;
 			      (1L << excl_point))) != 0)
 	{   /* backtracking : no assignment symbols */
 	  /* esli posle perem. +,++,!!,!. i :=, to dop. operator */
-	  l3 = l;   /* l3 - zdesx znak tipa priswaiwaniq */
+	  l3 = l;   /* l3 - zdesj znak tipa priswaiwanija */
 	  nextl();
 	  if (!el(let_sign))
 	    err(91L);
 	  if (er)
 	    goto _L1;
-	  nextl();   /* propuskaetsq znak := */
+	  nextl();   /* propuskaetsja znak := */
 	  switch (valc(l3)) {
 
-	  /* generiruetsq kod specoperatora */
+	  /* generiruetsja kod specoperatora */
 	  case plus:
 	    spopcode = 6656;
 	    break;
@@ -2470,12 +2470,12 @@ long *siz, *act;
 	  }/* case */
 	  specoperator = true;
 	}  /* if/in */
-	else {  /* movet bytx operator priswaiwaniq */
+	else {  /* movet bytj operator priswaiwanija */
 	  if (el(let_sign)) {  /* esli $a:= ... */
 	    push(m, 29184L);   /* null -> $a */
 	    push(m, a_varname);
 	    nextl();   /* propusk ego ":=" */
-	    spopcode = 6144;   /* kod oby~nogo prisw. */
+	    spopcode = 6144;   /* kod obychnogo prisw. */
 	    specoperator = true;
 	  }  /* if ":=" */
 	  else  /* woobshe ne operator */
@@ -2503,7 +2503,7 @@ _L55:
 	    goto _L1;
 	  if (specoperator)
 	    nextl();
-	  else {  /* ne nado powtorno pe~atatx imq perem.*/
+	  else {  /* ne nado powtorno pechatatj imja perem.*/
 	    next(&l);
 	    if (l.nel == 0)
 	      err(699L);
@@ -2515,8 +2515,8 @@ _L55:
 
 
 	if (!el(d_colon)) {  /* ******** no :: **** */
-	  /* esli dalee ne "::", to |to prosto */
-	  /*  peremennaq ili atom */
+	  /* esli dalee ne "::", to eto prosto */
+	  /*  peremennaja ili atom */
 	  push(m, a_title);
 	  goto _L99;
 	}
@@ -2529,11 +2529,11 @@ _L55:
       if (el(lpar_point)) {
 	nextl();
 	newlist(&z);
-	push(m, z.UU.U1.mainadr);   /* spisok opisaniq ego */
+	push(m, z.UU.U1.mainadr);   /* spisok opisanija ego */
 	namelist(z, (long)li);   /* standart */
 	if (agregname) {   /* net imeni */
 	  agregname = false;
-	  /* wstawlqem imq spiska */
+	  /* wstawljaem imja spiska */
 	  push(&z, a_title);
 	} else
 	  push(&z, 5120L);
@@ -2557,11 +2557,11 @@ _L55:
 	  err(53L);
 	  goto _L1;
 	}
-	alternflag = false;   /* ovidaetsq, ~to net '!' */
+	alternflag = false;   /* ovidaetsja, chto net '!' */
 	nextl();
 	newlist(&z);
 	push(m, z.UU.U1.mainadr);
-	namelist(z, (long)al);   /* alxternatiwa-standart */
+	namelist(z, (long)al);   /* aljternatiwa-standart */
 	do {
 	  pict(&z, &s1, &ac1);
 	  if (er)
@@ -2577,9 +2577,9 @@ _L55:
 	    nextl();
 	  }
 	  if ((s1 <= 1) & el(excl_sign)) {
-	    /* |to nastoqshaq alxternatiwa */
-	    push(&z, 4608L);   /* razdelitelx alxternatiw */
-	    alternflag = true;   /* wse ve estx '!'*/
+	    /* eto nastojashaja aljternatiwa */
+	    push(&z, 4608L);   /* razdelitelj aljternatiw */
+	    alternflag = true;   /* wse ve estj '!'*/
 	    nextl();
 	    if (el(rpar))
 	      err(84L);
@@ -2601,7 +2601,7 @@ _L55:
 
       /******************************   #xxx ****/
 
-      if (des(l) == rulename) {  /* imq prawila */
+      if (des(l) == rulename) {  /* imja prawila */
 	if (agregname) {
 	  err(52L);
 	  goto _L1;
@@ -2634,11 +2634,11 @@ _L55:
 	  namelist(z, 512L);
 	/* tip shablona <* ili <. */
 	if (agregname) {
-	  agregname = false;   /* esli bylo imq derewa */
+	  agregname = false;   /* esli bylo imja derewa */
 	  push(&z, a_title);
 	} else
 	  push(&z, 5120L);
-	lastarcflag = false;   /* poslednqq li wetwx */
+	lastarcflag = false;   /* poslednjaja li wetwj */
 	if (el(more_star) | el(more_point)) {
 	  err(57L);
 	  goto _L1;
@@ -2646,54 +2646,54 @@ _L55:
 	/* empty tree is not allowed */
 	arcnumber = 0;
 	while (!(el(more_star) | el(more_point))) {
-	  arcnumber++;   /* pods~et wetwej */
+	  arcnumber++;   /* podschet wetwej */
 	  if (lastarcflag)
 	    err(40L);
 	  if (er)
 	    goto _L1;
-	  /* ne dolvno bytx wetwej za   $a:... */
+	  /* ne dolvno bytj wetwej za   $a:... */
 	  if (el(lbrac)) {
 	    push(&z, 31232L);
 	    nextl();
-	    treebracflag = true;   /* estx [...] */
+	    treebracflag = true;   /* estj [...] */
 	  } else {
 	    push(&z, 0L);
-	    z1 = z;   /* sohranqem ~toby potom */
-	    /* w poslednij raz menqtx  0  na 30208 */
+	    z1 = z;   /* sohranjaem chtoby potom */
+	    /* w poslednij raz menjatj  0  na 30208 */
 	    treebracflag = false;
 	  }
 	  TEMP = des(l);
 	  if (((1L << ((long)TEMP)) & (1L << ((long)idatom))) != 0) {
 		/*atom,*/
-		  /* atom - imq wetwi derewa */
+		  /* atom - imja wetwi derewa */
 		  pushl(&z);
 	    nextl();
 	  } else {
 	    TEMP2 = des(l);
 	    if (((1L << ((long)TEMP2)) & varn_desks) != 0) {
-	      lastarcflag = true;   /* tut poslednqq wetwx */
+	      lastarcflag = true;   /* tut poslednjaja wetwj */
 	      if (!treestarflag)
 		err(41L);
 	      if (er)
 		goto _L1;
-	      /* zapretna peremennaq w <. $a : ... .> */
+	      /* zapretna peremennaja w <. $a : ... .> */
 	      if (treebracflag)
 		err(42L);
 	      if (er)
 		goto _L1;
-	      /* zapretna peremennaq w [ $a : ... ] */
-	      changeelement(&z1, 30208L);   /* zamenqem 0 dlq priznaka */
+	      /* zapretna peremennaja w [ $a : ... ] */
+	      changeelement(&z1, 30208L);   /* zamenjaem 0 dlja priznaka */
 	      dul(&a_arcvar);
 	      tabrule(a_arcvar, currulename);
 	      if (er)
 		goto _L1;
-	      push(&z, a_arcvar);   /* peremennaq -imq wetwi */
+	      push(&z, a_arcvar);   /* peremennaja -imja wetwi */
 	      nextl();
 	    } else
 	      err(43L);
 	  }
 	  /*, fatom, number */
-	  if (er)   /* ne peremennaq i ne atom */
+	  if (er)   /* ne peremennaja i ne atom */
 	    goto _L1;
 
 	  /* ****************************** : ***** */
@@ -2728,7 +2728,7 @@ _L55:
 	    err(47L);
 	  if (er)
 	    goto _L1;
-	}  /* while , cikl po wetwqm derewa */
+	}  /* while , cikl po wetwjam derewa */
 
 	if (treestarflag & el(more_point))
 	  err(48L);
@@ -2816,7 +2816,7 @@ _L99:
       if (specoperator) {
 	specoperator = false;
 	push(m, spopcode);
-	/* stawitsq imq peremennoj w specoperatore */
+	/* stawitsja imja peremennoj w specoperatore */
 	push(m, a_varname);
       }
     }  /* if/pattern */
@@ -2834,7 +2834,7 @@ _L111:
 			      TEMP1 == rpar_star || TEMP1 == star));
 _L1: ;
 
-  /* |to imq agregata */
+  /* eto imja agregata */
 }  /* pict */
 
 
@@ -2845,7 +2845,7 @@ long adr;
   mpd x, x1;
   a a1;
 
-  /* dobawlqet po pojnteru spiska nowyj |lement k spisku*/
+  /* dobawljaet po pojnteru spiska nowyj element k spisku*/
   /* i sdwigaet pojnter pp */
   if (pp->ptrtype != ptrlist) {
     printf("Rigal internal error Push-102\n");
@@ -2859,13 +2859,13 @@ long adr;
   points(pp->UU.U1.curfragment, &x.sa);
   if (x.smld->dtype == listmain && pp->nel == mainlistelnum ||
       x.sfld->dtype == listfragm && pp->nel == fragmlistelnum) {
-    /* w slu~ae dostiveniq konca fragmenta spiska */
+    /* w sluchae dostivenija konca fragmenta spiska */
     gets5(&a1, &x1.sa);
     if (x.smld->dtype == listmain)   /* podceplenie */
       x.smld->next = a1;
     else
       x.sfld->next = a1;
-    /* obrazuem i zapolnqem nowyj  */
+    /* obrazuem i zapolnjaem nowyj  */
     x1.sfld->dtype = listfragm;
     x1.sfld->elnum = 1;
     x1.sfld->elt[0] = adr;
@@ -2877,7 +2877,7 @@ long adr;
     pp->UU.U1.curfragment = a1;
     return;
   }  /* then */
-  /* ob{ij clu~aj dobawleniq |lementa wnutri fragmenta */
+  /* ob{ij cluchaj dobawlenija elementa wnutri fragmenta */
   switch (x.smld->dtype) {
 
   case listmain:
@@ -2900,7 +2900,7 @@ long adr;
 Void newlist(pp)
 ptr_ *pp;
 {
-  /* nowyj ukazatelx spiska */
+  /* nowyj ukazatelj spiska */
   /* sozdaet nowyj spisok */
   mpd x;
 
@@ -2921,9 +2921,9 @@ Void namelist(pp, name)
 ptr_ pp;
 long name;
 {
-  /* ukazatelx spiska */
-  /* imq */
-  /* priswaiwaet imq spisku */
+  /* ukazatelj spiska */
+  /* imja */
+  /* priswaiwaet imja spisku */
   mpd x;
   a a1;
 
@@ -2937,9 +2937,9 @@ Void changeelement(pp, adr)
 ptr_ *pp;
 long adr;
 {
-  /* gde izmenitx */
-  /* na ~to */
-  /* izmenqet odin |l-t spiska */
+  /* gde izmenitj */
+  /* na chto */
+  /* izmenjaet odin el-t spiska */
   mpd x;
   a a1;
 
@@ -2963,12 +2963,12 @@ long rname, *rnum;
 
 
   *rnum = 0;
-  pointr(rname, &x1.sa);   /* dostup k prowerqemomu imeni */
+  pointr(rname, &x1.sa);   /* dostup k prowerjaemomu imeni */
   for (ii = 76; ii <= 111; ii++) {   /* 111-76=35 funkcij */
     if (etalon[ii] != 0) {
       if (rulename == x1.srd->dtype) {   /* esli tipy ne rawny */
 	if (x1.srd->name == etalon[ii])
-	{  /* zapolnqetsq deskriptor s nomerom */
+	{  /* zapolnjaetsja deskriptor s nomerom */
 	  gets1(&a1, &x.sa);
 	  x.snd->dtype = number;
 	  x.snd->val = ii - 75;
@@ -2990,7 +2990,7 @@ long *ad;
   a a1, a2;
   mpd x1, x;
 
-  a2 = 12;   /* fikciq */
+  a2 = 12;   /* fikcija */
   a1 = l.cel;
   pointr(a1, &x.sa);
   switch (x.sad->dtype) {
@@ -3150,7 +3150,7 @@ ptr_ *d;
   } else
     err(63L);
   /* pohove na push(d,l.cel) , no nado */
-  /* perestawitx atom iz sp1 w sp2 */
+  /* perestawitj atom iz sp1 w sp2 */
   if (er)
     goto _L15;
   tabrule(512L, d->cel);   /* 512=registration of declaration */
@@ -3272,31 +3272,31 @@ long av, ar;
       vnum = 1;   /* counter along variable list */
       next(&f2);   /* f2 at second element */
 
-      while (f2.nel != 0) {  /* poka ne kon~ilsq spisok peremennyh ... */
+      while (f2.nel != 0) {  /* poka ne konchilsja spisok peremennyh ... */
 	vnum++;
-	/* cikl wdolx spiska peremennyh */
+	/* cikl wdolj spiska peremennyh */
 	p1 = f2.cel;
 	points(p1, &x.sa);   /* dostup k mestu peremennoj w tablice */
-	points(av, &x1.sa);   /* dostup k nastoq{emu opis. peremennoj */
+	points(av, &x1.sa);   /* dostup k nastojashchemu opis. peremennoj */
 	if (((1L << ((long)x1.svd->dtype)) & varn_desks) == 0) {
 	  err(503L);
 	  goto _L77;
-	}  /* o{ibka w ~ekere */
+	}  /* oshibka w chekere */
 	if (x1.svd->name == x.svd->name) {
-	  bb2 = true;   /* peremennaq najdena */
+	  bb2 = true;   /* peremennaja najdena */
 	  x1.svd->location = vnum;   /* ustanowka ee nomera */
 	  x.svd->location = vnum;   /* to ve */
 	}
-	f5 = f2;   /* posledn. zanqtyj |l-t */
+	f5 = f2;   /* posledn. zanjatyj el-t */
 	next(&f2);   /* sdwig na sled. opisanie peremennoj */
       }  /* while */
-      if (!bb2) {  /* peremennaq ne najdena */
+      if (!bb2) {  /* peremennaja ne najdena */
 	gets1(&p1, &x.sa);
-	push(&f5, p1);   /* |l-t - nowaq peremennaq */
+	push(&f5, p1);   /* el-t - nowaja peremennaja */
 	points(p1, &x.sa);
-	/* dostup k nowomu mestu dlq peremennoj w
+	/* dostup k nowomu mestu dlja peremennoj w
 	                      tabl.*/
-	points(av, &x1.sa);   /* dostup k nastoq{emu opis. peremennoj */
+	points(av, &x1.sa);   /* dostup k nastojashchemu opis. peremennoj */
 	x1.svd->location = vnum + 1;   /* ustanowim nomer peremennoj */
 	if (vnum >= 255) {
 	  err(504L);
