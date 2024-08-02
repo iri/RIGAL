@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title></title>
+	<meta name="generator" content="LibreOffice 24.2.5.2 (Windows)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="2024-08-02T12:26:48.470000000"/>
+	<style type="text/css">
+		@page { size: 8.5in 11in; margin-left: 0.79in; margin-right: 0.46in; margin-top: 0.79in; margin-bottom: 0.79in }
+		p { line-height: 115%; margin-bottom: 0.1in; background: transparent; background: transparent }
+		pre { background: transparent; background: transparent }
+		pre.western { font-family: "Liberation Mono", monospace; font-size: 10pt }
+		pre.cjk { font-family: "NSimSun", monospace; font-size: 10pt }
+		pre.ctl { font-family: "Liberation Mono", monospace; font-size: 10pt }
+		a:link { color: #000080; text-decoration: underline }
+		a:visited { color: #800000; text-decoration: underline }
+	</style>
+</head>
+<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><pre class="western" style="text-align: left"><font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">University of Latvia</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Institute of Mathematics and Computer Science</font></font></pre><p align="left" style="line-height: 100%; margin-top: 0.04in; margin-bottom: 0.08in; background: transparent; page-break-after: avoid">
+<font face="Liberation Sans, sans-serif"><font size="5" style="font-size: 18pt">RIGAL
+PROGRAMMING SYSTEM FOR SUN / UNIX</font></font></p>
+<p align="left" style="line-height: 100%; margin-top: 0.04in; margin-bottom: 0.08in; background: transparent; page-break-after: avoid">
+<font face="Liberation Sans, sans-serif"><font size="5" style="font-size: 18pt">PROGRAMMER’S
+GUIDE</font></font></p>
+<pre class="western" style="text-align: left"><font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">by VADIM ENGELSON</font></font>
+
+
+
+
+
+                         <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">TABLE OF CONTENTS</font></font>
+
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">1.1 Introduction</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">1.2 How to create a simple program</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2. Additional features of the language</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2.1 RIGAL lexical syntax</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2.2 Including other files</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2.3 Atom  types</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2.4   Lazy  boolean   evaluation</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2.5 Opening text files</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2.6 Text output</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2.7 Length of the text file line</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2.8 New  line format</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2.9 LOAD and  SAVE  statements</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2.10 PRINT statement</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2.11. Built‐in rules</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3  Scanners   and   special   subroutines</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3.1 Access to standard input and output</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3.2 Lexical analyzers</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3.3 Manipulations with the coordinates</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3.4 String conversion</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3.5 Real numbers</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3.6 Other services</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3.7 Low level memory control</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4  The lexical analyzer</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.1 The simplest lexical analyser</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.2 Reading from file</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.3 Reading from list of atoms</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.5 Options</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.6 Common components of the lexical grammars</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.7 Using options</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.8 Coordinate calculation</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.9 Coordinate marks</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.10 Structure control characters</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.11 Lexical error messages</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.12 Error message code numbers</font></font>
+
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">APPENDIX A. Messages of the syntax checker</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">APPENDIX B. Run time error messages</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">APPENDIX C. Debugging messages</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">APPENDIX D. Syntax of RIGAL</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">APPENDIX E. Reference table on #CALL_PAS parameters</font></font>
+
+                         <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">1.1 Introduction</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">RIGAL  is  a  high  level  programming  language designed for</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">syntax analysis, program optimization, code generation, converter</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">writing  and  rapid  design  of  language  prototypes.  RIGAL  is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">designed  in the Institute of Mathematics and Computer Science of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the  University  of  Latvia in 1987 ‐ 1990. It was implemented in</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">RSX‐11M,    VAX/VMS,    MS‐DOS,  MS‐Windows, UNIX/SUN   operating</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">systems.</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">See the manual pages on how to install RIGAL in your system.</font></font>
+
+              <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">1.2 How to create a simple program</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">After the installation try the example.</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Create file ’a.rig’ with the following text:</font></font>
+
+   ‐‐ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">THIS IS PROGRAM</font></font>
+   <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#START</font></font>
+     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$A:=(. ALPHA BETA GAMMA DELTA .);</font></font>
+     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">PRINT $A;</font></font>
+     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$B:=#TAIL($A);</font></font>
+     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">PRINT $B;</font></font>
+   <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">##</font></font>
+   <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#TAIL</font></font>
+     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(. $E (* $R!. := $K *) .)</font></font>
+     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/ RETURN $R /</font></font>
+   <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">##</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">There  are two rules in this program ‐ #START and #TAIL. The</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">first rule is the main one, it consists of four statements. There</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">are two variables ‐ $A and $B. The first statement assigns a list</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of  four atoms to the variable $A, the third statement assigns to</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">$B  the  result of rule #TAIL which works on the argument $A. The</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">second  and  the  fourth  statements  print out the values of the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">variable (to the standard output by default ).</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  second  rule #TAIL consists of the list pattern (. .) ,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the  iteration pattern (* *) and the variable patterns $E and $K.</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Values  of  $K  are  appended to the list in the variable $R. The</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">RETURN  statement  returns the result of this rule to the calling</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">rule.</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Execute command to check the file:</font></font>
+
+         <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">rc a</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If the program has no errors then continue, else correct  the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">errors reported and check the program again.</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Now file ’a.rsc’ appears in your directory.</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Execute command to interpret the program</font></font>
+
+        <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">ic a</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">You will see the result on the sceen:</font></font>
+
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(. ALPHA BETA GAMMA DELTA .)</font></font>
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(. BETA GAMMA DELTA .)</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Execute command to compile the program</font></font>
+
+       <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">rc a ‐c</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Now file ’a’ appears in your directory.</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Execute command to startup the compiled program</font></font>
+
+       <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">./a</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">You  see the same result:</font></font>
+
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(. ALPHA BETA GAMMA DELTA .)</font></font>
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(. BETA GAMMA DELTA .)</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Now you can try other examples or write them yourself.</font></font>
+
+            <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2. Additional features of the language</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Some  language  limitations,  extensions  and  special  cases</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">depending of the implementation are discussed.</font></font>
+
+
+                    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2.1 RIGAL lexics</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Tokens in RIGAL programs are the following :</font></font>
+    ‐‐ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">rule names , e.g. #ABC</font></font>
+    ‐‐ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">variable names , e.g.  $VAR</font></font>
+    ‐‐ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">RIGAL key words, e.g. FORALL, ELSIF</font></font>
+    ‐‐ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">RIGAL delimiters and special  tokens, e.g. ## ! +</font></font>
+    ‐‐ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">atoms ( RIGAL data )</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  tokens  differ  in   different  cases  (upper‐case  and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">lower‐case).  Type the key words in the upper‐case only.</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">In   the   following  description  LETTERS   are   A..Z,a..z,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">LETTERS_&amp;_DIGITS are A..Z,a..z,0..9,_ (underscore).</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The restrictions  to RIGAL token syntax follow.</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">RULE  NAMES  begin with # followed by LETTER and zero or more</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">LETTERS_&amp;_DIGITS.</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">VARIABLE  names  begin  with $ followed by LETTER and zero  or</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">more  LETTERS_&amp;_DIGITS. If the first letter is N or I (upper‐case</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">only),  such  pattern  variable  matches the number or identifier</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">respectively.</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Key  words  are  :  AND  BREAK CLOSE DIV DO ELSIF END FAIL FI</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">FORALL IF IN LAST LOAD LOOP MOD NOT NULL OD ONFAIL OPEN OR  PRINT</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">RETURN SAVE</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Note that all they are in uppercase.</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Delimiters and special tokens are :</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">## / ;; (* *) ! (+ +) &lt;* *&gt; : , ; := ++ !. !! + ‐ * ( ) &lt;&gt; =&lt;</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">= &gt;= &lt; &gt; :: &lt;. .&gt; (. .) [ ] . ‐&gt; &lt;&lt; &lt;] @ S’ V’</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Numerical  atoms in RIGAL are decimal, from 0 to 2**31‐1. The</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">numbers may be written in octal mode, followed by the letter &quot;B&quot;.</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Non‐numerical  atoms are quoted by apostrophes. An apostrophe</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">inside the atom must be written twice. Atom maximal length is  80</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">characters.</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If   the   non‐numerical   atom  is  LETTER  followed by zero</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">or  more LETTERS_&amp;_DIGITS,  and  this atom is not  a  RIGAL  key‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">word, then it is allowed to write it without apostrophes.</font></font>
+
+                  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2.2 Including other files</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Use  the  %INCLUDE &lt;filename&gt;.rig directive to include other</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">files   into  your  program. The suffix (.rig) is necessary, path</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">also may be specified.  The file name is followed by spaces.  Use</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">%INCLUDE only between or after  the  rules. Don’t use it  between</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the  statements or the patterns.</font></font>
+
+                       <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2.3 Atom  types</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  atoms (excluding NULL) are implemented as Pascal records</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">which  consist  of  the  type  of  the  atom  and  the string (or</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">numerical) value.</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">There are the following atom  types in RIGAL:</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">1.  IDENTIFIER.  Such  atom value is LETTER followed by zero</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">or more LETTERS_&amp;_DIGITS.</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Such  atoms match the built‐in rule #IDENT  and  I‐variables</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">in the patterns. They may be used as the selectors in the trees.</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2. NON‐NUMERIC atoms which are not identifiers.</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3.  NUMBER. They match built‐in rule #NUMBER and N‐variables</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">in the patterns.</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.  PASCAL  STRING  CONSTANT. They are created by the PASCAL</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">scanner and match built‐in rule #TATOM.</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">5.  PASCAL REAL CONSTANT. They are created by PASCAL scanner</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">and match built‐in rule #FATOM predicate. Arithmetical operations</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">with them are allowed through rule #CALL_PAS(80) only.</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Other  atom  types (KEYWORD, SPECIAL, VARIABLE, RULENAME) are</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">created by the RIGAL scanner and intended for internal use.</font></font>
+
+              <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2.4   Lazy  boolean   evaluation</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">AND and OR operations differ in  the  interpreter and in  the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">compiled program. The interpreter evaluates all the arguments  of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">boolean expressions,  but  the  compiled  program  evaluates  the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">necessary arguments only.</font></font>
+
+                     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2.5 Opening text files</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The statement</font></font>
+
+     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">OPEN &lt;internal‐file‐name&gt; &lt;expression&gt;</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">opens text file for output.</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  expression  must  have  a  value,  which represents valid</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">UNIX  file  name.  If it is not an atom ‐ ERROR 11 message is is‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">sued. If the file with such internal name  is  already open, then</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">ERROR  16  is  issued, and the new file is not being open. Only 5</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">files can be open simultaneously, ERROR 13  appears if you try to</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">open  the 6‐th file. ERROR 14 appears if you  try  to  output  to</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the closed file. ERROR 19 appears if the file name is not valid.</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">File  name  which consists of one space symbol corresponds  to</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the standard output.</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Examples :</font></font>
+
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">OPEN  LST  ’~john/dd.rep’;</font></font>
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">OPEN SCREEN ’ ’;</font></font>
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">OPEN   PASCODE   #IMPLODE   ($Name ’.pas’);</font></font>
+
+                        <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2.6 Text output</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  &lt;]  and &lt;&lt; statements write atoms to text file.  NULL  is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">written   as   empty   string.   The  #TATOM atoms are written in</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">apostrophes  and  inner  apostrophes  are duplicated. The list is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">written   as   sequence   of  the atoms in the list. The label of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the list  and  the  inner structure are not printed.  The   trees</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">are  not   allowed  to be written: the ’&lt;*!&lt;*TREE*&gt;!*&gt;’ mark will</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">appear in the file.</font></font>
+
+               <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2.7 Length of the text file line</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Default maximal  length of the line is 80 bytes.</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Before  every  atom  has  written  its length  and  length  of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the  current  line are added, and the sum is checked. If the atom</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">does not  fit in 80 bytes, then if insert‐space mode  is  ON,  (@</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">switch)  it   causes  switch  to  a  new  line, but, if OFF, then</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the atom is written to the current line (and length of this  line</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">will be more than the default maximal  value).</font></font>
+
+                    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2.8 New  line format</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  &lt;&lt;  statement  writes  EOL  byte  and then writes the re‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">quired  atoms.   If  the  &lt;&lt;  statement is  executed  immediately</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">after OPEN, the first line in the file remains empty.</font></font>
+
+                 <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2.9 LOAD and  SAVE  statements</font></font>
+
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">RIGAL    data   loading   and   saving  require  the  following</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">statements:</font></font>
+
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">LOAD $Variable &lt;expression&gt;;</font></font>
+
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">SAVE $Variable &lt;expression&gt;;</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  expression  value  must be an atom, its value must be  a</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">valid     file    name.  If  it is not an atom, ERROR 11 appears.</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Limitations and defaults for file name are the same  as  in  OPEN</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">statement.   If  the  file name is invalid, LOAD statement causes</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">ERROR 18, but SAVE causes  ERROR  15. Piping and  standard  input</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">and output are not allowed here.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Screen  file  (’ ’)  is  not allowed.  If  the  file  does  not</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">exist, LOAD statement assigns NULL to the variable. If the  vari‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">able    value    is   NULL,    SAVE statement does not create any</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">file.</font></font>
+
+
+                      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2.10 PRINT statement</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  PRINT statement writes the argument value to the special</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">file,   its  name  is   received  as the command line option. The</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">statement writes to standard output  by default.</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Atoms,  lists  and  trees are written in structured form with</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the   indentation.  Identifiers,  numbers  and  Pascal  REAL CON‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">STANTS  are written without the apostrophes,  but  Pascal  STRING</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">CONSTANTS and non‐numerical atoms in apostrophes. The sequence of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the tree selectors is not determined. The maximum depth of  nest‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">ing  can be changed by  #CALL_PAS(78 level). The default level is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">15.</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The trace information is written to the same file in the same</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">format.</font></font>
+
+                     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2.11. Built‐in rules</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">There are predicates such as #ATOM(E), #NUMBER(E), #IDENT(E),</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#LIST(E)  and  #TREE(E).  They  return  their  argument  and  end</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">successfully or return NULL and end unsuccessfully.</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The built‐in rule #LEN(E) returns the number of characters in</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the atom, the number of list elements or tree branches.</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#EXPLODE(E) returns E decomposed in separate characters.</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#IMPLODE(E1  E2  ...  EN) concatenates atoms or lists E1, E2,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">..., EN</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#CHR(N). The rule returns an atom, which consists of just one</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">ASCII character with the code N ( 0 &lt;= N &lt;= 255).</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#ORD(A). Returns an integer, which is an internal code of the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">first character of the non‐numerical atom A.</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#PARM(T)  . Returns a list of the command line parameters.</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#DEBUG(E).  If E equals  the  atom  ’RULES’,  then  debugging</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">trace is  turned  ON  , if NORULES, it is turned OFF. The list of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">debugging trace messages is given in Appendix C.</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#CALL_PAS(N ...) ‐ special Pascal subroutines.</font></font>
+
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3.  Scanners   and   special   subroutines    (#CALL_PAS)</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The scanners and special subroutines are called in the form</font></font>
+
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#CALL_PAS ( &lt;number&gt;   &lt;parameters  ...&gt;  )</font></font>
+
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">where &lt;number&gt; defines the option to be executed. The options are</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">intended  for  interface between Rigal and Pascal data types, and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">they implement procedures which cannot be written in Rigal.</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Notions mentioned here are :</font></font>
+
+    ‐  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">parameters  of  #CALL_PAS  (  after number of option ) are</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Rigal  objects,  and  the  value returned from this rule is Rigal</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">object.</font></font>
+
+    ‐   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">non‐numerical   atoms, i.e. strings (including  #FATOM  ,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#TATOM  and #IDENT),  their values  are used as values of  Pascal</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">type STRING (except #FATOM in #CALL_PAS(80) )</font></font>
+
+    ‐  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">numerical  atoms  (  #NUMBER  ),  their values are used as</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">values of Pascal integer type (32 bits).</font></font>
+
+          <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3.1. ACCESS TO STANDARD INPUT AND OUTPUT</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">1.  If  the first parameter is given, the option writes it on</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the screen. The parameter must be non‐numerical. The option reads</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">one line from the standard input. The option returns the  non‐nu‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">merical  atom containing the string. Zero length string is repre‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">sented by NULL.</font></font>
+
+   <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">LOOP</font></font>
+     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$E:=#CALL_PAS(1 ’Enter Y or N ’);</font></font>
+     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">IF $E ‐&gt;</font></font>
+        <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">IF ($E=Y)OR($E=y)‐&gt; $REZ:=T;BREAK;FI;</font></font>
+        <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">IF ($E=N)OR($E=n)‐&gt; $REZ:=NULL;BREAK;FI;</font></font>
+     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">FI;</font></font>
+   <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">END;</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">This program expects Y or N from the user.</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">31.  The  first  parameter is numerical or non‐numerical. The</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">second  parameter  is  numerical.  The option converses the first</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">parameter  value  to  the  string, and spaces are added to it (or</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">some  last  characters are cut). The length of the string becomes</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">equal  to  the  second  parameter  value. The option calls Pascal</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">WRITE procedure and writes the string on the screen.</font></font>
+
+
+        <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3.2.  LEXICAL  ANALYZERS</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">35. The first parameter must be file name. The atoms are read</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">from  file.  The  optional  second parameter is string of scanner</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">options. See 4.2 for the detailed definition.</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">36. The first parameter must be list of atoms(strings). These</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">atoms  are parsed to smaller atoms. The optional second parameter</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">is   string   of  scanner  options.  See  4.3  for  the  detailed</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">definition.</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">38.  No parameters. Returns list of errors which was produced</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">by last lexical analysis. See 4.11 for details.</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">14  and  15.  Parameter  must  be existing file name, and the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">lexical  scanner  of  Rigal  is  applied to this file. The option</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">returns  the  list of tokens according to Rigal lexical rules. If</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the  file  does  not exist, NULL is returned. Option 14 forces to</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">include other files marked with %INCLUDE directive.</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">16.  Parameter  must  be existing file name. All the lines of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the  file  are  read  and appended to the list of atoms (one atom</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">corresponds to one line).</font></font>
+
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3.3.  MANIPULATIONS WITH  THE COORDINATES</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.  Parameter  is  any  object, except list or tree. When the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">lexical  scanner  forms  the  output  list,  every  numerical and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">non‐numerical  atom  contains the coordinate of the corresponding</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">token  in  the  source file. See 4.8 on  detailed  definition  of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the coordinate.  The  option  returns the  value  of  the coordi‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">nate, or 0 if the object has no coordinate.</font></font>
+
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#MAIN</font></font>
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">OPEN LST ’A.LST’;</font></font>
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$L:=#CALL_PAS(35 ’A.PRG’);</font></font>
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#TEST($L)</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">##</font></font>
+
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#TEST</font></font>
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">( ’PROGRAM’ !</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$E</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/ LST &lt;&lt; #CALL_PAS(4 $E) ’ is coordinate of error ’ /</font></font>
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">)</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">##</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">This  program  prints the error message with the coordinate of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the first token in file A.LST.</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">44. The first parameter is an atom. The second parameter (any</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">number  in  0..65535)  is  assigned to the coordinate of the atom</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(the  first  parameter) and modified first parameter is returned.</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">This option is opposite to no. 4.</font></font>
+
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3.4. STRING  CONVERSION</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">21.  Parameter must be  non‐numerical.  The  option  converts</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the   string   to   number.   If  the conversion  is  impossible,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NULL  is  returned.</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">85. Converts string to uppercase.</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">86. Converts string to lowercase.</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">87. Evaluates substring. First argument is string, second  and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">optional  third  are numbers.  The option takes number of charac‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">ters specified by the third  argument,  starting  from  character</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">specified  by  second  argument.  If third argument is absent, it</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">takes substring until the end of string.</font></font>
+
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#CALL_PAS(87 ’AFRIKA’ 3 2) returns ’RI’</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">88. Both arguments are strings. The option returns position of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the first string in the second one. If position is not found 0 is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">returned.</font></font>
+
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#CALL_PAS(88 ’RI’  ’AFRIKA’) returns 3</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3.5. REAL NUMBERS</font></font>
+
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">80.You  can  access  some  operations  with  real  numbers   by</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#CALL_PAS(80) utility.</font></font>
+
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Real  numbers  are  represented  as  atoms (non identifiers) with</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">length equal to the size of internal  representation  of   ’real’</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">type in your system.</font></font>
+
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Following  operations  can be  preformed; the second parameter of</font></font>
+
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#CALL_PAS rule used as an operation sign.</font></font>
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Operation &quot;S&quot; converts atom (or Fatom) to real atom:</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">$REAL:=#CALL_PAS(80 S ’444.22’);</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">$REAL:=#CALL_PAS(80 S ’‐44.22E05’);</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#CALL_PAS(80 S ’‐4+’) (invalid string) returns NULL</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Operation &quot;I&quot; converts integer to real atom:</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">$REAL:=#CALL_PAS(80 I 55);</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#CALL_PAS(80 I ’55’) or</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#CALL_PAS(80 I $REAL_ATOM) returns NULL</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Operation &quot;T&quot; converts real atom to integer;</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The value is truncated (but not rounded).</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">$NUM:=#CALL_PAS(80 T $REAL);</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#CALL_PAS(80 T $NOT_REAL) returns NULL</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Is possible overflow (run time error).</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Operation &quot;Z&quot; converts real atom to string in</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">corresponding formats.</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The format is integer</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Format=100*Total_digits+Digits_after_point.</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The format value should present in parameters:</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If value of $REAL is 13.6254,</font></font>
+       <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#CALL_PAS(80 Z $REAL 702 ) returns ’  13.63’</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If argument is not real or format is not integer,</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NULL is returned.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Operations ’+’,’‐’,’*’,’/’ return the result:</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">$REAL1  is 2.2</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">$REAL2  is 1.5</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#CALL_PAS(80 ’+’ $REAL1 $REAL2) returns 3.7</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">When ’*’ or ’/’ calculates run time error (overflow)</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">can occur;</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If you divide to 0.0 , NULL is returned.</font></font>
+       <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If one of arguments is not real, NULL is returned.</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Operations  ’&lt;’,’&gt;’,’&lt;=’,’&gt;=’,’=’,’&lt;&gt;’</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">return the first (real) argument if succeed and NULL</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">if fail:</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">$REAL1  is 2.2</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">$REAL2  is 1.5</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#CALL_PAS(80 ’&gt;=’ $REAL1 $REAL2) returns 2.2</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#CALL_PAS(80 ’&lt;=’ $REAL1 $REAL2) returns NULL</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If one of arguments is not real, NULL is returned.</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If wrong operation is given, NULL is returned.</font></font>
+
+
+                  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3.6. OTHER SERVICES</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">78. The first parameter is a number.  The option sets maximal</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">depth  of  nested   elements, printed by statement PRINT. The de‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">fault value is 15.</font></font>
+
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">89. Returns list of two strings  ‐ system time and date:</font></font>
+        <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(.’ 16:30:47 ’ ’18 Apr 92 ’ .)</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">90. Closes all the files and halts the program.</font></font>
+
+
+
+               <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3.7. LOW LEVEL MEMORY CONTROL</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NOTE: These control options are intended for  advanced  users</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">only.</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">40.  Parameter  of any type. The option returns a number. Its</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">value is equal to the S‐address of the  parameter  (converted  to</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">number).</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">41.   No  parameters.  The option returns a number. Its value</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">is equal to the S‐address of the returned atom (converted to num‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">ber).</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">42.   No  parameters. The option returns a number.  Its value</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">is equal to  the page number where the  returned  numerical  atom</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">was just allocated.  This number is in ‐128..127.</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">43.  No  parameters.  If  the virtual memory manager uses the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">current  (physical) disk drive as secondary disk, then the option</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">returns the page number of the returned numerical atom (otherwise</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">0 is returned).</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">46. The first parameter is any Rigal object. The option tests</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the current environment. If the interpreter executes the program,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the  option returns the same value as the parameter. If the  com‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">piled program is working, the option returns NULL.</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">99.  Parameter is an atom which is inserted into the generated</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Pascal code when the Rigal program is compiled.</font></font>
+
+            <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4     The lexical analyzer</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The analyzer reads  unstructured  data,  e.g.   strings   of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">text   or  files   and  returns list of tokens  or  other  struc‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">tures.  You can call the analyzer using #CALL_PAS built‐in rule.</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The analyzer</font></font>
+     ‐  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">supports  Pascal,  C  and Modula‐2 lexics;</font></font>
+     ‐ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">produces labelled trees and lists;</font></font>
+     ‐  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">takes  input from Rigal atom or  from disk file;</font></font>
+     ‐ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">produces error message list;</font></font>
+     ‐ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">supports different coordinate computation modes;</font></font>
+
+          <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.1 The simplest lexical analyzer</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">This rule requires a file name and it returns  the  list  of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">tokens.</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If you write</font></font>
+
+                   <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$A:=#CALL_PAS(35   ’A.PAS’);</font></font>
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">and  file   A.PAS contains</font></font>
+
+                     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">ABC+752 ’TEXT’</font></font>
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">then value  of variable $A  becomes  a list of 4 atoms:</font></font>
+
+                    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(. ABC ’+’ 752 ’TEXT’ .)</font></font>
+
+
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The   coordinates  of  these  atoms  are  1,  4,  5  and  9</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">respectively.  Use  built‐in  rule  #CALL_PAS(4  ..)  to  get the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">coordinates.</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Following questions are discussed here:</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">How to read from text file ?</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">How to analyze the atoms like ’ABC+D’ ?</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">How to set options for the analyzer ?</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">How to change lexical grammar ?</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">How to control computation of the coordinates ?</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">How to get tree and list structures ?</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">How to get error messages ?</font></font>
+
+
+                     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.2 Reading from file</font></font>
+
+
+ <font size="3" style="font-size: 12pt"><font face="Verdana, sans-serif">SYNTAX:   $A:=#CALL_PAS (35 filename options)</font></font>
+          <font size="3" style="font-size: 12pt"><font face="Verdana, sans-serif">or</font></font>
+          <font size="3" style="font-size: 12pt"><font face="Verdana, sans-serif">$A:=#CALL_PAS (35 filename)</font></font>
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">FUNCTION: Reads tokens from the  file</font></font>
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">REMARKS:  Rigal tries to find the given file name and read  from</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">this  file.  If the file is absent, NULL is returned. File is set</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of zero or more   lines,   separated  by  the  newline character.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Each  line  is  set  of zero or more  characters.  The  newline</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">character  isn’t included into the line.  Lines longer  than  127</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">characters  are  truncated.  Lexical  grammar and the coordinates</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">depend of the options specified.</font></font>
+
+                  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.3 Reading from list of atoms</font></font>
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">SYNTAX:   $A:=#CALL_PAS (36 list_of_atoms options)</font></font>
+          <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">or</font></font>
+          <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">$A:=#CALL_PAS (36 list_of_atoms)</font></font>
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">FUNCTION: Forms tokens from the list of atoms</font></font>
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">REMARKS:  Rigal  reads  data from the given list. It should be a</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Rigal  expression;   its  value  should  be list of non‐numerical</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">atoms.  This  list is interpreted as a set of zero or more lines,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">each line is a  set of characters. Numeric atoms, lists and trees</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">are ignored (they  are  interpreted  as  empty  lines).   Lexical</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">grammar and coordinates depend of the options given.</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">EXAMPLE:</font></font>
+
+   <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#CALL_PAS(36 (. ’ ABC+D’ (. to ignore .) ’EF’ .))</font></font>
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">returns value</font></font>
+
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(. ’ABC’ ’+’ ’D’ ’EF’ .)</font></font>
+
+                         <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.5 Options</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Options  are  presented as string of   characters   followed</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">by  + (on) or ‐ (off) immediately after them.  Default value   of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">options is ’D‐C‐P+p+m‐U+S+O+s‐t‐L‐A+R+Y‐B‐N‐’.  Options  supplied</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">by  the  user  overwrite  default  ones. Note that  some  options</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">require   other   ones,  some  of them are incompatible. All such</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">cases are noted below in NOTE sections.</font></font>
+
+         <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.6 Common components of  lexical grammars</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">SPACES.  One  or  more  spaces, tabs, newline characters are</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">ignored during lexical analysis.</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">COMMENTS. They are ignored during lexical analysis.</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  options  allow to choose among different  comment start</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">and comment end symbols.</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If a comment is not ended at the end of file, error code  12</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">is produced.</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">STRING CONSTANTS. They are converted into TATOM atoms.</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The   options   allow to choose among different  string con‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">stant start and end   symbols   and  conversion modes. If the end</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of line appears within string constant, error code 11 is produced</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">and string con‐ stant is truncated.</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NUMBERS. They are converted to NUMBER or FATOM atoms.</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Integer  numbers  with  less than 10 digits are converted to</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NUMBER  atoms.  Integer  numbers with 10 or more digits, floating</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">point  numbers  and  fixed  point  numbers are converted to FATOM</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">atoms.  The  following  grammar  rule  defines all the acceptable</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">numbers:</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Number ::= Digits [ . [ Digits ] ] [ ( e | E ) [ ( + | ‐ ) ]</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[ Digits ] ]</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Digits ::= Digit*</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Digit  ::= (0|1|...|9)</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">IDENTIFIERS. They are converted to IDATOM atoms.</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The following   grammar   rule   defines    all    the   ac‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">ceptable identifiers:</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Identifier ::= Letter   Letter_or_digit*</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Letter_or_digit ::= ( Letter | Digit | _ )</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  options  allow  to  change  the  set  of letters and to</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">convert all the letters to the uppercase.</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">SPECIAL SYMBOLS. They are converted to ATOMs.</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">These  symbols  consist  of  2  or  more  characters. Set of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">special symbols should be specified by options.</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">SINGLE CHARACTERS. They are converted to ATOMs.</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NOTE:  All  the  atoms  have  length up to 80 bytes. All the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">atoms longer are truncated and error code 10 is produced.</font></font>
+
+                       <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.7 Using options</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  specific  properties  of different lexical grammars are</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">set by the following option groups:</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Special symbols:</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">A ‐ Pascal‐oriented symbols</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">L ‐ C‐oriented symbols</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Identifier conversion:  U ‐ convert to uppercase</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Comment modes:</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">P ‐ Pascal‐like  comments ( (* *) { } )</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">C ‐ C‐like comments ( /* */ )</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">String constants:</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">p ‐ Pascal‐like ( ’..’ )</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">m ‐  Modula‐2‐like ( ’..’ and &quot;..&quot; )</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">For  Pascal  input you can  use the  default  options.   For</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">C  input  use  use   Pascal  or  C  options  and  switch  some of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">them on(off) if necessary. Option ’C+P‐m+p‐U‐L+A‐’ is recommended</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">for C‐like lexics.</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">For  other  languages  you should modify some assignments in the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">source  file  SCAN.PAS  available  in  Rigal sources library.</font></font>
+
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">SYNTAX:   A+ A‐ (default A+)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">FUNCTION: Sets Pascal‐oriented special symbols and letter set</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">REMARKS:  This option sets the following special symbols:</font></font>
+                     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">:=  &lt;=  &gt;=  **  ..  &lt;&gt;</font></font>
+           <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#Digits_and_letters     $Digits_and_letters      %Dig‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">its_and_letters</font></font>
+           <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">{$Any_characters}</font></font>
+
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">SYNTAX:   L+ L‐ (default L‐)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">FUNCTION: Sets C‐oriented special symbols and letter set</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">REMARKS:  This option sets the following special symbols:</font></font>
+          ‐<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">&gt;   ++   ‐‐   &gt;&gt;   &lt;&lt;   ==   +=</font></font>
+          <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">*=   ‐=   /=   %=   &amp;=   ^=   |=   !=</font></font>
+          <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">0Digits_and_letters</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NOTE:     L+A+ is not allowed</font></font>
+
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">SYNTAX:   P+ P‐ (default P+)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">FUNCTION: Sets Pascal‐like comments</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">REMARKS:  This  option  sets  comments  start  symbol { and (* ,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">comment  end  symbol  } and *) . Nested comments are not allowed.</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">{$...} is not comment. NOTE: Requires A+.</font></font>
+
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">SYNTAX:   C+ C‐ (default C‐)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">FUNCTION: Sets C‐like comments</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">REMARKS: This option sets comments start symbol /* , comment end</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">symbol */ . Nested comments are not allowed.</font></font>
+
+
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">SYNTAX:   p+ p‐ (default p+)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">FUNCTION: Sets Pascal‐oriented string constants</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">REMARKS: String constants start and end with one apostrophe (’).</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">An apostrophe within string constant should be written twice, but</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">only  one  apostrophe  is  included  into  the  atom value.</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NOTE:Requires P+.</font></font>
+
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">SYNTAX:   m+ m‐ (default m‐)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">FUNCTION: Sets C‐ or Modula‐oriented string constants</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">REMARKS:  String constants start and end with one apostrophe (’)</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">and is converted to TATOM , or double quotes (&quot;) and is converted</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">to  KEYWORD.  If back slash  appears within string constant, this</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">and   the  next   character  are  included  into  the atom value.</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">atom value.</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NOTE: Requires C+.</font></font>
+
+
+
+                   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.8  Coordinate calculation</font></font>
+
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  lexical analyzer assigns a number (coordinate) to every</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">atom  produced. This number should be in 0..32767. You can access</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">this  number  using  built‐in  rule  #CALL_PAS(4  ..).  Following</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">options give different modes to calculate this number.</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NOTE:  Coordinate  function  does  not  check for coordinate</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">value  overflow. The function works correctly within given bounds</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">only.</font></font>
+
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">SYNTAX:   R+ (default R+)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">FUNCTION: Sets coordinate mode to Line*80+Column</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">REMARKS:   This   option   sets   the   coordinate  function  to</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">line_number*80+column_number,   where   line_number   in  1..410,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">column_number in 1..127.</font></font>
+
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">SYNTAX:   s+R‐ (default R+)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">FUNCTION: Sets coordinate mode to Line</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">REMARKS:  This  option  sets the coordinate function to the line</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">number (in 1..32767).</font></font>
+
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">SYNTAX:   t+R‐ (default R+)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">FUNCTION: Sets coordinate mode to token number</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">REMARKS:  This  option sets the coordinate function to the token</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">number (in 1..32767).</font></font>
+
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">SYNTAX:   Y+R‐ (default R+)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">FUNCTION: Sets coordinate mode to the byte number</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">REMARKS: This option sets the coordinate function to byte number</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of  the first character of token in source (in 1..32767). Newline</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">and  carriage‐return  characters are not included in this number.</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Coordinate marks (see below) and structure control characters are</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">included.</font></font>
+
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">SYNTAX:   B+R‐ (default R+)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">FUNCTION: Sets coordinate mode to mark_value+bytes_number</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">REMARKS:  This  option  sets the coordinate function to the last</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">coordinate  mark value plus byte number of the first character of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">token starting from the mark (in 1..32767). Newline and carriage‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">return  characters  are  not  included in this number. Coordinate</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">marks (see below) and structure control characters are included.</font></font>
+
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">SYNTAX:   N+R‐ (default R+)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">FUNCTION: Sets coordinate mode to mark_value</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">REMARKS:  This  option  sets the coordinate function to the last</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">coordinate mark value (in 1..32767).</font></font>
+
+
+                      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.9  Coordinate marks</font></font>
+
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">You  can  insert a coordinate mark Chr(17) in source and any</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">number  immediately  after  the mark. The coordinate mark is used</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">for  calculation of coordinates of all the atoms produced between</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">this mark and next one. The coordinate marks are not converted to</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">atoms.</font></font>
+
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">EXAMPLE:</font></font>
+
+        <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#CALL_PAS(36 #IMPLODE ( #CHR(17) 100 ’ a’) ’N+R‐’)</font></font>
+
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">returns (.A.) and the coordinate of atom A is 100.</font></font>
+
+
+               <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.10   Structure control characters</font></font>
+
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">You  can  insert  the structure control characters in source</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">for  lexical  analyzer.  It  allows  to have an arbitrary complex</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">structure of trees and lists rather than simple list of atoms.</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Chr(21)   ‐ start list</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Chr(22)   ‐ end list</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Chr(23)   ‐ start tree</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Chr(24)   ‐ end tree</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Chr(25)   ‐ assign name to object</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The entire source for lexical analyzer should be accepted by</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the  following  grammar.  If the source does not matches grammar,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">error codes are produced.</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Entire_source  ::= (* Item *)</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Item ::= ( start_list (* Item *) end_list |</font></font>
+                <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">start_tree (* Selector Item *) end_tree |</font></font>
+                <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">name_character Item1 Item2 |</font></font>
+                <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">token )</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Item1 ::= Item</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Item2 ::= Item</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Selector ::= Non‐numeric_token</font></font>
+
+
+
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The corresponding Rigal structure is</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#Entire_result  (. #Object .) ##</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#Object      ( (. (* #Object *) .) !</font></font>
+                    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">&lt;* #Selector : #Object *&gt; !</font></font>
+                    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#Object1 :: #Object2 !</font></font>
+                    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#Atom ) ##</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#Object1 #Object ##</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#Object2 #Object ##</font></font>
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">EXAMPLE:</font></font>
+
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#CALL_PAS(36 #IMPLODE(#CHR(21) ’ A B ’ #CHR(22) ’ C ’ ))</font></font>
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">returns</font></font>
+
+     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(. (. A B .) C .)</font></font>
+
+
+                   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.11  Lexical error messages</font></font>
+
+
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The following options allow to control error messages:</font></font>
+
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">SYNTAX:   S+ S‐ (default S+)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">FUNCTION: Send error messages to the screen</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">REMARKS:  This  option  sends  the  error  code number, line and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">column  number  to  the  screen.  This  option  is  intended  for</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">debugging purposes.</font></font>
+
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">SYNTAX:   O+ O‐ (default S+)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">FUNCTION: Append error messages to the list</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">REMARKS:  This  option  collects  the  error code numbers in the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">special list of messages. You can have this list using</font></font>
+
+                 <font size="3" style="font-size: 12pt"><font face="Verdana, sans-serif">$LIST:=#CALL_PAS(38)</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">$LIST  is  Rigal list of numeric atoms. Each number is error</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">code  number, but the coordinate of the numeric atom is erroneous</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">place  coordinate.  $LIST  is  NULL if there was no errors during</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">last   lexical  analysis.  This  option  is  intended  for  smart</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">diagnostic   purposes.   Text   of  the  lexical  error  messages</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(corresponding   to   the  given  message  code  number  and  the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">coordinates) should be constructed by the programmer.</font></font>
+
+
+                <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.12 Error message code numbers</font></font>
+
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">1 ‐ unexpected end of file before end of tree</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2 ‐ unexpected end of file within tree branch</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3 ‐ unexpected end of file within tree</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4 ‐ unexpected end of file before end of list</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">5 ‐ unexpected end of tree</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">6 ‐ unexpected end of list or another control character</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">7 ‐ unexpected end of file in name</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">8 ‐ unexpected end of file in named object</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">9 ‐ unexpected control character</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">10 ‐ too long atom ( more than 80 bytes )</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">11 ‐ end of string constant not found in the current line</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">12 ‐ end of file before end of comment</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">13 ‐ control character within comment</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">14 ‐ control character within string constant</font></font>
+
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">APPENDIX A. Messages of the syntax checker</font></font>
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2‐ symbol ’##’ not found after the main rule</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3‐ rule name ’#...’ not found in the beginning of the rule</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">5‐  symbol ’##’ not found after the rule</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">21‐  rule name ’#...’ not  found  in  the   beginning   of   the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">main rule</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">22‐  symbol ’##’ not found after the main rule</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">23‐  main rule name is built‐in rule name</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">30‐  ending ’/’ not found after list of statements</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">31‐  symbol ’.)’ matching ’(.’ was not found</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">37‐  unexpected element in pattern</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">38‐  unexpected keyword or symbol in pattern</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">40‐  unexpected branch  found  in  tree  pattern   after   vari‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">able $a:...</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">41‐  variables not allowed in tree pattern  &lt;. $a : ...</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">42‐  variables not allowed in tree pattern  &lt;. ... [ $a : ..]</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">43‐  only variables and atoms  allowed   as   branch   name   in</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">tree pattern</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">44‐  symbol ’:’ not found in tree pattern</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">45‐  only one pattern as branch value in tree pattern allowed</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">46‐  symbol ’]’ matching ’]’ not found in tree pattern</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">47‐  symbol ’.&gt;’, ’*&gt;’ or ’,’ must be after branch pattern</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">48‐  pattern  &lt;* ... .&gt; not allowed</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">49‐  pattern  &lt;. ... *&gt; not allowed</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">50‐  a variable not find in the last branch of  &lt;* ... *&gt;</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">51‐  no more than 5 branches in  &lt;* ... *&gt; allowed</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">52‐  symbol ’::’ not allowed before rule name</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">53‐  symbol ’::’ not allowed before ’(’</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">54‐  must be at least one pattern or action within (* *)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">55‐  must be at least one pattern or action within (+ +)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">56‐  must be at least one pattern or action within [ ]</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">57‐  empty tree pattern is not allowed</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">58‐  symbol ’::’ is not allowed in this position</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">59‐  empty alternative in (..!..) or empty () are not allowed</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">61‐  symbol ’;;’ or ’##’ expected</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">63‐  rule name  #... not found in the beginning of the rule</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">64‐  symbol ’;;’ or ’##’ expected</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">65‐  this rule name is built‐in rule name</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">66‐  symbol ’;;’ or ’##’ expected</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">71‐  wrong delimiter in (*...* .. ) pattern</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">72‐  symbol ’)’ expected in (*...* .. ) pattern</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">73‐  symbol ’*)’ matching ’(*’ not found</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">74‐  wrong delimiter in (+...+ .. )</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">75‐  symbol ’)’ expucted in (+...+ .. ) pattern</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">76‐  symbol ’+)’ matching ’(+’ not found</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">77‐  symbol ’]’  matching ’[’  not found</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">81‐  only one element might be in every part of (..!..!..!..)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">82‐  only one element might be in the last part of (..!..!..!..)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">83‐  unexpected symbol in pattern (..!..!..!..)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">84‐  unexpected  ’!’ found in pattern (..!..!..!..)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">86‐  symbol ’(’ expected after s’ or v’</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">87‐  symbol ’)’ expected after s’(... or  v’(...</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">91‐  assignment symbol ’:=’ expected after ’!!’, ’!.’, ’++’ or</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">101‐ ‐ internal error :mainadr&lt;&gt;listmain</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">102‐ ‐ internal error : push for trees</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">201‐ ‐ins‐ symbol ’fi’,’od’, ’/’, ’##’ or  ’;’ expected</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">202‐  symbol ’‐&gt;’ after ’if’ expected</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">203‐  symbol ’fi’ after ’if...‐&gt;’ expected</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">205‐  symbol ’‐&gt;’ after ’elsif’ expected</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">206‐  symbol ’fi’ after ’elsif...‐&gt;’ expected</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">207‐  statement expected after ’elsif..‐&gt;’</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">208‐  symbol ’end’ matching ’loop’ no found</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">209‐  statement expected after ’if..‐&gt;’;</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">210‐  variable name after ’forall’ expected</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">211‐  symbol ’in’ after ’forall’ expected</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">212‐  symbol ’do’ after ’forall...in’ expected</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">213‐  symbol ’od’ or ’’ expected after forall..do...</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">215‐  symbol ’:=’ expected after this object</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">216‐  assignment symbol ’:=’  expected  after  ’!!’,’!.’,’+’  or</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">217‐  variable expected after &quot;selectors&quot;</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">218‐  variable expected after &quot;branches&quot;</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">220‐  variable expected after ’load’</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">221‐  variable expected after ’save’</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">222‐  file identifier  expected after ’open’</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">223‐  file identifier  expected after ’close’</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">224‐  wrong beginning of the statement</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">225‐  unexpected symbol after rule call #..(..)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">301‐  symbol ’)’ expected</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">302‐  rule name #... expected after ’last’</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">303‐  vaiable name $... expected after ’last #...’</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">304‐  built‐in rule not allowed in ’last’</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">307‐  symbol ’$$’ allowed only inside  s’ pattern</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">313‐  symbol ’(’ expected after ’copy’</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">314‐  symbol ’)’ expected after ’copy (...’</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">321‐  symbol ’]’ matching ’[’ not found in expression</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">323‐  unexpected symbol (end of ’&lt;&lt;’‐statement not found)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">324‐  null or  a’...  not  allowed  in   the   left    side   of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the assignment</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">325‐  symbol ’(’ expected after rule call in expression</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">327‐  wrong object or symbol in expression</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">329‐  symbol ’:’ expected in &lt;. ... .&gt; constructor</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">330‐  symbol ’,’ or ’.&gt;’ expected in &lt;. ... .&gt; constructor</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">331‐  symbol ’’,’’ is unexpected</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">405‐  rule was defined two times (this is the second)</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">406‐  rule was not defined in program</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">407‐  call of the main rule not allowed</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">408‐  variable $ not allowed in the main rule</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">409‐  variable $$ not allowed in the main rule</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">501‐  internal error : 1st parm ‐ not rule name</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">503‐  internal error : 2nd parm ‐ not variable</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">504‐  more than 255 variables in rule</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">505‐  more than 400 rules in program</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">521‐  internal error : no rulename in v‐list</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">522‐  internal error : no listmain in r‐list variable list</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">523‐  internal error : this rule not found</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">524‐  internal error : no num in v‐list 1‐st parm</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">525‐  internal error : no num in v‐list 2‐nd parm</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">526‐  rule #### was not defined in program</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">527‐  rule #### was defined two times</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">528‐  internal error : wrong type in bltin rule table</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">699‐ ‐ unexpected end of program</font></font>
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">APPENDIX B. Run time error messages</font></font>
+
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">1 ‐ Interpreter stack size overflow (stack size = #### );</font></font>
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(Usually looping in the sequence of calls)</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2 ‐ Assignment left side is not list or tree</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3 ‐ List index is not number</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4 ‐ Using [..] not for list</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">5 ‐ Index value exceeds list bounds</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">6 ‐ Not list or tree after &quot;::&quot;</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">7 ‐ Not atomic name before &quot;::&quot;</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">8 ‐ NULL in left side of assignment</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">9 ‐ Not numerical value in left side of &quot;+:=&quot; statement</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">10 ‐ Not numerical value in right side of &quot;+:=&quot; statement</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">11 ‐ File specification is not atom</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">12 ‐ Too long file specification</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">13 ‐ Too much open text files</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">14 ‐ File not open for output</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">15 ‐ Unable to open file in SAVE</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">16 ‐ File was not closed before new opening</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">17 ‐ Atom length exceeds file record length</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">18 ‐ Unable to open file in LOAD</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">19 ‐ Unable to open file in OPEN</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">21 ‐ Selector after &quot;.&quot; is not identifier</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">22 ‐ Selector in tree constructor is not identifier</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">23 ‐ Not tree before &quot;.&quot; operation</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">24 ‐ Not tree or list as base of FORALL‐IN statement</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">25 ‐ Atom length more than 80 bytes in #IMPLODE</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">26 ‐ &quot;BRANCHES&quot; option cannot be used for lists</font></font>
+
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">APPENDIX C. Debugging messages</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">=&gt;&gt;&gt;CALLS RULE #... IN STATEMENT</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">1‐ST ARGUMENT($):</font></font>
+
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">=&gt;&gt;&gt;CALLS RULE #... IN PATTERN</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">1‐ST ARGUMENT($):</font></font>
+
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">&gt;&gt; (BRANCH NO 2)</font></font>
+
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">=&gt;&gt;&gt;CALLS BUILT‐IN RULE #... IN STATEMENT: SUCCESS</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">RESULT:</font></font>
+
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">=&gt;&gt;&gt;CALLS BUILT‐IN RULE #... IN PATTERN: SUCCESS</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">RESULT:</font></font>
+
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">&lt;&lt;&lt;=EXITS FROM RULE #... : SUCCESS</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">RESULT:</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">APPENDIX D. Syntax grammar of Rigal</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Singature:</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NNNN  ‐ nonterminal</font></font>
+  ’<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">TTTT’ ‐ terminal (inner quotes are duplicated)</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">S1.S2  ‐ concatenation without the delimiters</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[ S ]  ‐ optional</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">S1 ! S2  ‐ alternative</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(* S *) ‐ iteration 0 or more times</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(+ S +) ‐ iteration 1 or more times</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(* S *  ) ‐ delimiter A</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(+ S +  ) ‐ delimiter A</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(    )  ‐ metaparentheses</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Lexical rules:</font></font>
+
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Letter ::= A..Z,..z</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Digit  ::= 1!2!3!4!5!6!7!8!9!0</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Number ::=  (+ digit +)</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Symbol ::= visible character</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">String ::= (+ Symbol +)</font></font>
+
+                     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Base rules of the grammar</font></font>
+
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">1) RIGAL_program ::= main_program  (* rule *)</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2) main_program ::= ’#’.name  statements ’##’</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3) rule ::= ’#’.name  (* simple_rule  * ’;;’ ) ’##’</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4) simple_rule ::=  (* ( sequence_of_patterns !</font></font>
+                             <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( ’/’ statements ’/’ ) )  *)</font></font>
+                          <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[ ’ONFAIL’ statements ]</font></font>
+
+
+                             <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Patterns</font></font>
+
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">5) sequence_of_patterns ::=</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(*  element_of_sequence_of_patterns *)</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">6) element_of_sequence_of_patterns ::=   pattern  !</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( ’(*’ sequence_of_patterns ( ’*)’ !</font></font>
+                                 <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( ’*’ atom ’)’ ) !</font></font>
+                                 <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(’*’ ’#’.name  ’)’  )</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">)!</font></font>
+                   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( ’(+’ sequence_of_patterns (  ’+)’ !</font></font>
+                                 <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(’+’ atom ’)’) !</font></font>
+                                 <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(’+’ ’#’.name   ’)’)</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">)!</font></font>
+                   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( ’[’  sequence_of_patterns  ’]’ ) !</font></font>
+                   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( ’(’  sequence_of_patterns  ’)’ ) !</font></font>
+                   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( ’(’</font></font>
+                    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(+  element_of_sequence_of_patterns +</font></font>
+                       ’<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">!’) ’)’ )</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">7) pattern ::= ( [ variable  assignment_symbol ]</font></font>
+                          <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( atom !</font></font>
+                            <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">variable !</font></font>
+                            ’<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#’.name !</font></font>
+                            <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">pattern_of_list !</font></font>
+                            <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">pattern_of_tree !</font></font>
+                            ’<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">S’’’ ’(’ expression ’)’ !</font></font>
+                            ’<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">V’’’ ’(’ expression ’)’ !</font></font>
+                            <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( ’(’ (* pattern * ’!’ ) ’)’ )</font></font>
+                          <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">)</font></font>
+                  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">) !</font></font>
+         <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( [ ’/’ statements ’/’]</font></font>
+            <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">pattern  [’/’ statements ’/’] )</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">8) variable ::= ’$’.name</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">9) assignment_symbol ::= [ ’+’ ! ’++’ ! ’!!’ ! ’!.’  ] ’:=’</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">10) atom ::= name !  number !  number.’B’ !  ’NULL’ !</font></font>
+               <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( ’’’’.    String       .’’’’ )</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">11) name ::= letter [. (* ( letter ! digit ! ’_’ ) *) ]</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">12) pattern_of_list ::=</font></font>
+        <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[ ( atom ! variable ) ’::’ ]</font></font>
+      ’<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(.’  sequence_of_patterns ’.)’</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">13) pattern_of_tree ::=</font></font>
+          <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[ ( atom ! variable ) ’::’ ]</font></font>
+          <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(( ’&lt;.’ (* element_of_pattern_of_tree * ’,’) ’.&gt;’ ) !</font></font>
+           <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( ’&lt;*’ (* element_of_pattern_of_tree  ’,’ *)</font></font>
+                  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">variable ’:’ pattern ’*&gt;’ )       )</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">14) element_of_pattern _of_tree ::=</font></font>
+        <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( atom ’:’ pattern )  !  ( ’[’ atom ’:’ pattern ’]’ )</font></font>
+
+                            <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Statements</font></font>
+
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">15) statements ::= (* statement * ’;’ )   [ ’;’ ]</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">16) statement ::=  assignment !  condition!  input_output !</font></font>
+              <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">return ! fail ! loop ! call ! break</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">17) assignment ::= object  assignment_symbol  expression</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">18) condition ::=</font></font>
+     ’<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">IF’ expression  ’‐&gt;’ statements</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(*  ’ELSIF’  expression  ’‐&gt;’  statements  ’)</font></font>
+     ’<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">FI’</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">19) input_output ::=</font></font>
+              <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(’LOAD’  variable  filename   )!</font></font>
+              <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(’SAVE’  variable  filename   )!</font></font>
+              <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(’OPEN’ name  filename  )!</font></font>
+              <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( name ’&lt;&lt;’ (* ( expression ! ’@’ ) *)  )!</font></font>
+              <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( name ’&lt;]’ (* ( expression ! ’@’ ) *)  )!</font></font>
+              <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( ’CLOSE’ name )    !</font></font>
+              <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( ’PRINT’ expression )</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">20) filename ::=  expression</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">21) return ::= ’RETURN’ expression</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">22) fail ::= ’FAIL’</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">23) loop ::= ( ’FORALL’</font></font>
+                 <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[ [’SELECTORS’]  variable ]</font></font>
+                 <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[ ’BRANCHES’ variable ]</font></font>
+                 ’<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">IN’ expression</font></font>
+                     ’<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">DO’ statements ’OD’   ) !</font></font>
+               <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( ’LOOP’  statements  ’END’ )</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">24) break ::=  ’BREAK’</font></font>
+
+                     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Expressions</font></font>
+
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">25) object ::=</font></font>
+          <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[ prefix ] ( variable ! ’$’ )   (* index ! selector *)</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">26) expression ::=   atom !</font></font>
+              <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( [ prefix ] ( variable ! ’$’ ! ’$$’ ) ) !</font></font>
+              <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">constructor !</font></font>
+              <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( un_operation expression ) !</font></font>
+              <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( expression bin_operation expression ) !</font></font>
+              <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">call !</font></font>
+              <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( expression (+ index ! selector +) ) !</font></font>
+              <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">( ’(’ expression ’)’ )</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">27) prefix ::= ’LAST’ ’#’.name</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">28) index ::= ’[’ expression ’]’</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">29) selector ::= ’.’ expression</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">30) constructor ::= constructor_of_list !  constructor_of_tree</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">31) constructor_of_list ::= ’(.’ (* expression *) ’.)’</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">32) constructor_of_tree ::=</font></font>
+                    ’<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">&lt;.’ (*  expression  ’:’  expression  *  ’,’)</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">33) bin_operation ::= ’!!’ ! ’!.’ ! ’++’ ! ’=’  ! ’&lt;&gt;’ !</font></font>
+               ’<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">AND’ ! ’OR’ ! ’+’  ! ’‐’  ! ’*’  ! ’DIV’! ’MOD’!</font></font>
+               ’<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">&gt;’  ! ’&lt;’  ! ’&gt;=’ ! ’&lt;=’ ! ’::’</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">34) un_operation ::= ’NOT’ ! ’‐’</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">35) call ::= ’#’.name ’(’ (* expression *)  ’)’</font></font>
+
+
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">APPENDIX E.      FAST REFERENCE TABLE ON  #CALL_PAS PARAMETERS</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">ATOM_OR_NULL:=#CALL_PAS(1 ATOM) WRITE and READLN from screen</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NUM:=#CALL_PAS(4 ATOM_OR_NUM) Takes coordinate</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">LIST_OR_NULL:=#CALL_PAS(14  FILENAME) Rigal scanner  with %IN‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">CLUDE</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">LIST_OR_NULL:=#CALL_PAS(15      FILENAME)  Rigal       scanner</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">without %INCLUDE</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">LIST_OR_NULL:=#CALL_PAS(16 FILENAME) Reads file by lines</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NUM_OR_NULL:=#CALL_PAS(21 ATOM) Numerical value from string.</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#CALL_PAS(30 NUM_OR_ATOM)  WRITE</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#CALL_PAS(31 NUM_OR_ATOM SIZE) WRITE(X:SIZE)</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">$LIST:=#CALL_PAS(35 FILE [OPTIONS]) LEXICAL ANALYSER OF FILE</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">$LIST:=#CALL_PAS(36 LIST_OF_STRINGS [OPTIONS])</font></font>
+                             <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">LEXICAL ANALYSER OF STRINGS</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">$LIST_OF_NUM:=#CALL_PAS(38)  LEXICAL ERROR LIST</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NUM:=#CALL_PAS(40 ANY)    S‐ADDRESS</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NUM:=#CALL_PAS(41)        S‐ADDRESS of itself</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NUM:=#CALL_PAS(42)        Page number</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NUM:=#CALL_PAS(43) Page number on disk (or 0)</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NUM_OR_ATOM:=#CALL_PAS(44 NUM_OR_ATOM NUM) Assign new  coordi‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">nate   to atom.</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">ANY_OR_NULL:=#CALL_PAS(46 ANY) NULL if this  program  is  com‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">piled</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#CALL_PAS(78 DEPTH) maximal depth for PRINTs</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#CALL_PAS(80 OP ???) Float processor:</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#FATOM or NULL:=#CALL_PAS(80 S String)  ‐‐ convertion</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#FATOM:=#CALL_PAS(80 I #NUMBER) ‐‐  ‐‐‐&quot;‐‐‐</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#NUMBER:=#CALL_PAS(80 T #FATOM) ‐‐ Truncation</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">String:=#CALL_PAS(80  Z #FATOM X*100+Y) ‐‐ Formatter</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(  X digits, Y after point )</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#FATOM OR NULL:=#CALL_PAS(80  op #FATOM #FATOM) &quot;op&quot; is +</font></font>
+   ‐ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">* / &lt; &gt; = &lt;= &gt;= &lt;&gt;</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">TEXT:=#CALL_PAS(85 TEXT)  UPPERCASE</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">TEXT:=#CALL_PAS(86 TEXT)  LOWERCASE</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">TEXT:=#CALL_PAS(87      TEXT      N1      [HOW_MANY])     SUB‐</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">STR(TEXT,N1,HOW_MANY)     (default ‐ until till the end)</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NUM:=#CALL_PAS(88 TEXT1 TEXT2) POSITION OF TEXT1 IN TEXT2,</font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(0 if not found)</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">LIST:=#CALL_PAS(89) Returns data and time:</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#CALL_PAS(90 [errorlevel])  Halts program, closes files.</font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#CALL_PAS(99 ’a Pascal  statement’)  insert  to  the  compiled</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">text.</font></font></pre>
+</body>
+</html>
