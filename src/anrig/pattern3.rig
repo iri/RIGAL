@@ -1,0 +1,117 @@
+--------------------------------------------------- 
+#{ablon_derewa
+-- <. ... .>
+        [ $E := #NAME_PAT ] 
+        V'($$ = '<.') 
+        #_KEYWORD 
+         / $WORK_PL:= #GET_WORK_PL()/ 
+        (* $B !.:= #|l_t_{_derewa * #COMMA )
+        V'($$ = '.>') 
+        #_KEYWORD 
+        / LAST #programma $tek_PL:= 
+           LAST #programma $tek_PL -1;
+          RETURN 'TREE'::<. NAME: $E, 
+                            WORK_PL: $WORK_PL,
+                            BODY: $B .>/  ;;
+
+-- <* ... *>
+        [ $E := #NAME_PAT ] 
+        V'($$ = '<*') 
+        #_KEYWORD 
+          / $WORK_PL:= #GET_WORK_PL()/
+        (* $B !.:= #|l_t_{_derewa   #COMMA *) 
+        $VAR := #_VARNTOATM 
+        / #TAB( LAST #programma $tek_prawilo $VAR); 
+          #ADD_USEVAR($VAR);
+          $P !.:= 'VAR'::<. NAME: $VAR .>   / 
+        V'($$ = ':')
+        #_KEYWORD 
+        [ $P !! := #dejstwiq ]
+        $P !. := #{ablon
+        [ $P !! := #dejstwiq ]
+        V'($$ = '*>') 
+        #_KEYWORD 
+        / LAST #programma $tek_PL:= 
+                LAST #programma $tek_PL -1; 
+          RETURN 'TREE'::<. NAME: $E, 
+                            WORK_PL: $WORK_PL,
+                            LABEL: #NEW_LABEL(),
+                            BODY: $B, 
+                           'LOOP': $P 
+                             .>/
+##
+------------------------------------------------------- 
+#NAME_PAT 
+        V'( NOT #_KEYWORD($$))
+        $E := #ATOM 
+        V'($$ = '::') 
+        #_KEYWORD 
+              /IF #NUMBER( $E) -> RETURN NUM:: (. $E .) 
+               ELSIF T -> RETURN ATOM:: (. #GETCNST( $E 
+                           LAST #C $A_CONSTANT_LIST) .) 
+                FI/ ;;
+
+        $E := #_VARNTOATM 
+        V'( $$ = '::')
+        #_KEYWORD 
+        /#TAB( LAST #programma $tek_prawilo $E ); 
+         #ADD_USEVAR($E) ;
+          RETURN VAR::<. NAME: $E .>/  ;;
+
+-- added 23-01-1992 due to pattern  NULL::<.a:B.>
+      V'(#_CONTENT2($$)=0)
+      #_SPECDESC
+      V' ($$ = '::')
+      #_KEYWORD 
+     / RETURN 'NULL' /
+##
+------------------------------------------------------- 
+#|l_t_{_derewa
+        [ V'( $$ = '[') 
+          $N := #_KEYWORD 
+          / $A!.:= #NEW_LABEL()/  ] 
+        $I := #IDENT
+          /$A !.:=
+                #GETCNST( $I LAST #C $A_CONSTANT_LIST)/ 
+        V'($$ = ':')
+        #_KEYWORD 
+        [ $A !!:= #dejstwiq ] 
+        $A !.:= #{ablon 
+        [ $A !!:= #dejstwiq ] 
+        [ V'($$ = ']')
+          $N1 := #_KEYWORD ]
+        / IF $N -> RETURN '[':: $A
+          ELSIF T  -> RETURN   $A       FI/ 
+##
+--------------------------------------------------------- 
+#COMMA
+        V'( $$ = ',') 
+        #_KEYWORD 
+##
+------------------------------------------------------
+#BUILTIN
+        ( 'ATOM'   / RETURN 3 /  !
+          'NUMBER'   / RETURN 4 /  !
+          'IDENT'   / RETURN 5 /  ! 
+          'LIST'   / RETURN 6 /  !
+          'TREE'   / RETURN 7 /  !
+          'TATOM'   / RETURN 8 /  ! 
+          'FATOM'   / RETURN 9 /  ! 
+          '_KEYWORD'   / RETURN 10 /  ! 
+          '_SPECDESC'   / RETURN 11 /  !
+          '_VARNAME'   / RETURN 12 /  ! 
+          '_RULENAME'   / RETURN 14 /  !
+          'LEN'   / RETURN 15 /  !
+          '_RULETOATM'   / RETURN 16 /  ! 
+          '_VARNTOATM'   / RETURN 17 /  ! 
+          'DEBUG'   / RETURN 19 /  !
+          '_SPECTODSC'   / RETURN 20 / ! 
+          '_CONTENT2'   / RETURN 21 /  !
+          'CHR'   / RETURN 22 / ! 
+          'PARM'   / RETURN 23 / ! 
+          '_TOTATOM'   / RETURN 24 / !
+          'ORD'     / RETURN 25 / !
+          'REZZZERVED1' / RETURN 26 / !
+          'REZZZERVED2' / RETURN 27 / ) 
+      ##
+------------------------------------------------------

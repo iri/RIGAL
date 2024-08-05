@@ -1,0 +1,120 @@
+--
+--      { a b l o n y   g e n e r a c i i
+--
+-----------------------------------------------------
+#{6
+/ GEN <<' _L99: rez1=NULL;';
+  GEN <<' _L98: *rez=rez1;*success=success1;';
+  GEN <<' if (*success) *pl=pl1;'
+        '/* prodwinutx ukazatelx leksem */'
+/
+##
+-----------------------------------------------------
+#{7
+/ GEN << ;
+  GEN <<
+   '/* branch */ pl1=*pl;rez1=NULL;success1=true;'
+/
+##
+----------------------------------------------------
+#{9
+/ GEN <<  @
+        ' rez1=pl'
+        LAST #G_prawilo $tek_PL
+        '.cel;';
+  GEN <<@ ' if ((pl'
+        LAST #G_prawilo $tek_PL
+        '.nel==0)||(rez1==NULL)) '
+        '  ';
+  GEN<<' { success1=false;' ;
+
+  GEN<< 'goto' @ ' _L'
+        LAST #G_SIMPLE $metka_wyhoda_po_neuspehu
+        ';};';
+ GEN<<' pointr(rez1,&x.sa);';
+ GEN<<' success1=(x.sad->dtype '
+/
+##
+-------------------------------------------------------
+#{10
+/ GEN <] ');';
+  GEN << 'if (success1){';
+  GEN <<    @ '   if (pl'
+        LAST #G_prawilo $tek_PL
+                  '.ptrtype!=ptrtree ) next(&pl'
+        LAST #G_prawilo $tek_PL
+      @
+        ') ;}';
+  GEN <<@ ' else { rez1=NULL;goto _L'
+        LAST #G_SIMPLE $metka_wyhoda_po_neuspehu
+            ';};'
+/
+##
+------------------------------------------------------
+#{11
+        $wid
+/ GEN <<
+        '/* shablon' $wid '*/'
+      @   'rez1=pl'
+        LAST #G_prawilo $tek_PL ;
+  GEN<] @  '.cel;';
+  GEN<< @ 'success1=false;if(pl'
+        LAST #G_prawilo $tek_PL
+         '.nel==0 ) goto _L'
+        LAST #G_SIMPLE $metka_wyhoda_po_neuspehu
+        @';';
+  GEN<<' if (rez1!=NULL ) { pointr(rez1,&x.sa);';
+  GEN<<'       if (x.smld->dtype!='
+            $wid
+        ') ';
+
+  GEN<<@ '        { rez1=NULL;goto _L'
+        LAST #G_SIMPLE $metka_wyhoda_po_neuspehu
+        ';};'
+/
+##
+--------------------------------------------------------
+#{12
+-- FIRST -funkciq
+        $NPL
+/
+ GEN <<  @ '{pl' $NPL '.ptrtype=ptrlist; pl' $NPL '.nel=1;';
+ GEN <<  @ 'pl' $NPL '.cel=x.smld->elt[0];pl' $NPL '.UU.U1.curfragment=rez1;}';
+/
+##
+-------------------------------------------------------
+#{13
+/ GEN << @
+        '{ success1=false;rez1=NULL;goto _L'
+        LAST #G_SIMPLE $metka_wyhoda_po_neuspehu
+        ';};' ;
+  GEN << @
+          'success1=true;rez1=pl'
+          LAST #G_prawilo $tek_PL
+        '.cel;';
+  GEN << @ ' if( pl'
+        LAST #G_prawilo $tek_PL
+        '.ptrtype!=ptrtree ) next(&pl'
+        LAST #G_prawilo $tek_PL
+        ');'
+/
+##
+--------------------------------------------------------
+#{14
+-- konec {ablona
+/ GEN <<
+       @ 'if( !success1 ) goto _L'
+        LAST #G_SIMPLE $metka_wyhoda_po_neuspehu ';' /
+##
+-------------------------------------------------------
+#{17
+/ GEN<<
+        ';} else ';
+  GEN<<
+      @
+      '{pl' LAST #G_prawilo $tek_PL '.ptrtype=ptrlist;'
+      'pl' LAST #G_prawilo $tek_PL '.nel=0;'
+      'pl' LAST #G_prawilo $tek_PL '.cel=NULL;}'
+/
+##
+-------------------------------------------------------

@@ -1,0 +1,148 @@
+--  RIGAL compiler to Bordland Turbo PASCAL 5.0 for IBM/PC
+--      riga wc lgu 28.09.1987-29.07.1988 (VAX)
+--                            -24.02.1989 (IBM/PC-XT)
+--                            -16.10.1989 (IBM/PC-AT)
+--                 to Unix C  - 5.7.1993
+--      1-q faza  :(ANRIG) postroenie S-koda,
+--              (sintaksi~eskij kontrolx wynesen w
+--               otdelxnu` komponentu - CHECKER )
+--      2-q faza  :(GENRIG) generaciq teksta PASCAL
+--------------------------------------------------
+#C
+-- globalxnye peremennye - tablica
+--      $TAB    <* imq_prawila : <* imq_peremennoj :
+--                                  nomer_peremennoj *>
+--              *>
+--      $RULENUM  <* imq_prawila : nomer_prawila *>
+--                 dlq generacii LAST -mehanizma
+--
+--      $RIGLIB   <* imq_modulq : T *> -biblioteka
+--                      ispolxzuemyh podprogramm
+--
+--      $LAST_VARIABLES <* imq_prawila :
+--                       <* imq_peremennoj : nomer *> *>
+--
+--      $CONSTANT_LIST  (. (* konstanta *) .)
+--              spisok atomow dlq wyravenij
+--
+--      $A_CONSTANT_LIST (. (* konstanta *) .)
+--              spisok atomow dlq {ablonow
+--
+--      $CROSS <* $wyzywa`}ee prawilo :
+--                <* $wyzywaemoe prawilo : T *>*>
+--
+--      $FL    (. $MAINFILE  (* $INCLUDED_FILE *) .)
+--------------------------------------------------
+--       $PROG      S-Code of this part of program
+---------------------------------------------------
+--                 Filles and data flows :
+--             /A.RC2                /B.RC2
+--       _ANRIG       .-------> ANRIG        ...
+--  A.RIG      \A.RC4/   B.RIG/      \A.RC4
+--                                    (table)
+--  Calling Parameters :
+--  anrig [n]
+--  format of file RIGCOMP.TMP:
+--  main file
+--  other files (*)
+-------------------------------------------------
+OPEN ERR ' ';
+
+$glavn:=T;
+$FL:=#CALL_PAS(16 'RIGCOMP.TMP');  -- read list of files as lines
+--ERR<< 'List of files ' $FL ;
+IF NOT $FL ->
+   ERR << ' Compilation aborted - no file RIGCOMP.TMP ';
+   RETURN T;
+FI;
+$FN:=#IMPLODE ($FL[1] '.rig'   );
+$L:=#CALL_PAS(15 $FN);
+IF NOT $L ->
+   ERR << ' Compilation aborted - no file ' $FN ;
+   RETURN T;
+FI;
+--#CALL_PAS(25 1 #CALL_PAS(34)+1); -- GotoXY(1,WhereY),same line on screen
+ERR<< #IMPLODE('RIGAL v.4.45 '  $FN ',  '
+          #LEN($L) ' tokens ');  -- write to screen
+
+--#CALL_PAS(28); -- CLREOL
+
+ $PROG := #programma (MAIN  $L );
+ $RULENUM := #RULENUM( $TAB );
+ SAVE $PROG #IMPLODE($FL[1] '.RC2') ;
+ $REZ:= <. FL : $FL,  -- file list
+           SUMLEX : #LEN($L),
+           FLCUR : 1 .>; -- current number in file list
+
+LOOP
+
+ $REZ++:=
+ <. TAB: $TAB,
+    RULENUM: $RULENUM,
+    LASTVAR: $LAST_VARIABLES,
+    CONST: $CONSTANT_LIST ,
+    CROSS: $CROSS ,
+    ACONST: $A_CONSTANT_LIST.>;
+
+ $REZ.FLCUR+:=1;
+
+ IF $REZ.FLCUR > #LEN($REZ.FL) -> BREAK FI;
+
+IF ( NOT #CALL_PAS(46 T))AND(#PARM(T)[1]=R) ->
+-- It apperars that optimal version is
+-- to execute Reopen every time    ( 34 sec )
+-- worse is without reopen ( 46 sec ),
+-- or testing necessity of reopen if #CALL_PAS(43)<>0 ( 43 sec )
+
+    PRINT 'Compiler reopen';
+    $REZ:=#CALL_PAS(45 $REZ);
+    #CALL_PAS(99 'acon(); ');
+FI;
+  -- makes undefined everything but $REZ !!!
+
+ $PN:=$REZ.FL [ $REZ.FLCUR ] ;
+ $FN:=#IMPLODE ( $PN '.rig' );
+
+$L:=#CALL_PAS(15 $FN);
+IF NOT $L ->
+   ERR << ' Compilation aborted - no file ' $FN ;
+   RETURN T;
+FI;
+--#CALL_PAS(25 1 #CALL_PAS(34)+1); -- GotoXY(1,WhereY),same line on screen
+ERR<<  #IMPLODE('Analysing '  $FN ', '
+          #LEN($L) ' tokens ('
+          $REZ.FLCUR ' of ' #LEN ($REZ.FL) ' files)' );  -- write to screen
+$REZ.SUMLEX+:=#LEN($L);
+--#CALL_PAS(28); -- CLREOL
+
+$glavn:=NULL;
+
+$TAB := $REZ . TAB;
+$LAST_VARIABLES := $REZ . LASTVAR;
+$CONSTANT_LIST := $REZ . CONST;
+$A_CONSTANT_LIST := $REZ . ACONST;
+$CROSS := $REZ . CROSS;
+
+$PROG := #programma (NOMAIN  $L );
+$RULENUM := #RULENUM( $TAB );
+SAVE $PROG #IMPLODE($PN '.RC2') ;
+END;
+--#CALL_PAS(25 1 #CALL_PAS(34)+1); -- GotoXY(1,WhereY),same line on screen
+ERR<< #IMPLODE('Total '  $REZ.SUMLEX
+ ' tokens in '
+  #LEN ($REZ.FL) ' files' );  -- write to screen
+--#CALL_PAS(28); -- CLREOL
+SAVE $REZ  #IMPLODE($REZ.FL[1] '.RC4') ;
+
+##
+-- prawila analiza i postroeniq S -koda
+%INCLUDE anlz.rig
+%INCLUDE pattern.rig
+%INCLUDE pattern2.rig
+%INCLUDE pattern3.rig
+%INCLUDE express.rig
+%INCLUDE operator.rig
+%INCLUDE prawilo.rig
+%INCLUDE expr1.rig
+%INCLUDE instr.rig
+------------------------------------------------

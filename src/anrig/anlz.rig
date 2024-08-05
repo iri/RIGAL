@@ -1,0 +1,62 @@
+-- prawila 1-j fazy , analiz RIGAL- programmy
+-- i postroenie S -koda
+---------------------------------------------
+#programma
+-- globalxn. peremennye
+-- $tek_prawilo = imq tek.prawila dlq dostupa w $TAB
+-- $WRKNOM      tek.nomer rab.per.:
+--                              inicializ.w #prawilo
+--                              i #glawnoe_prawilo,
+--                              ispolxz.w #wyravenie
+-- $MAXWRKNOM   MAX ispolxzowannyj nom.rab.per. - " -
+--
+-- $LABEL   teku}aq unikalxnaq metka
+-- $MAX_PL  MAX nomer PL I :PTR
+-- $tek_PL  tek. - " -
+-- $MAX_FLAG MAX nomer rab.per. tipa BOOLEAN
+-- $tek_FLAG tek. - " -
+--------------------------------------------
+
+  (
+   ( MAIN
+        (.   $E !. := #glawnoe_prawilo
+          (* $E !. := #prawilo *) .)  ) !
+   ( NOMAIN
+       (.  (* $E !. := #prawilo *) .) ) )
+        / RETURN $E /
+##
+---------------------------------------------
+#glawnoe_prawilo
+        $imq := #_RULETOATM
+        / 
+
+
+          #CALL_PAS(25 55 #CALL_PAS(34));
+           -- GotoXY(55,WhereY),same line on screen
+          #CALL_PAS(30 #IMPLODE('#' $imq));  -- write to screen
+          #CALL_PAS(28); -- CLREOL
+
+          LAST #programma $WRKNOM := 0;
+          LAST #programma $MAXWRKNOM := 0;
+          LAST #programma $MAX_PL := 1;
+          LAST #programma $tek_PL := 0;
+          LAST #programma $tek_prawilo := $imq;
+          LAST #programma $LABEL := 100;
+          LAST #C $CONSTANT_LIST !.:= T;
+          LAST #C $A_CONSTANT_LIST !.:= T;
+          #TAB( $imq ) /
+        (* $E !. := #operator * ';' ) [';']
+       S'(#_KEYWORD($$) AND $$ = '##' )
+        / RETURN $imq :: <. MAXWRK: LAST #programma
+                                        $MAXWRKNOM,
+                            MAXPL: LAST #programma
+                                        $MAX_PL,
+                            MAX_FLAG: LAST #programma
+                                        $MAX_FLAG,
+                            MAXLABEL: LAST #programma
+                                        $LABEL,
+                            BODY:  $E .> / ;;
+
+        / ERR << 'ERROR:  COMPILATION ERROR IN MAIN  RULE OF PROGRAM';
+          ERR << '        TRY CHECK IT' /
+##

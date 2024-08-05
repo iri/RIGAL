@@ -1,0 +1,110 @@
+-- RIGAL COMPILER - GENERATION PHASE
+-- $R - Table of compiled objects
+-- $PROG - List if coded rules of current file
+-------------------------------------------------
+------------------ Files and data flow ----------
+--  A.RC2
+--       \genrig
+--       /      |XCRG.PAS(main program)
+--  A.RC4        XCRG_N.PAS(atom init.-ion Unit)
+--               XCRG_C.PAS(common decl.& dispatcher)
+--               XCRG_0.pas(unit where nomain rules of main file)
+--
+--  Parameters  GENRIG (n) A A 0 unitcount
+--
+--  B.RC2_
+--        genrig->XCRG_#.PAS (unit from file B.RIG)
+--  A.RC4/
+--  Parameters  GENRIG (n) A B #
+--
+#C
+
+OPEN ERR ' ';
+ERR<<' Starting...';
+$B:=#PARM(T);
+IF ($B[1]='N') -> $OPTSIZE:=T; FI;
+
+  -- used in PAT.RIG; forces alternative pattern to be
+  -- always not-optimized mode.
+IF ($B[1]='S') -> $SUN:=T;FI;
+$FL:=#CALL_PAS(16 'RIGCOMP.TMP');  -- read list of files
+IF NOT $FL->ERR<< ' Compilation aborted - no file RIGCOMP.TMP ';RETURN T;FI;
+
+$FN:=#IMPLODE ($FL[1] '.RC4');
+LOAD $R $FN;
+IF NOT $R->ERR<< ' Compilation aborted - no file' $FN;RETURN T;FI;
+
+$FN:=#IMPLODE ($FL[1] '.RC2');
+LOAD $PROG $FN;
+IF NOT $PROG->ERR<< ' Compilation aborted - no file' $FN;RETURN T;FI;
+
+#CALL_PAS(25 1 #CALL_PAS(34)); -- GotoXY(1,WhereY),same line on screen
+#CALL_PAS(30 #IMPLODE('RIGAL v.4.45 '  $FL[1]  ));  -- write to screen
+#CALL_PAS(28); -- CLREOL
+
+$B:=(. $FL[1] $FL[1] 0 #LEN($FL)-1 .);
+-- for compatibility --
+$TAB := $R.TAB;
+$RULENUM:= $R.RULENUM;
+$RIGLIB := $R.RIGLIB;
+$LAST_VARIABLES:= $R.LASTVAR;
+$CONSTANT_LIST:= $R.CONST;
+$A_CONSTANT_LIST:= $R.ACONST;
+#G_COMMON_PART();
+#GEN_ATOM_INITIALIZATION
+    ($CONSTANT_LIST   $A_CONSTANT_LIST);
+#G_programma (MAIN     $PROG[1]);
+#G_programma (CONTINUE $PROG);
+$R.FLCUR:=1;
+LOOP
+ $R.FLCUR+:=1;
+ IF $R.FLCUR > #LEN($R.FL) -> BREAK FI;
+ IF  NOT #CALL_PAS(46 T) ->
+-- It apperars that optimal version is
+-- to execute Reopen every time    ( 34 sec )
+-- worse is without reopen ( 46 sec ),
+-- or testing necessity of reopen if #CALL_PAS(43)<>0 ( 43 sec )
+
+--    PRINT 'Compiler reopen';
+--    ERR << ' Compiler memory reopen ';
+    $R:=#CALL_PAS(45 $R);
+    #CALL_PAS(99 'acon(); ');-- for C version
+  --  #CALL_PAS(99 'acon; ');-- for Pascal version
+FI;
+  -- makes undefined everything but $R !!!
+
+ $PN:=$R.FL [ $R.FLCUR ] ;
+ $FN:=#IMPLODE ( $PN '.RC2' );
+ LOAD $PROG $FN;
+ IF NOT $PROG->ERR<< ' Compilation aborted - no file' $FN;RETURN T;FI;
+
+-- #CALL_PAS(25 1 #CALL_PAS(34)); -- GotoXY(1,WhereY),same line on screen
+ --#CALL_PAS(28); --- CLREOL
+ERR<<  #IMPLODE('Coding '  $PN ' ('
+          $R.FLCUR ' of ' #LEN ($R.FL) ' files)' );  -- write to screen
+ --#CALL_PAS(28); -- CLREOL
+
+
+ $B:=(. $R.FL[1] $PN   $R.FLCUR-1   #LEN($R.FL)-1 .);
+ -- for compatibility --
+ $TAB := $R.TAB;
+ $RULENUM:= $R.RULENUM;
+ $RIGLIB := $R.RIGLIB;
+ $LAST_VARIABLES:= $R.LASTVAR;
+ $CONSTANT_LIST:= $R.CONST;
+ $A_CONSTANT_LIST:= $R.ACONST;
+ #G_programma (NOMAIN   $PROG);
+END;
+##
+ %INCLUDE ac1.rig
+ %INCLUDE ac2.rig
+ %INCLUDE atnd.rig
+ %INCLUDE assgnd.rig
+ %INCLUDE exprd.rig
+ --%INCLUDE instr2d.rig
+ %INCLUDE ati3d.rig
+ %INCLUDE framesd.rig
+ %INCLUDE stmtd.rig
+ --%INCLUDE stmt2d.rig
+ %INCLUDE patd.rig
+ %INCLUDE pat2d.rig

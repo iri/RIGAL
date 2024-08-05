@@ -1,0 +1,181 @@
+.TH RIGAL 1 "7.7.1993, Linkoping Univ"
+.SH NAME
+ \fBrc\fP \- checks and compiles RIGAL file
+ \fBic\fP \- interprets intermediate RIGAL code
+ \fBv\fP \- viewer for RIGAL data saved in file
+ \fBrig_crf\fP  \-  RIGAL cross\-referencer
+ \fBrig_lint\fP \- RIGAL Lint (data type checker)
+.SH SYNOPSIS
+ \fBrc\fP  \fIfilename\fP \fB [-c] [\-D] [\-P \fP parameter]...
+ \fBic\fP \fIcodefilename\fP \fB [\-p\fP \fIprintfilename\fP]\fB [\-d][\fP parameter...]
+ \fBv\fP  \fIfilename\fP
+ \fBrig_crf\fP  \fIfilename\fP
+ \fBrig_lint\fP  \fIfilename\fP
+ \fIexecutable\fP \fB [\-p \fP\fIprintfilename\fP] [ parameter...]
+ \fB (!) \fP the options and parameters must be separated by one or more
+spaces.
+.SH COMPILATION TARGET (Pascal and C)
+     There are two variants of RIGAL implementation: RIGAL/Pascal in UNIX Pascal and RIGAL/C in UNIX C.
+The differences between them are mentioned below.
+.SH DESCRIPTION OF  \fBrc\fP
+  \fBrc\fP  \fIfilename\fP \fB [\-c] [\-D] [\-P \fP parameter]...
+  \fBrc\fP \- checks source file written in RIGAL language. The
+source code file  must have suffix \fB.rig\fP, but in the command \fIfilename\fP is
+specified without the suffix.
+  \fBrc\fP reports error messages if any appear; file
+name, row, column
+and message text are  reported to standard output.
+  \fBrc\fP creates intermediate code \fIfilename\fP\fB.rsc\fP which can be used for interpretation.
+.SH OPTIONS
+.TP
+.BI \-c
+creates an executable file \fIfilename\fP (without suffix).
+In RIGAL/Pascal variant an intermediate
+Pascal code is generated and then Pascal compiler (\fBpc\fP) and linker are invoked.
+In RIGAL/C variant
+an intermediate C code is generated and then C compiler (\fBcc\fP) and linker are invoked.
+Some intermediate files, among them script file \fBxd\fP,
+also appear.
+.TP
+.BI \-D
+does not remove intermediate files after the compilation.
+.TP
+.BI \-P " parameter "
+passes option to Pascal or C compiler. You can use \fB\-P\fP several times or
+use  \fB\-P \fP\fI 'param1 param2' \fP syntax. Typically you may be need to compile
+with statically linked standard libraries, e.g.  \fB$rig/rc rigcrf -c -P -Bstatic\fP
+.SH DESCRIPTION OF \fIexecutable\fP file (compilation result)
+     \fIexecutable\fP\fB [\-p\fP \fIprintfilename\fP] [parameter...]
+    The parameters
+are passed to RIGAL program and can be received through #PARM
+built\-in rule which returns list of parameters. The execution
+is identical to the interpreted program.
+.SH OPTION
+   \fB\-p\fP \fIprintfilename\fP   \- name of file for statement PRINT output.
+By default output is written to standard output.
+.SH DESCRIPTION OF \fBic\fP
+ \fBic\fP \fIcodefilename\fP [\fB\-p\fP \fIprintfilename\fP] [\fB\-d\fP] [parameter...]
+ \fBic\fP   \- interprets the intermediate code, created by  \fBrc\fP. 
+The intermediate code must have suffix \fB.rsc\fP, but in the command 
+it is specified without the suffix. Other parameters are passed 
+to RIGAL program and can be received through #PARM built\-in rule
+which returns list of parameters.The execution is identical to 
+the compiled program.
+.SH OPTIONS
+.TP
+.BI \fB\-p\fP " printfilename"
+name of file for statement PRINT output. 
+By default output is written to standard output.
+.TP
+.BI \-d " "
+tracing mode is turned on. Trace of rules and branches, 
+rule arguments and success/unsuccess messages is written to file 
+specified by \fB\-p\fP option and is mixed with output from PRINT 
+statements. If \fB\-p\fP option is absent trace is written to standard 
+output.
+.SH DESCRIPTION of v
+ \fBv\fP \fIfilename\fP
+ \fBv\fP    writes the contents of RIGAL code saved in file to standard
+output. The structure of code is written with indentation, in 
+well\-readable form. If the depth of some element of the structure 
+is more than 15 levels, then  characters '..' appear instead of the 
+element. 
+   The \fIfilename\fP must contain data saved by RIGAL statement
+          SAVE $\fIvar  'filename\fP' 
+.SH DESCRIPTION of \fBrig_crf\fP
+ \fBrig_crf\fP \fIfilename\fP
+ \fBrig_crf\fP creates cross reference table for given RIGAL program
+\fIfilename\fP. The program file  must have suffix \fB.rig\fP, but in the command 
+\fIfilename\fP is specified without the suffix. The result is written 
+to file \fIfilename\fP\fB.crf\fP. For every rule the following is reported: 
+rules calling this one, rules called by this one, variables, use 
+of global variables.
+.SH DESCRIPTION of \fBrig_lint\fP
+ \fBrig_lint\fP \fIfilename\fP
+  \fBrig_lint\fP   creates warning table for given RIGAL program
+\fIfilename\fP. The program file  must have suffix \fB.rig\fP, but in the command 
+\fIfilename\fP is specified without the suffix. The result is written 
+to file \fIfilename\fP\fB.lnt\fP.
+   \fBrig_lint\fP checks type compatibility and cases when values of 
+different types can be assigned to the same variable.
+.SH ERROR MESSAGES
+\fB  Error in file\fP \fIfilename\fP \fB  
+Line=\fP\fInn\fP\fB  Message=\fP\fItext\fP\fB  
+Column=\fP\fImm\fP 
+ \- checker found syntax error in your RIGAL file. Intermediate
+code is not created, compilation failed.
+
+\fB  *** ERROR\fP \fI nn xxx\fP
+ \- runtime warnings about dangerous manipulations with RIGAL
+data structures or runtime input/output errors.
+
+\fB  rig:undefined variable
+  pc:command not found\fP
+  \- see ENVIRONMENT  section of this manual
+
+\fB   ERROR:COMPILATION ERROR IN RIGAL, rule #\fP\fIname\fP
+    \- internal compilation message, normally does not appear; 
+try to simplify this rule.
+
+\fB    ld() errors  or warnings \fP
+    \- try command
+\fB       ranlib $rig/lib/riglib.a\fP
+      to remove errors.
+.SH ENVIRONMENT
+   For running RIGAL/Pascal you must have Sun Pascal release 2.1 (or higher). Command \fBpc\fP
+(Pascal compiler) must be available.  
+   For running RIGAL/C  you must have a C compiler (command \fBcc\fP) available.
+   You must have environment variable \fBrig\fP set to the
+name of directory where RIGAL system binary files are located.
+   You can set it by command
+        \fBsetenv rig \fP\fIfull_path\fP\fB/bin\fP
+   in your \fB.login\fP file
+   It is recommended to include this directory at the start of
+path list by command
+     \fB set path=( $rig ... )\fP
+   in your \fB.login\fP file. Then you can use RIGAL commands  \fBrc\fP,
+\fBic\fP etc. from any directory.
+.SH INSTALLATION of RIGAL from sources
+   All files are packed and compressed in file
+  \fBrigs\fP\fIvariant.system_version.\fP\fBtar.Z\fP
+(e.g. rigsp.444.tar.Z). Here \fBrigsp\fP denotes Pascal sources, \fBrigsc\fP - C sources.
+ \fBuncompress\fP  file   (without suffix \fB.Z\fP)
+ \fBtar \-xvf\fP   file
+ execute instructions in ENVIRONMENT section.
+
+ Go to RIGAL source directory (\fB/src\fP)  and execute \fB make\fP ;
+it takes 3-5 minutes to  compile all sources  by Sun  Pascal (or C)
+compiler and perform self-test. The result is in  \fB/bin\fP
+.SH FILES
+ \fB bin/rc, bin/ic, bin/rig_crf, bin/rig_lint, bin/v\fP   basic RIGAL system executable files
+ \fB lib/riglib.a\fP         RIGAL compiler runtime library. If you move it from one directory to another, execute command
+\fBranlib\fP\fI new_directory\fP\fB/riglib.a\fP
+  \fBinclude/\fP\fIfile\fP.\fBinc\fP,  \fBinclude/\fP\fIfile\fP.\fBh\fP m 
+include files for compilation
+ \fB bin/anrig, bin/genrig\fP     parts of RIGAL compiler
+ \fB doc/rigal.1     \fP         this manual
+ \fB doc/langdesc.txt \fP        RIGAL language description
+ \fB doc/impl.txt     \fP        User's guide
+ \fIfile\fP\fB.rig\fP  source programs in RIGAL
+ \fIfile\fP\fB.rsc\fP intermediate code for interpreter
+ \fBxcrg*.pas,\fP \fIfile\fP.\fBRC2\fP, \fIfile\fP.\fBRC4\fP, \fIfile\fP.\fBTMP\fP
+intermediate files, appear and by default are removed during compilation.
+.SH PRINTED DOCUMENTATION
+    The documentation is in \fBdoc\fP subdirectory.
+    Use
+    \fBtroff -man -t rigal.1 | lpr -h -t\fP        to print manual page
+    \fBnroff -man -t rigal.1 > rigal.man\fP        to prepare readable manual page file
+    \fBtroff -ms -t langdesc.txt | lpr -h -t\fP    to print language description
+    \fBtroff -ms -t impl.txt | lpr -h -t\fP        to print the programmer's guide
+
+.SH AUTHORS
+ Mikhail Auguston and Vadim Engelson, Inst. of Math. and Comp.Sci, University of Latvia,
+Rainis blvd. 29, Riga, LV-1459, Latvia (Lettland). Currently (1994-1995) Vadim Engelson is
+at IDA, S-58183, Linkoping University, Linkoping, Sweden.
+e\-mail:  vadim@mii.lu.lv , vaden@ida.liu.se.
+
+Some info and  pointers to papers are  available from http://www.ida.liu.se/labs/pelab/members/vaden/rigal.html
+
+Rigal and papers about it available by ftp  ftp.ida.liu.se /pub/labs/pelab/rigal
+
+

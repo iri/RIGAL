@@ -1,0 +1,130 @@
+--      analiz wyravenij RIGAL
+--
+--********************************************
+#wyravenie
+        $A1 := #EXPR7
+        (* V'($$ = 'OR')
+           #_KEYWORD
+           $A2 := #EXPR7
+           / $A1 := 'OR'::<. ARG1: $A1,
+                             ARG2: $A2,
+                             tip: log,
+                             mesto: #IMPLODE( wrk
+                                      #GETWRK()) .>/
+        *)
+        / RETURN $A1/
+##
+--------------------------------------------------
+#EXPR7
+        $A1 := #EXPR6
+        (* V'($$ = 'AND')
+           #_KEYWORD
+           $A2 := #EXPR6
+           / $A1 := 'AND'::<. ARG1: $A1,
+                              ARG2: $A2,
+                              tip: log,
+                              mesto: #IMPLODE( wrk
+                                        #GETWRK()).>/
+        *)
+        / RETURN $A1/
+##
+--------------------------------------------------
+#EXPR6
+        $A1 := #EXPR5
+        (* (( $OP := V'( ($$ = '=') OR ($$ = '<>'))
+              #_KEYWORD
+              $A2:= ( #ne~islowoj_atom ! #EXPR5 ) ) !
+
+             (V'( ($$ = '>')
+                OR ($$ = '<') OR ($$ = '>=')
+                OR ($$ = '<=') )
+              $OP:= #_KEYWORD
+              $A2 := #EXPR5 ) )
+           /  $A1 := $OP::<. ARG1: $A1,
+                             ARG2: $A2,
+                             tip: log,
+                             mesto: #IMPLODE(wrk
+                                        #GETWRK()) .>/
+        *)
+        / RETURN $A1/
+##
+---------------------------------------------------
+#EXPR5
+        $A1 := #EXPR4
+        (* $OP := V'(($$ = '!.')
+                OR ($$ = '!!') OR ($$ = '++')
+                OR ($$ = '+') OR ($$ = '-') )
+           #_KEYWORD
+           $A2 := #EXPR4
+           / IF $OP = '+' OR $OP = '-' -> $tip:= ~islo
+             ELSIF T -> #sozdatx_mesto2 ($A2)
+-- correction 23-01-1992 -- because of wrong generation $X:=$A!.1
+             FI;
+             $A1 := $OP::<. ARG1: $A1,
+                            ARG2: $A2,
+                            tip: $tip,
+                            mesto: #IMPLODE(wrk
+                                #GETWRK())  .>/
+        *)
+        / RETURN $A1/
+##
+---------------------------------------------------
+#EXPR4
+        $A1 := #EXPR3
+        (* $OP := V'( ($$ = '*')
+                OR ($$ = 'DIV') OR ($$ = 'MOD'))
+           #_KEYWORD
+           $A2 := #EXPR3
+           / $A1 := $OP::<. ARG1: $A1,
+                            ARG2: $A2,
+                            tip: ~islo,
+                            mesto: #IMPLODE( wrk
+                                       #GETWRK()) .>/
+        *)
+        / RETURN $A1/
+##
+----------------------------------------------------
+#EXPR3
+        $OP := S'(#_KEYWORD($$) AND (($$ = 'NOT') OR
+                                ($$ = '-')) )
+        $A1 := #EXPR3
+        / IF $OP = '-' -> $tip:= ~islo
+          ELSIF $OP = 'NOT' -> $tip:= log FI;
+          RETURN $OP:: <. ARG: $A1,
+                          tip: $tip,
+                          mesto: #IMPLODE(wrk
+                                     #GETWRK()) .>/ ;;
+
+        $A1 := #EXPR2  / RETURN $A1/
+##
+-----------------------------------------------------
+#EXPR2
+        $A1 := #EXPR1
+        (* ( ( $OP := V'( $$ = '::')
+                #_KEYWORD
+                   /#sozdatx_mesto2 ( $A1 ) /
+               $A2 := #EXPR1 ) !
+
+             (  V'( $$ = '.')
+                #_KEYWORD
+                       /$OP := SELECTOR /
+                $A2 := ( #atom_selektor ! #EXPR1 )
+                        / #sozdatx_mesto2( $A2)/
+               )  !
+
+             ( V'( $$ = '[')
+                #_KEYWORD
+               $A2 := #wyravenie
+               V'( $$ = ']')
+                #_KEYWORD
+                / $OP := INDEX / )
+
+           )
+             / $A1 := $OP:: <. ARG1: $A1,
+                               ARG2 : $A2,
+                               mesto: #IMPLODE( wrk
+                                     #GETWRK()) .>/
+        *)
+        / RETURN $A1/
+##
+------------------------------------------------------

@@ -1,0 +1,194 @@
+-------------------------------------------------
+#prawilo
+-- globalxn.peremennye
+--      $MAX_FLAG
+--      $tek_FLAG
+--      $USESUN
+
+        $imq := #_RULETOATM
+        /
+
+    --      #CALL_PAS(25 55 #CALL_PAS(34));
+           -- GotoXY(55,WhereY),same line on screen
+   -- ERR<<    #IMPLODE('#' $imq);  -- write to screen
+    --      #CALL_PAS(28); -- CLREOL
+
+          LAST #programma $WRKNOM := 0;
+          LAST #programma $MAXWRKNOM := 0;
+          LAST #programma $MAX_FLAG := 0;
+          LAST #programma $tek_FLAG := 0;
+          LAST #programma $MAX_PL := 1;
+          LAST #programma $tek_PL := 1;
+          LAST #programma $tek_prawilo := $imq ;
+          LAST #programma $LABEL := 100 ;
+          #TAB ( $imq ) /
+        (*  $E !. := #prostoe_prawilo
+                             * #END_OF_BRANCH )
+                        V'( $$ = '##')
+                        S'(#_KEYWORD($$))
+        /RETURN $imq :: <. MAXWRK : LAST #programma
+                                    $MAXWRKNOM ,
+                           MAXLABEL : LAST
+                                #programma $LABEL ,
+                           MAX_FLAG: LAST #programma
+                                         $MAX_FLAG,
+                           USESUN : $USESUN,
+                           MAXPL: LAST #programma
+                                  $MAX_PL,
+                           BODY : $E  .>/ ;;
+
+        /ERR<< @ 'ERROR : COMPILATION ERROR IN RIGAL, RULE #' $imq @
+              ' NUMBER '  #LEN(LAST #C $TAB)  ;
+         ERR<<   '        TRY CHECK IT';
+        LAST #C $ERNUM+:=1;
+        IF LAST #C $ERNUM>3 ->
+            ERR<< 'COMPILATION ABORTED - TOO MUCH (>2) ERRORS';
+            FAIL FI    /
+##
+-----------------------------------------------------
+#END_OF_BRANCH
+        V'( $$ = ';;' )
+        #_KEYWORD
+##
+-----------------------------------------------------
+#prostoe_prawilo
+ --- global $USEVAR : <* $VARNAME : T *>
+        $E := #PLO
+        [ V'( $$ = 'ONFAIL')
+          #_KEYWORD
+                   (* $ONFAIL !.:= #operator *';')
+                                        [ ';' ]   ]
+        /RETURN <. LABEL: #NEW_LABEL(),
+                   USEVAR : $USEVAR,
+                   BODY: $E,
+                   'ONFAIL': $ONFAIL .> /
+##
+-----------------------------------------------------
+#PLO
+-- PATTERN LIST OR OPERATOR
+-- wozwra}aet spisok
+        (*  ( $E !! := #dejstwiq  !
+              $E !. := #|l_t_posled_{ablonow )
+        *)
+        /RETURN $E /
+##
+------------------------------------------------------
+#dejstwiq
+        (+  V'( $$ = '/')
+            #_KEYWORD
+        (*  $E !. := #operator
+                        * #SEMICOLON )
+        [ #SEMICOLON ]
+        S'(#_KEYWORD($$) AND $$ = '/')
+        +)
+        / RETURN $E /
+##
+------------------------------------------
+#SEMICOLON
+        V'( $$ = ';' )
+        #_KEYWORD
+##
+-----------------------------------------
+#operator
+
+        / LAST #programma $WRKNOM :=0/
+        -- dlq kavdogo wyraveniq s~et
+        -- WRK na~inaetsq snowa
+        $X:= ( #operator1 !
+               #operator2 !
+               #operator3 )
+        /RETURN $X/
+##
+--------------------------------------------
+#operator1
+-- IF
+        V'( $$ = 'IF')
+        #_KEYWORD
+        /$LABEL := #NEW_LABEL() /
+        $COND := #wyravenie
+        V'( $$ = '->')
+        #_KEYWORD
+        (* $OPS !. := #operator * #SEMICOLON )
+                [ #SEMICOLON ]
+        / $R !. := <. COND: $COND,
+                      BODY: $OPS  .>/
+
+        (* V'($$ = 'ELSIF')
+           #_KEYWORD
+           $COND := #wyravenie
+           V'($$ = '->')
+           #_KEYWORD
+           / $OPS := NULL /
+           (* $OPS !. := #operator * #SEMICOLON )
+                [ #SEMICOLON ]
+           / $R !. := <. COND: $COND,
+                         BODY: $OPS .>/
+        *)
+        V'($$ = 'FI' )
+        #_KEYWORD
+        /RETURN 'IF' :: <. LABEL: $LABEL,
+                           'BRANCHES': $R .>  / ;;
+
+-- LOAD , SAVE
+        V'(( $$ = 'LOAD') OR ($$ = 'SAVE'))
+        $OP:= #_KEYWORD
+        $VAR := #_VARNTOATM
+        /IF $VAR='_' -> LAST #prawilo $USESUN:=T FI;
+        #ADD_USEVAR($VAR);
+        #TAB (LAST #programma $tek_prawilo  $VAR)/
+        $FSPEC := #wyravenie
+        / RETURN $OP :: <. VAR: VAR:: <. NAME: $VAR.>,
+                           FILE_SPEC: $FSPEC .>/ ;;
+
+-- OPEN
+        V'($$ = 'OPEN')
+        #_KEYWORD
+        $ID
+        $FSPEC := #wyravenie
+        / #sozdatx_mesto2( $FSPEC);
+          RETURN 'OPEN' ::<. NAME: #GETCNST( $ID
+                        LAST #C $A_CONSTANT_LIST),
+                             FILE_SPEC: $FSPEC .>/ ;;
+
+-- << i <]
+        $ID
+        V'(($$ = '<<') OR ($$ = '<]'))
+        $OP:= #_KEYWORD
+        (* (( V'($$ ='@')  #_KEYWORD
+                / $E!.:= '@'/ ) !
+           $E!.:=#ONE_ATOM      !
+
+            ( $E1 := #wyravenie
+              / #sozdatx_mesto2( $E1);
+                $E !.:= $E1;
+                LAST #programma $WRKNOM:=NULL/))
+        *)
+        / RETURN 'PUT'::<. NAME: #GETCNST( $ID
+                             LAST #C $A_CONSTANT_LIST),
+                           tip : $OP,
+                           arg: $E .>/ ;;
+
+-- CLOSE
+        V'($$ = 'CLOSE')
+        #_KEYWORD
+        $ID
+        / RETURN 'CLOSE':: (. #GETCNST( $ID
+                      LAST #C $A_CONSTANT_LIST) .) /
+##
+----------------------------------------------------
+----------------------------------------------------
+#ONE_ATOM
+  -- izolirowannyj ne~islowoj atom
+  -- ispolxzuetsq dlq << i <]
+  $E:=#ATOM
+  ( V'(NOT #_KEYWORD($$)) !
+    V'($$=';') !
+    V'($$='/') !
+    V'($$='@') !
+    V'($$='FI') !
+    V'($$='ELSIF') !
+    V'($$='OD') !
+    V'($$='END')  )
+  / IF #_KEYWORD($E) OR #TATOM($E) OR #NUMBER($E)
+      ->  FAIL FI ;
+    RETURN $E / ##

@@ -1,0 +1,123 @@
+--------------------------
+-------------------------
+---------------------------
+--------------------------
+-------------------------
+---------------------------
+--      wspomogatelxnye  procedury
+--        fazy  generacii
+--
+--------------------------------------------------
+#G_LOC_dekl
+        $prawilo
+        / $VARS := LAST #C $TAB . $prawilo ;
+          $GVARS := LAST #C $LAST_VARIABLES . $prawilo ;
+          FORALL  $X IN  $VARS DO
+                IF NOT(( $GVARS.$X) OR
+                      ($X = '_') AND NOT LAST #G_prawilo $.USESUN )
+                    -> GEN << @ 'v loc' $VARS .$X  ';/* $';
+                       #Print_name($X); GEN<]'*/';
+                FI
+         OD /
+##
+-----------------------------------------------------
+#G_WRK_dekl
+        $MAXWRK
+        / $X := 1;
+          LOOP
+             IF $X > $MAXWRK -> BREAK FI;
+             GEN << @ 'v wrk' $X ';' ;
+             $X +:= 1
+          END /
+##
+------------------------------------------------------
+#G_PL_dekl
+        $NPL
+        / $X :=1;
+          LOOP
+             IF $X > $NPL -> BREAK FI;
+             GEN << @ 'ptr_ pl' $X ';';
+             $X +:=1
+          END /
+##
+------------------------------------------------------
+#G_FLAG_dekl
+        $NFLAG
+        / $X := 1;
+         LOOP
+            IF $X > $NFLAG -> BREAK FI;
+            GEN << @ 'boolean flag' $X ';';
+            $X +:=1
+         END /
+##
+------------------------------------------------------
+#G_OLDGLOB_dekl
+        $prawilo
+        / $NUM := LAST #C $RULENUM . $prawilo;
+          $X := LAST #C $LAST_VARIABLES . $prawilo;
+          FORALL $A IN $X DO
+                GEN << @ 'v oldglob' $NUM '_' $X.$A ';'
+                OD /
+##
+------------------------------------------------------
+#G_sohranitx_GLOB
+-- sohranitx / wosstanowitx
+        $prawilo  $sohranitx
+        / $NUM := LAST #C $RULENUM . $prawilo;
+          $X := LAST #C $LAST_VARIABLES . $prawilo;
+          IF $sohranitx -> $lew := old; $praw:= NULL ;
+                        GEN << '/* sohranitx GLOB */'
+          ELSIF T ->   $lew:= NULL ;  $praw:= old;
+                        GEN << '/* wosstanowitx GLOB */'
+          FI;
+          FORALL $A  IN  $X  DO
+                $N2 := $X . $A ;
+                GEN << @ $lew glob $NUM '_' $N2  '='
+                        $praw glob $NUM '_' $N2 ';'
+                OD /
+##
+------------------------------------------------------
+#G_INIT_VARS
+        $prawilo
+        / $VARS := LAST #C $TAB .$prawilo;
+          $NOM := LAST #C $RULENUM . $prawilo;
+          $GVARS := LAST #C $LAST_VARIABLES .$prawilo;
+          GEN << '/* inicializaciq peremennyh */';
+          FORALL $X  IN  $VARS DO
+            IF $X <> '_' ->
+                $GNOM := $GVARS .$X;
+                IF $GNOM -> GEN<< @ glob $NOM '_' $GNOM
+                                  '.sa=NULL;'
+                ELSIF   (NOT LAST #G_SIMPLE $) OR
+                        LAST #G_SIMPLE $.USEVAR.$X
+                         -> GEN <<@ loc $VARS .$X '.sa=NULL;/* $';
+                                  #Print_name($X); GEN<]'*/';
+
+                FI
+            FI                 OD /
+##
+------------------------------------------------------
+#G_ATOM_FROM_REZ
+-- generaciq koda dlq
+-- sozdaniq atoma iz ~isla ili bulewskogo
+
+        <. tip: log,
+           mesto: $E,
+           mesto2: $E1  .>
+        / GEN << 'if(' $E '.bo )'
+                $E1 '.sa=cnst[1].sa; else'
+                $E1 '.sa=NULL;' /       ;;
+
+-- ~islowoj atom
+        <. tip: ~islo,
+           mesto:  $E,
+           mesto2: $E1  .>
+        /GEN<< 'mknumb('  ;
+         IF NOT #NUMBER( $E) -> GEN<]$E '.nu'
+         ELSIF T-> GEN<]@ $E 'L'
+         FI;
+         GEN<] ',&' $E1 '.sa);' /
+##
+-------------------------------------------------------
+#G_LABELS
+        $N ##

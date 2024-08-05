@@ -1,0 +1,122 @@
+#WW $w:=$dd ##
+-------------------------------------------------------
+#G_INIT_GLOB
+-- inicializaciq LAST per., krome glawn.prawila
+/ $TABL := LAST #C $LAST_VARIABLES;
+  GEN << '/* inicializaciq LAST-perem.*/';
+  FORALL $X IN $TABL DO
+        IF $X<> LAST #G_programma $imq_gl ->
+           $VARS := $TABL .$X;
+           $NOM := LAST #C $RULENUM .$X;
+           FORALL $Y IN $VARS DO
+                GEN<< @ glob $NOM '_' $VARS .$Y
+                        '.sa=NULL;'
+           OD
+        FI
+     OD /
+##
+-------------------------------------------------------
+#GEN_ATOM_INITIALIZATION
+--  generaciq procedury XCRG_N.PAS
+-- priwqzka skompilirowannoj programmy k A -prostranstwu
+$LISTACON $LISTACOP
+/
+
+  OPEN FF 'xcrga.h';
+
+FF<<'/* Local variables for acon: */  ';
+FF<<'struct LOC_acon {a k;allpacked r;} ;';
+
+FF<<'Local Void uc(l, cn, dt, LINK)      ';
+FF<<'long l, cn; char dt;                ';
+FF<<'struct LOC_acon *LINK;              ';
+FF<<'{  putatm(LINK->r.bl, l, &LINK->k); ';
+FF<<'  mkatom(LINK->k, dt, &cnst[cn ].sa);}';
+
+FF<<'Static Void acon()                 ';
+FF<<'{  struct LOC_acon V;    mpd x;    ';
+FF<<'  mainlistdescriptor *WITH;        ';
+
+#ACON_LIST(' ' $LISTACON);  -- zapolnenie massiwa
+
+-- sozdanie deskriptora spiska dliny 1
+-- dlq wyzowa prawil s odnim argumentom
+
+
+FF<<'  gets5(&cnst['#LEN( LAST #C $CONSTANT_LIST)+1'].sa, &x.sa);';
+FF<<'  WITH = x.smld;  ';
+FF<<'  WITH->dtype = listmain; ';
+FF<<'  WITH->elnum = 1;        ';
+FF<<'  WITH->totalelnum = 1;   ';
+FF<<'  WITH->name = null_;     ';
+FF<<'  WITH->next = null_;}    ';
+
+
+FF<<'/* Local variables for acop: */    ';
+FF<<'struct LOC_acop {  allpacked r;} ; ';
+
+FF<<'Local Void uc_(l, cn, dt, LINK)    ';
+FF<<'long l, cn; char dt;               ';
+FF<<'struct LOC_acop *LINK;             ';
+FF<<'{putatm(LINK->r.bl, l, &acnst[cn ]);}  ';
+
+
+FF<<'Static Void acop()    ';
+FF<<'{struct LOC_acop V;   ';
+
+#ACON_LIST('_' $LISTACOP);  -- spisok
+
+  FF << '}';
+  CLOSE FF /
+ ##
+
+
+#ACON_LIST $MARK
+  (. (* $E  / $I +:=1;
+         $LEN := #LEN( $E);
+IF $LEN=1->
+  IF ($E='\')OR($E='''')->  FF<< @ 'V.r.p1=''\' $E ''';';
+  ELSIF T-> FF<< @ 'V.r.p1=''' $E ''';';
+  FI;
+ELSIF T->     FF<<@'memcpy(V.r.p' $LEN ',' #CALL_PAS(116 $E) ',' $LEN 'L);';
+FI;
+IF #IDENT($E) -> $ID:=idatom ELSIF T-> $ID:=atom FI;
+FF<<@'uc' $MARK '(' $LEN 'L,' $I 'L,' $ID ',&V);';
+   / *) .)
+   / RETURN $I / ##
+----------------------------------------------------------------------
+#G_COMMON_PART
+
+
+
+/
+
+  OPEN DDD 'xcrg.h';
+
+DDD<<@ 'v cnst[' #LEN( LAST #C $CONSTANT_LIST)+2   '];';
+DDD<<@ 'a acnst[' #LEN( LAST #C $A_CONSTANT_LIST)+1   '];';
+FORALL $P IN LAST #C $LAST_VARIABLES DO
+         $X:= LAST #C $LAST_VARIABLES .$P;
+         FORALL $VAR IN $X DO
+                  DDD<< @ 'v glob' LAST #C $RULENUM .$P '_'
+                        $X. $VAR ';'
+                OD OD ;
+  $N:= #LEN( LAST #C $RULENUM);
+  $U:= LAST #C $B[4];
+
+  $X:=2;
+   LOOP
+     IF $X > $N -> BREAK FI;
+     DDD<<@ 'extern Void r'   $X
+          ' PP((long *rez, boolean *success, ptr_ *pl));';
+     $X +:=1
+   END;
+
+ CLOSE DDD /
+##
+
+
+
+
+
+

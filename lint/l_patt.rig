@@ -1,0 +1,70 @@
+-------------  PATTERN.RIG ----------------------
+--      analiz {ablonow RIGAL 
+--
+--*********************************************** 
+#|l_t_posled_{ablonow 
+-- (* .... *) i (* .... * DELIM ) 
+        V'($$ = '(*')        #_KEYWORD 
+        (* $E !!:= #PLO  *)
+        (  ( V'($$ = '*)')  #_KEYWORD  )  !
+           ( V'( $$ = '*')  #_KEYWORD
+             $D:=#prostoj_{ablon    V'($$ = ')')  #_KEYWORD
+           )) 
+        / RETURN 'ITERATIVE_LIST':: <. BODY: $E,
+                                 DELIMITER: $D .>/ ;; 
+
+-- (+ .... +) i (+ .... + DELIM ) 
+        V'($$ = '(+')         #_KEYWORD 
+        (*  $E !!:= #PLO  *)
+        ( ( V'( $$ = '+)')    #_KEYWORD   )  !
+           ( V'($$ = '+')     #_KEYWORD
+             $D:=#prostoj_{ablon
+             V'($$ = ')')     #_KEYWORD
+           )) 
+        / RETURN 'ITERATIVE_LIST':: <. BODY: $E,
+                                       DELIMITER: $D .>/ ;; 
+
+-- [ ... ]
+        V'($$ = '[' )         #_KEYWORD 
+        (*  $E !!:= #PLO  *)
+        V'($$ = ']' )         #_KEYWORD 
+        /  RETURN 'FACULT':: <. BODY:  $E .>/ ;; 
+
+-- ( ... ! ... ! ... )
+        V'($$ = '(')          #_KEYWORD 
+        (* / $E := NULL/ (* $E !!:= #PLO  *) /$E1!.:= $E/
+         * #ALTERNATIVE_SYMBOL )
+        V'( $$ = ')')         #_KEYWORD 
+      / RETURN ALTERNATIVE:: <. BODY: $E .> / ;;
+
+-- {ablon 
+        $E := #{ablon /RETURN $E/ 
+##
+----------------------------------------------------- 
+#ALTERNATIVE_SYMBOL 
+        V'($$ = '!')
+        #_KEYWORD 
+##
+----------------------------------------------------- 
+#{ablon 
+        [ $V := #_VARNTOATM 
+          / $vartype := #TAB(LAST #program $name  $V ) /
+          (  ( $ASS_SYMBOL := V'( $$ = ':=') #_KEYWORD )  !
+             (  ( $ASS_SYMBOL :=  V'( $$ = '!.' OR $$ ='!!')
+                  / $vartype++:= <. list: T .>/ !
+                  $ASS_SYMBOL := V'( $$ = '+')
+                  / $vartype ++:= <. num : T .> / !
+                  $ASS_SYMBOL := V'( $$ = '++')
+                  / $vartype ++:= <. tree : T .>/ )
+                #_KEYWORD  V'( $$ = ':=') #_KEYWORD)
+          )  ] 
+        $P := #prostoj_{ablon 
+        / IF $ASS_SYMBOL ->
+             IF $ASS_SYMBOL = ':=' -> $vartype ++:= $P . type FI;
+             RETURN PATASSGN :: <. VAR: VAR::  <. NAME: $V,
+                                               type: $vartype .>,
+                                op: $ASS_SYMBOL,
+                                PAT: $P .> 
+          ELSIF T -> RETURN $P FI / 
+##
+-------------------------------------------

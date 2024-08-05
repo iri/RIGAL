@@ -1,0 +1,102 @@
+------------------EXPRESS.RIG ----------------
+--      analiz wyravenij RIGAL
+--
+--********************************************
+#wyravenie
+        $A1 := #EXPR7 
+        (* V'($$ = 'OR')       #_KEYWORD
+           $A2 := #EXPR7
+           / $A1 := bin_op::<. op: 'OR',
+                             ARG1: $A1, 
+                             ARG2: $A2, 
+                             type: <. id: T .> .>/  *)
+        / RETURN $A1/ 
+##
+--------------------------------------------------
+#EXPR7
+        $A1 := #EXPR6 
+        (* V'($$ = 'AND')       #_KEYWORD
+           $A2 := #EXPR6
+           / $A1 := bin_op::<.op: 'AND',
+                              ARG1: $A1,
+                              ARG2: $A2,
+                              type: <. id: T .> .>/  *)
+        / RETURN $A1/ 
+##
+--------------------------------------------------
+#EXPR6
+        $A1 := #EXPR5 
+        (*  $OP := V'( ($$ = '=') OR ($$ = '<>')
+                         OR ($$ = '>')
+                         OR ($$ = '<') OR ($$ = '>=')
+                         OR ($$ = '<=') )
+              #_KEYWORD 
+              $A2 := #EXPR5  
+           /  $A1 := bin_op::<. op: $OP,
+                             ARG1: $A1, 
+                             ARG2: $A2, 
+                             type: <. id: T .> .>/  *)
+        / RETURN $A1/ 
+##
+--------------------------------------------------- 
+#EXPR5
+        $A1 := #EXPR4 
+        (*  ( V'(($$ = '!.') OR ($$ = '!!') ) / $type:= list/ !
+              V' ($$ = '++') / $type := tree / !
+              V'( ($$ = '+') OR ($$ = '-') ) / $type:= num/)
+           $OP := #_KEYWORD
+           $A2 := #EXPR4
+           / $A1 := bin_op::<. op: $OP,
+                            ARG1: $A1,
+                            ARG2: $A2,
+                            type: <. $type: T .> .>/ *)
+        / RETURN $A1/ 
+##
+--------------------------------------------------- 
+#EXPR4
+        $A1 := #EXPR3 
+        (* $OP := V'( ($$ = '*')
+                OR ($$ = 'DIV') OR ($$ = 'MOD'))
+           #_KEYWORD
+           $A2 := #EXPR3
+           / $A1 := bin_op::<. op: $OP,
+                            ARG1: $A1,
+                            ARG2: $A2,
+                            type: <. num : T .> .>/  *)
+        / RETURN $A1/ 
+##
+----------------------------------------------------
+#EXPR3
+        ( V'($$ = 'NOT') / $type:=  id / !
+          V'($$ = '-') / $type := num /   )
+        $OP := #_KEYWORD
+        $A1 := #EXPR3 
+        / RETURN un_op:: <. op: $OP,
+                          ARG: $A1, 
+                          type: <. $type: T .> .>/ ;;
+
+        $A1 := #EXPR2  / RETURN $A1/
+##
+----------------------------------------------------- 
+#EXPR2
+        $A1 := #EXPR1 
+        (* ( ( $OP := V'( $$ = '::')       #_KEYWORD 
+               $A2:= #EXPR1  / $type := $A2 . type ++ <. T : T .>/ ) !
+
+             (  V'( $$ = '.')   #_KEYWORD    /$OP := SELECTOR / 
+                $A2 :=  #EXPR1 / $type:= <. T: T .>/ )  ! 
+
+             ( V'( $$ = '[')    #_KEYWORD 
+               $A2 := #wyravenie
+               V'( $$ = ']')    #_KEYWORD 
+                / $OP := INDEX; $type:= <. T: T .> / )
+
+           )
+             / $A1 := bin_op:: <. op: $OP,
+                               ARG1: $A1, 
+                               ARG2 : $A2,
+                               type : $type .>/ 
+        *)
+        / RETURN $A1/ 
+##
+------------------------------------------------------

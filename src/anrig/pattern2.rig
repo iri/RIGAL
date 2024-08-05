@@ -1,0 +1,96 @@
+-------------------------------------------------------
+#prostoj_{ablon
+-- (. ... .)  , <. ... .> ,  <* ... *>
+        $E := ( #{ablon_spiska !
+                #{ablon_derewa ) /RETURN $E/ ;;
+
+-- NULL
+        V'(#_CONTENT2($$)= 0)
+        #_SPECDESC
+             /RETURN 'NULL'::(. T .)/ ;;
+
+-- ATOM
+        V'(NOT #_KEYWORD($$))
+        $E := #ATOM
+        / IF NOT #NUMBER( $E) -> $mesto:=
+                #GETCNST( $E LAST #C $A_CONSTANT_LIST)
+          FI; RETURN ATM:: <. VAL: $E,
+                              mesto: $mesto .> / ;;
+
+-- $XXX
+        $E := #_VARNTOATM
+        / #TAB( LAST #programma $tek_prawilo
+                $E );
+                 RETURN 'VAR'::<. NAME: $E .>/ ;;
+
+-- #RRRR
+        $E := #_RULETOATM
+        / $S:= #BUILTIN( $E);
+          IF $S -> RETURN BLTIN_NAME:: (. $S .)
+          ELSIF ($E= 'EXPLODE') OR ($E= 'IMPLODE') ->
+                RETURN $E:: (. T .)
+          ELSIF T ->
+                #CROSS($E);
+                RETURN 'RULENAME'::(. $E .) FI/ ;;
+
+--S'( EXPR )
+       V'($$ = #IMPLODE( S #CHR( 39)) )
+  --      V'($$ = S''' )
+        #_KEYWORD
+        V'($$ = '(')
+        #_KEYWORD
+        / LAST #programma $WRKNOM:=0 /
+        $E := #wyravenie
+        V'($$ = ')')
+        #_KEYWORD
+        / RETURN  SPAT:: (. $E .)/ ;;
+
+--V'( EXPR )
+        V'( $$ = #IMPLODE( V #CHR(39)) )
+--      V'( $$ = V''')
+
+        #_KEYWORD
+        V'( $$ = '(')
+        #_KEYWORD
+        / LAST #programma $WRKNOM :=0/
+        $E := #wyravenie
+        V'( $$ = ')')
+        #_KEYWORD
+        / RETURN  VPAT:: (. $E .)/ ;;
+
+-- ( ... ! ... ! ... )
+        V'($$ = '(')
+        #_KEYWORD
+        /$WORK_PL:=#GET_WORK_PL()/ -- added v. 2.10 4-feb-92
+         (*  / $S := NULL/
+            [ $S !!:= #dejstwiq ]
+            $S !.:= #{ablon
+            [ $S !!:= #dejstwiq ]
+            / $E !.:= (. #NEW_LABEL() .) !! $S /
+        * #ALTERNATIVE_SYMBOL )
+        V'($$ = ')')
+        #_KEYWORD
+        /  -- simplified 26-jul-91 v. 2.0
+          $metka_uspeha:=#NEW_LABEL();
+          RETURN 'ALTERNATIVE':: 
+            <. metka_uspeha : $metka_uspeha,
+               WORK_PL:$WORK_PL, -- added v. 2.10 4-feb-92 
+               BODY: $E .>/
+##
+------------------------------------------------------
+#{ablon_spiska
+        [ $E := #NAME_PAT ]
+        V'($$ = '(.')
+        #_KEYWORD
+        / $WORK_PL := #GET_WORK_PL() /
+        $R := #PLO
+        V'($$ = '.)')
+        #_KEYWORD
+        / LAST #programma $tek_PL :=
+                LAST #programma $tek_PL -1;
+         -- oswoboditx WORK PL
+          RETURN 'LIST':: <. NAME: $E,
+                             WORK_PL: $WORK_PL,
+                             BODY: $R .>/
+##
+---------------------------------------------------

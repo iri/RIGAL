@@ -1,0 +1,206 @@
+--****************************************************
+--      S - kod  RIGAL - programmy
+--  sozdaetsq fazoj analiza : #programma
+--
+--****************************************************
+#SKOD ##
+--------------------------------------------------
+#S_programma
+        (.  #S_glawnaq_programma
+            (*   #S_prawilo   *)  .)
+##
+--------------------------------------------------
+#S_glawnaq_programma
+        $imq :: (. (* #S_operator *).) 
+##
+--------------------------------------------------- 
+#S_prawilo
+   $imq :: (. (*  ( #S_{ablon !  #S_operator ) *) .)
+##
+----------------------------------------------------
+--**************************************************
+--      o p e r a t o r y 
+--
+--**************************************************
+#S_operator 
+        ASSGN::  <. lew: #S_wyravenie , 
+                    op:  ( ':=' ! '+' ! '++' !
+                           '!.' ! '!!' ) ,
+                    praw : #S_wyravenie  .>  ;; 
+
+        'LOAD':: <. VAR : #S_peremennaq , 
+                    FILE_SPEC : #S_wyravenie .> ;;
+
+        'SAVE':: <. VAR : #S_peremennaq , 
+                    FILE_SPEC : #S_wyravenie .> ;;
+
+        'OPEN' :: <. NAME : $ID , 
+                     FILE_SPEC : #S_wyravenie .> ;; 
+
+        'PUT' ::  <. NAME : $ID , 
+                    [  arg : (. (*  #S_wyravenie   *) .) ]
+                  .> ;; 
+
+        'CLOSE' ;; 
+
+        'PRINT':: (. #S_wyravenie .) ;; 
+
+        'RETURN' :: (. #S_wyravenie .) ;; 
+
+        'FAIL'  ;;
+
+        'FORALL':: <. VAR : #S_peremennaq , 
+                      'IN' : #S_wyravenie , 
+                      BODY : (. (* #S_operator *) .)
+                   .> ;;
+
+        'LOOP' ::   (. (* #S_operator *) .) ;;
+
+        'BREAK' :: (. T .) ;; 
+
+        'IF' ::  (. (* #S_IF_wetwx *).) ;;
+
+        'CALL' :: <. NAME : $imq ,
+                   [ ARGS : (. (* #S_wyravenie *) .)] 
+                  .>    ;;
+
+        'BLTIN':: <. NAME: $Id,
+                     ARGS: (. (*  #S_wyravenie *) .) .> ;;
+
+##
+------------------------------------------------------- 
+#S_IF_wetwx 
+        <. COND : #S_wyravenie ,
+           BODY : (. (* #S_operator *) .) .>
+##
+------------------------------------------------------
+--****************************************************
+--
+--              { a b l o n y 
+--****************************************************
+#S_{ablon 
+        ATM :: <. val: #ATOM,
+                  type: ( id ! num ! sym ) .> ;;
+
+        'NULL':: <. type: <. sym: T .> .> ;; 
+
+        #S_peremennaq ;;
+
+        call:: <. NAME: $Id,
+                  type: type .> ;;
+
+        'LIST' :: <. [ NAME : #S_{ablon_imeni ],
+                     BODY : (. #S_PLO .) .> ;;
+
+        'ITERATIVE_LIST':: <. BODY : (. #S_PLO .),
+                              [ DELIMITER : ( #ATOM !
+                                         #S_imq_prawila )]
+                           .> ;; 
+
+
+        'FACULT' :: <.  BODY:  (. #S_PLO .) .> ;;
+
+        'ALTERNATIVE'::<. BODY: (.(* (. #S_PLO .) *) .),
+                          [ type: $type ]   .> ;;
+
+        'TREE':: <.  [ NAME : #S_{ablon_imeni ],
+                     [ BODY:(. (* #S_TREE_EL_T *) .)],
+                     [ 'LOOP' : (.   #S_PLO    .)],
+                     [ loopvar: $S_peremennaq ],
+                      type: tree      .> ;;
+
+        'VPAT':: <. pat: #S_wyravenie .> ;;
+
+        'SPAT':: <. pat: #S_wyravenie .> ;;
+
+        PATASSGN :: <. VAR : #S_peremennaq ,
+                       op: ( ':=' ! '+' ! '!.' ! '!!' ! '++'),
+                       PAT : #S_{ablon .> ;;
+
+        builtin:: <. NAME: $Id,
+                     type: type .>
+
+
+##
+------------------------------------------------------- 
+#S_TREE_EL_T
+
+         (.  #S_PLO  .) 
+##
+----------------------------------------------------
+#S_{ablon_imeni 
+        ATOM:: (. #ATOM .) ;;
+
+        #S_peremennaq 
+##
+----------------------------------------------------
+#S_PLO
+        (* ( #S_operator ! #S_{ablon ) *) 
+##
+----------------------------------------------- 
+--******************************************************
+--      w y r a v e n i q 
+--
+--******************************************************
+#S_wyravenie
+
+        CONSTANT:: <. VAL: #ATOM, 
+                     [ tip: $Type ] .> ;;
+
+        'NULL' ::<. mesto: 'NULL' .> ;; 
+
+        #S_peremennaq ;;
+
+        'LAST':: <. RULE: $ID,
+                    VAR:  $ID1 .> ;;
+
+        'CONLIST':: <. [ BODY: (. (* #S_wyravenie *)
+                                .) ] 
+                    .>    ;;
+
+        'CONTREE':: <. [ BODY:
+                         (. (* #S_wyravenie 
+                               #S_wyravenie   *) .)]
+                    .>     ;;
+
+
+        un_op :: <.  op: $op,
+                     ARG:   #S_wyravenie .> ;;
+
+        bin_op::<. op: $op,
+                   ARG1:  #S_wyravenie ,
+                   ARG2:  #S_wyravenie .> ;;
+
+        call:: <. NAME : $ID ,
+                [ ARGS : (. (* #S_wyravenie *) .) ] .> ;; 
+
+        BLTIN :: <. NAME: $ID, 
+                   [ ARGS: (. (* #S_wyravenie *) .) ] .> ;; 
+
+##
+--------------------------------------------------------
+#S_peremennaq 
+        'VAR'::<. NAME: $ID .>          
+        -- w tom ~. '_' dlq $ 
+##
+----------------------------------------
+#S_imq_prawila
+        'RULENAME'::<. name: $ID .> 
+##
+------------------------------------------
+#S_unarnaq_op 
+        ( 'NOT' ! '-' ! '+' ! 'COPY' ! '$$' ) 
+        / RETURN T/ 
+##
+------------------------------------------
+#S_binarnaq_op
+        ('!!' ! '!.' ! '++' ! 
+         '=' ! '<>' ! 'AND' ! 
+         'OR' ! '+' ! '-' ! 
+         '*' ! 'DIV' ! 'MOD' !
+         '>' ! '<' ! '>=' ! 
+         '<=' ! '::' !
+         'INDEX' ! 'SELECTOR' ) 
+        / RETURN T/ 
+##
+------------------------------------------

@@ -1,0 +1,74 @@
+-- transitive closure under :=, return
+-- file closure.rig
+------------------------------
+#transitive_closure
+  $rule_list
+  / LOOP
+      $N1 := #node_num( LAST #Lint $Tab  LAST #Lint $Rules);
+      #Closure( $rule_list);
+      $N2 := #node_num( LAST #Lint $Tab  LAST #Lint $Rules);
+      IF $N2 <= $N1 -> BREAK FI
+    END /
+##
+#node_num
+  <* $R : <* $V : $S +:= #LEN *> *>
+  <* $R : $S +:= #LEN *>
+  / RETURN $S /
+##
+#Closure
+  (. (*  $name :: (. (* #ch_stmt *) .) *) .)
+##
+#ch_stmt
+  ASSGN :: <. op: $op ,
+              praw:  $rtype := ( #Vartype ! #call_copy_name ),
+              lew: $ltype := #Vartype  .>
+      /IF $op=':=' -> $ltype ++:= $rtype FI/          ;;
+
+  'RETURN' :: (. $rtype := ( #Vartype ! #call_copy_name ) .)
+  / LAST #Lint $Rules . LAST #Closure $name ++:= $rtype /  ;;
+
+  'FORALL' :: <. VAR : $V,
+                 BODY: (. (* #ch_stmt  *) .),
+                 'IN' : $E:= (#Vartype ! #call_copy_name ! $E) .>
+  / IF $E .type.tree -> LAST #Lint $Tab . LAST #Closure $name .
+                        ( $V . NAME) ++:= <. id: T .> FI / ;;
+
+  'LOOP':: (. (* #ch_stmt  *) .)  ;;
+
+  'IF':: (. (* <. BODY: (. (* #ch_stmt *) .) .> *) .) ;;
+
+  'TREE':: <. [ BODY: (. (* (. (* #ch_stmt *) .) *) .) ],
+              [ 'LOOP': (. (* #ch_stmt *) .) ] .> ;;
+
+  <. BODY: (. (* #ch_stmt *) .) .>  ;;
+
+  PATASSGN :: <. op: $op ,
+                 VAR: $ltype:= #Vartype,
+                 PAT: #ch_stmt,
+                 PAT: ( CALL:: <. NAME: $rule .>
+                      /$type:= LAST #Lint $Rules . $rule;
+                       $.PAT.type++:= $type/ !
+                        $E /$type:= $E. type/) .>  
+          / IF $op=':=' -> $ltype ++:= $type FI/ ;;
+
+  $E
+##
+#Vartype
+  ( VAR:: <. NAME: $var .>
+        /$type := LAST #Lint $Tab . LAST #Closure $name . $var / !
+    'LAST' :: <. RULE: $rule,
+                 VAR: $var .>
+        /$type := LAST #Lint $Tab . $rule . $var / )
+  / $.type ++:= $type; RETURN $type /
+##
+#call_copy_name
+  ( CALL:: <. NAME: $rule .>
+      /$type := LAST #Lint $Rules . $rule/ !
+    un_op :: <. op: 'COPY',
+                ARG: $E .>
+     /$type := $E . type /  !
+    bin_op :: <. op: '::',
+                 ARG2: $E .>
+     /$type := $E . type/ )
+  / $.type ++:= $type; RETURN $type/
+##

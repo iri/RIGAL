@@ -1,0 +1,282 @@
+#G_PATTERN2
+
+-- (* ... * [D] ) i (+ ... + [D])
+        $P::
+        <. WORK_PL: $NPL
+                / IF $P<> STARLIST AND $P<> PLUSLIST ->
+                        FAIL FI;
+                GEN<<'/*shablon' $P '*/' /,
+           LABEL: $LABEL
+                /$OLDBL:= LAST #G_programma $BREAK_LABEL;
+                 LAST #G_programma $BREAK_LABEL:= $LABEL/,
+        [  FLAG: $NFLAG
+                / GEN<<  @ flag $NFLAG '=' false
+                           ';'/],
+           BODY: /
+             -- corrected 12.9.90 due to (+ A + B ) $C unsuccess
+             -- problem
+                GEN<<  @
+                     ' pl' $NPL '=pl'
+                     LAST #G_prawilo $tek_PL ';'
+                     'while(pl'
+                     LAST #G_prawilo $tek_PL '.nel!=0'
+                     ' ) { ';
+                $OLD_LABEL := LAST #G_SIMPLE
+                        $metka_wyhoda_po_neuspehu;
+               LAST #G_SIMPLE $metka_wyhoda_po_neuspehu:=
+                        $LABEL /
+                (. (* ( #G_PATTERN ! #G_STMT ) *) .)
+                /
+                GEN<<  @
+                     ' pl' $NPL '=pl'
+                     LAST #G_prawilo $tek_PL ';' ;
+                IF $NFLAG -> GEN<< @ flag $NFLAG
+                                    '=true;'   FI /,
+        [  DELIM_LABEL: $DL ],
+        [  DELIMITER: $E /LAST #G_SIMPLE
+                       $metka_wyhoda_po_neuspehu:= $DL;
+                        #G_PATTERN( $E)/ ]
+        .>
+          / GEN<< ';};';
+            GEN<<@ '_L'  $LABEL ':if( ! success1 )'
+                 pl LAST #G_prawilo $tek_PL '=' pl
+                    $NPL ';' ;
+            IF $DL -> GEN<<@ '_L' $DL ':;' FI;
+            GEN<< success1 '=' ;
+            IF $NFLAG ->  GEN <] @ flag $NFLAG ';'
+            ELSIF T ->   GEN <] true ';'  FI;
+            LAST #G_SIMPLE $metka_wyhoda_po_neuspehu :=
+                        $OLD_LABEL;
+            LAST #G_programma $BREAK_LABEL:= $OLDBL;
+            IF $NFLAG -> GEN<<@ 'if( ! success1 ) goto _L'
+                $OLD_LABEL ';' FI /
+                        ;;
+
+-- <. ... .> i <* ... *>
+        'TREE':: <. [ NAME: $A ],
+                    WORK_PL: $NPL
+                        / #{11( treemain);
+                        --generaciq prowerki imeni
+                     IF $A -> #G_NAME_CHECK( $A) FI;
+                     GEN<< ';};';
+                     LAST #G_SIMPLE $NEXTRET+:=1;
+                    -- depth of tree for possible NEXT(pl1) when RETURNs
+                    -- added 2.15 : 1-mar-92
+                     GEN<<@ pl $NPL '.nel=1;pl' $NPL '.ptrtype=ptrtree;';
+                    GEN<<'success1=true;';
+                $OLDPL:= LAST #G_prawilo $tek_PL;
+                LAST #G_prawilo $tek_PL:= $NPL
+                 /,
+
+                     [ LABEL: $LABEL
+             / $OLDBL:= LAST #G_programma $BREAK_LABEL;
+               LAST #G_programma $BREAK_LABEL:= $LABEL /] ,
+
+                     [ BODY: (. (* $E
+                      / #GEN_TREE_ELT( $OLDPL $NPL $E)/
+                                *) .) ],
+                     [ 'LOOP': $L
+                        /#GEN_TREE_LOOP( $OLDPL $NPL
+                                 $acnst_LIST $L)/ ] .>
+
+
+                /
+                LAST #G_SIMPLE $NEXTRET+:=-1; -- added 2.15 1-mar-92
+                LAST #G_prawilo $tek_PL:= $OLDPL;
+                IF $LABEL -> GEN<<@ '_L' $LABEL ':' ;
+                   LAST #G_programma $BREAK_LABEL:= $OLDBL
+                FI;
+               GEN<< @ 'if( success1 ) {';
+               GEN<< @ ' rez1=pl'
+                        $OLDPL  '.cel;if( pl' $OLDPL
+                        '.ptrtype!=ptrtree ) next(&pl' $OLDPL
+                  ') ;}';
+               GEN<< @  ' else { rez1=NULL;goto _L'
+                LAST #G_SIMPLE $metka_wyhoda_po_neuspehu
+                        ' ;};' /  ;;
+
+-- [ ... ] fakulxtatiw
+        'FACULT':: <. LABEL: $metka,
+                      WORK_PL: $WORK_PL
+                /GEN<< '/* shablon [ ... ] */'
+                   @ pl $WORK_PL '=pl'
+                        LAST #G_prawilo $tek_PL ';' ;
+                 $OLDLABEL:=
+               LAST #G_SIMPLE $metka_wyhoda_po_neuspehu;
+             LAST #G_SIMPLE $metka_wyhoda_po_neuspehu:=
+                        $metka /,
+                       BODY: (. (* ( #G_PATTERN !
+                                     #G_STMT ) *) .) .>
+             / GEN<< @ '_L' $metka ':if( ! success1 ) pl'
+                        LAST #G_prawilo $tek_PL '=pl'
+                        $WORK_PL ';success1=true;' ;
+              LAST #G_SIMPLE $metka_wyhoda_po_neuspehu:=
+                        $OLDLABEL /     ;;
+
+-- S'(...) V'(....)
+        $S:: (.
+  /IF $S<>'SPAT' AND $S<>'VPAT' -> FAIL FI;
+   GEN<< '/* shablon' $S '*/';
+-- S' - pattern controls if we reached end of list,
+-- V' - no control .
+
+   IF $S='SPAT' ->
+           GEN <<  @ 'if( pl' LAST #G_prawilo $tek_PL
+             '.nel==0 ) { success1=false;goto _L'
+               LAST #G_SIMPLE $metka_wyhoda_po_neuspehu
+                        ' ;};'
+    FI;
+   /
+                $E
+                / #G_wyravenie( $E);
+                GEN<<'success1=';
+                $T:= $E.tip;  $M:= $E.mesto;
+                IF $T = log -> GEN<] $M '.bo'
+                ELSIF $T = ~islo -> GEN<] true
+                ELSIF $M = 'NULL' -> GEN<] false
+                ELSIF T ->  GEN<] $M '.sa!=NULL' FI;
+                GEN  <]';if( success1 ) {';
+                GEN<< @ 'rez1=pl' LAST #G_prawilo $tek_PL  '.cel;';
+                IF $S = 'SPAT' -> GEN<< @ 'if( pl'
+                        LAST #G_prawilo $tek_PL
+                        '.ptrtype!=ptrtree ) next(&pl'
+                        LAST #G_prawilo $tek_PL
+                        ');' FI;
+                 GEN<<@ '   ;} else { rez1=NULL;goto _L'
+            LAST #G_SIMPLE $metka_wyhoda_po_neuspehu
+                ' ;};'    /
+                .)
+
+##
+-----------------------------------------------------
+#G_alternative_pat
+
+-- ALTERNATIVE ( ... ! ... ! ... )
+
+  #split_branches  /FAIL/ ;;  -- extracts atomic branches if any
+
+  ALTERNATIVE:: <. [ metka_uspeha:   $LABEL],
+                   [ WORK_PL:$WORK_PL
+     / GEN<< '/* Alternative pattern */';
+       GEN<< @ pl $WORK_PL '=pl' LAST #G_prawilo $tek_PL ';' /] ,
+
+                   [ nonatomic_branch_label: $nonatbrlbl
+     /  $OLDLABEL:= LAST #G_SIMPLE $metka_wyhoda_po_neuspehu;
+        LAST #G_SIMPLE $metka_wyhoda_po_neuspehu := $nonatbrlbl / ],
+
+--- Atomic branches generation -------------
+                   [ atomic:  (.
+
+/ GEN<< @ 'rez1=pl' LAST #G_prawilo $tek_PL '.cel;' ;
+  GEN<< @ 'if ((pl' LAST #G_prawilo $tek_PL
+               '.nel==0) || (rez1==NULL)) goto _L'  $nonatbrlbl ';';
+  GEN<< 'else { pointr(rez1,&x.sa);';
+  GEN<< 'if (!((x.sad->dtype==atom)||'
+        '(x.sad->dtype==idatom)||(x.sad->dtype==keyword)';
+  GEN<<@ '||(x.sad->dtype==fatom)) ) goto _L'  $nonatbrlbl ';';
+  GEN<< 'else x.sa=x.sad->name ;};'/
+
+                  (*   (. $branch_label  $aconst
+   /
+     GEN <<;
+     GEN<< '/* atomic branch */';
+     GEN<< 'if (x.sa==acnst[' $aconst '] ) { success1=true;';
+     GEN<< @ ' if (pl' LAST #G_prawilo $tek_PL '.ptrtype!=ptrtree ) ';
+     GEN<< @ 'next(&pl' LAST #G_prawilo $tek_PL ');'/
+                          (* ( #G_PATTERN !  #G_STMT ) *)
+                       .)
+   / GEN<<@ 'goto _L' $LABEL ';}; _L' $branch_label ':;' /
+                  *)
+   / GEN<< 'success1=false;rez1=NULL;';
+     GEN<< @ 'pl' LAST #G_prawilo $tek_PL '=pl' $WORK_PL ';'/
+                              .)
+   / LAST #G_SIMPLE $metka_wyhoda_po_neuspehu := $OLDLABEL;
+     IF NOT $.BODY -> GEN<<@ 'goto _L'
+                           LAST #G_SIMPLE $metka_wyhoda_po_neuspehu ';'
+     FI/
+                       ],  -----end of atomic part
+
+
+--- nonatomic part -----------
+                 [ BODY: (.
+   / $L:= #LEN( $.BODY) ;
+     $OLDLABEL:= LAST #G_SIMPLE $metka_wyhoda_po_neuspehu;
+     IF $L>1 ->  GEN<<'/* nonatomic alternative branches */' FI   /
+           (*   (. $BRANCH_LABEL
+   /$I+:=1;
+    LAST #G_SIMPLE $metka_wyhoda_po_neuspehu:= $BRANCH_LABEL/
+
+     / $SUCC:=T /
+                  (*  ( ( #G_PATTERN / $SUCC:=NULL /)
+                       ! ( #G_STMT  / IF $SUCC ->
+                          GEN<]'success1=true;';$SUCC:=NULL FI/)
+                                 ) *)   .)
+ /
+ IF $LABEL ->
+    GEN<<@ 'goto _L' $LABEL  '/*uspeh*/;'; FI;
+ GEN<<@ '_L' $BRANCH_LABEL ':; ';
+ IF $WORK_PL -> GEN <<@ pl  LAST #G_prawilo $tek_PL '=pl'
+                               $WORK_PL ';' FI ;
+ IF $I = $L ->
+       LAST #G_SIMPLE $metka_wyhoda_po_neuspehu := $OLDLABEL;
+       GEN<< goto @ ' _L' $OLDLABEL ';' FI /
+            *)               .) ] .>
+  /  GEN<<@ '_L' $LABEL ':;/*uspeh alxtern.*/' /
+##
+
+-------------------------------------------------------
+#split_branches
+-- $actatoms : (. (* atom *) .)  -- atoms , used in a-branches
+
+  ALTERNATIVE:: <. BODY: (.
+-- atomic branches
+      (*
+           (.  $branch_label  / $L:=NULL /
+             ( (  ATM :: <. mesto: $aconst:=#good_atom .>
+     -- when #good_atom ends with unsuccess
+     -- we switch to non atomic branches
+                  (* $L!.:= $P *)
+             )  !
+
+               ALTERNATIVE:: <. BODY:
+                  (. (. $b_l
+                        ATM :: <. mesto: $aconst:=#good_atom .>
+                        (* $L!.:= $P *) .) .)  .>
+             )
+             .)
+       / $atomic !.:= (. $branch_label  $aconst .) !! $L;
+         $actatoms !.:= $aconst /
+         *)
+      /IF $atomic -> $nonatbrlbl := $atomic [-1] [1] FI/
+
+-- non atomic branches
+  (* $body !.:= $P *)
+  .)  .>  --- end of body
+
+  /
+    $.BODY:=NULL;
+    $ ++:= <. nonatomic_branch_label: $nonatbrlbl,
+             atomic: $atomic,
+             BODY: $body  .>/
+
+##
+-----------------------------------------------
+#notin
+   $A  (. (*  S'( $$<> $A)  *) .)
+ /RETURN T/
+##
+-------------------------------------------
+#good_atom
+ $A
+/
+  IF LAST #C $OPTSIZE ->
+     GEN<<' /* OPT */';
+     FAIL;
+  FI;
+  GEN<<'/* OPT SP */ ';
+  -- for optimizing size(not time)
+
+  IF #notin ( $A LAST #split_branches $actatoms ) -> RETURN $A
+  ELSIF T -> FAIL FI
+/
+##--------------------------

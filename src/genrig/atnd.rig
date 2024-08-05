@@ -1,0 +1,206 @@
+#G_programma
+-- globalxn.peremen.
+--      $imq
+--      $BREAK_LABEL
+--      $ACONX , $ACOPX
+ MAIN  $imq_gl :: <. MAXWRK: $MAXWRK,
+                         MAXPL: $MAXPL,
+                        [ MAX_FLAG: $MAX_FLAG] ,
+                         MAXLABEL: $MAXLABEL,
+                         [BODY: $BODY] .>
+/ OPEN GEN 'xcrg.c';
+--ERR<<'Code XCRG.PAS for main rule';
+GEN<<'/* ****************************************** */';
+GEN<<'/*      rigal/pascal compiler                 */';
+GEN<<'/*  vax/vms & omsi/rsx & ms/dos & ms-windows  */';
+GEN<<'/*  & unix/sun         v 2.42/4.45 february 1996    */';
+GEN<<'/*      author M.Auguston,Riga                */';
+GEN<<'/*  adaptation by V.Engelson ,Riga            */';
+GEN<<'/*  sponsored by P.Fritzson, Linkoping        */';
+GEN<<'/*  IMCS University of Latvia ,Riga (c) 1987-1996  */';
+GEN<<'/*  IDA Linkoping  University, Sweden         */';
+GEN<<'/* ****************************************** */';
+GEN<<'#include "globrig.h" ';
+GEN<<'#include "define.h"  ';
+GEN<<'#include "defpage.h" ';
+GEN<<'#include "nef2.h"    ';
+GEN<<'#include "c1.h"      ';
+GEN<<'#include "usemod.h"  ' ;
+GEN<<'#include "def180.h"  ';
+GEN<<'#include "xcrg.h"    ';
+GEN<<'#include "xcrga.h"   ';
+
+GEN<<'a rez1;boolean success1;long k;mpd x;';
+
+#G_LOC_dekl( $imq_gl );
+#G_WRK_dekl ( $MAXWRK );
+#G_PL_dekl( $MAXPL);
+#G_FLAG_dekl( $MAX_FLAG);
+IF $MAXLABEL> 100 ->
+                    #G_LABELS( $MAXLABEL)
+          FI ;
+$imq := $imq_gl;
+
+GEN<<'main(argc, argv)';
+GEN<<'int argc;Char *argv[];';
+GEN<<'{ out = NULL;  ';
+GEN<<'  g_argc=argc;  g_argv=argv;';
+GEN<<'  prolog(argc,argv);  acon(); acop();';
+FORALL $PROCNAME IN LAST #C $ACO_EXT_LIST DO
+           GEN<] $PROCNAME '();';OD;
+#G_INIT_VARS( $imq_gl );
+#G_INIT_GLOB();
+#G_telo_glawn( $BODY );
+GEN<< '   _L98:;';
+GEN<< '   _L99: epilog();';
+GEN<< ' if(out!=NULL) fclose(out);exit(0);';
+GEN<< ' } ' ;
+CLOSE GEN/;;
+
+NOMAIN (. #G_UNIT .) ;;
+  -- Generates separated Unit for Nomain File
+CONTINUE (. $EEE #G_UNIT .)
+  -- Generates Unit for Nomain rules of MAIN file
+##
+------------------------------------------------
+#G_UNIT
+/ $FN:=#IMPLODE ( 'xcrg_'   LAST #C $B[3] );
+  OPEN GEN #IMPLODE ( $FN '.c');
+GEN<<'#include "globrig.h"';
+GEN<<'#include "define.h" ';
+GEN<<'#include "defpage.h"';
+GEN<<'#include "nef2.h"   ';
+GEN<<'#include "c1.h"     ';
+GEN<<'#include "usemod.h" ';
+GEN<<'#include "def180.h" ';
+GEN<<'#include "xcrg.h"   ';
+
+  /
+(*  $imq:: <. [MAXWRK:$MAXWRK] .>
+  /
+      GEN<< @ '/*  R' LAST #C $RULENUM.$imq ' ';
+      #Print_name ($imq); GEN<]' */'  ;
+
+    /
+    *)
+/FAIL/;; -- we start traverse again  List of rules
+(* /$CURRENT+:=1/
+   #G_prawilo *) -- Generates Procedures R#
+/CLOSE GEN/
+##
+--------------------------------------------
+#G_telo_glawn
+  / $total := #LEN ($) /
+      (. (*  #G_STMT
+      / $total+:=-1 /     -- Added 14.2.90 for #G_LOAD_SAVE
+       *) .) ##
+--------------------------------------------
+
+#Print_name $imq
+  /$EXPL:=#EXPLODE($imq);
+   FORALL $LETTER IN $EXPL DO
+          IF $LETTER='}' -> $LETTER:='sss' FI;
+          IF $LETTER='{' -> $LETTER:='ss' FI;
+          GEN<]@ $LETTER OD;/
+##
+
+
+#G_prawilo
+-- globalxnye peremennye
+--      $tek_PL   -nomer tek. PLI dlq wlovennyh
+--                              ssablonow
+$imq:: <. MAXWRK: $MAXWRK ,
+        MAXLABEL: $MAXLABEL ,
+        MAX_FLAG: $MAX_FLAG  ,
+        MAXPL: $MAXPL
+/ $NUM:=LAST #C $RULENUM.$imq;
+  $FN:=#IMPLODE('xcrg_' $NUM);
+
+
+   --#CALL_PAS(25 55 #CALL_PAS(34));
+   -- GotoXY(55,WhereY),same line on screen
+ --ERR<<@'#' $imq;
+   --#CALL_PAS(30 #IMPLODE('#' $imq ));  -- write to screen
+   --#CALL_PAS(28); -- CLREOL
+
+
+
+    LAST #G_programma $imq := $imq;
+  GEN<<'/*===============================================*/';
+  GEN<<@ '/* GENERATED TEXT OF RULE   #';
+  #Print_name ($imq);
+  GEN<] '   */';
+
+GEN << @' Void r' $NUM '(rez,success,pl)';
+GEN<< 'long *rez;boolean *success;ptr_ *pl;';
+GEN << '{  a rez1;  boolean success1; long k; mpd x;';
+
+       #G_LOC_dekl ( $imq );
+       #G_WRK_dekl ( $MAXWRK );
+       #G_OLDGLOB_dekl( $imq);
+       #G_PL_dekl($MAXPL);
+       #G_FLAG_dekl( $MAX_FLAG);
+       #G_LABELS( $MAXLABEL);
+                -- metki wyhoda iz wetwi po neuspehu
+GEN << '#ifdef XX ';
+GEN <<@ ' d(1,"';
+#Print_name ($imq);
+GEN<]     '",'   $NUM   ',pl->cel,0);';
+GEN << '#endif';
+       #G_sohranitx_GLOB( $imq sohranitx);
+                  -- sohranitx GLOB perem.
+
+         $X:=LAST #C $LAST_VARIABLES.$imq.'_';
+         IF $X -> GEN<< @ glob $NUM '_' $X  '.sa=pl->cel;'
+         ELSIF $.USESUN -> GEN<< 'loc0.sa=pl->cel;'
+         FI;
+         --- generiruet ustanowku $ ( GLOB#_# ili LOC0 )
+         --- EXCEPT CASE WHEN $ IS ABSENT AND IS NOT GLOBAL.
+         --- VAX / 30.8.88,/PC/ 22.8.90
+         -- ustanowka $ na tek.leksemu
+
+       $tek_PL :=1             /,
+
+        BODY: (. (*
+                  ( #G_SIMPLE !
+                  (<. LABEL:$E.>/GEN<<@ '_L' $E ':;'/)  )
+                  *) .) -- !! VAX !! 22.6.88
+                .>
+       / #{6();
+                #G_sohranitx_GLOB( $imq NULL );
+         -- wossqftanowitx GLOB perem.
+       GEN << '#ifdef XX ';
+       GEN <<@ ' d(2,"';
+       #Print_name ($imq);
+         GEN<]     '",'    $NUM ',*rez,*success);';
+       GEN << '#endif';
+   GEN << ';};/* RULE */'/
+##
+-----------------------------------------------------
+#G_SIMPLE
+-- $metka_wyhoda_po_neuspehu --glob.
+-- $metka
+
+/ #{7();
+#G_INIT_VARS( LAST #G_prawilo $imq )  /
+<. LABEL: $metka_wyhoda_po_neuspehu
+  /$metka:= $metka_wyhoda_po_neuspehu/,
+
+  BODY: / $NEXTRET:=0 / -- teku}aq glubina wlovennosti
+        -- ssablonow spiskow i derewxew; esli <>0 , to
+        -- G_RETURN generiruet NEXT(PL1) ...
+  (. (* ( #G_PATTERN ! #G_STMT ) *)
+  /GEN<< @ 'goto _L99;  _L'
+         $metka_wyhoda_po_neuspehu ':;'
+          '  /* metka wyhoda po neuspehu wetwi */'/
+  .)  ,
+[ 'ONFAIL': /GEN<<'/* ONFAIL-dejstwiq */'/
+   (. (* #G_STMT *) .)
+  --   /GEN<<'goto _L99;'/  -- removed 20-nov-92
+ ] .>
+##
+-------------------------------------------------------
+
+
+
+

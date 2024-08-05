@@ -1,0 +1,310 @@
+--****************************************************
+--      S - kod  RIGAL - programmy
+--  sozdaetsq fazoj analiza : #programma
+--  ispolxzuetsq fazoj generacii: #G_programma
+--
+--  sozdano 26 okt 1987 
+--  poslednee izmenenie :    9 marta 1988 
+--****************************************************
+
+#S_programma
+        (.  #S_glawnaq_programma
+            (*   #S_prawilo   *)  .)
+##
+--------------------------------------------------
+#S_glawnaq_programma
+        $imq :: <.  MAXWRK : $MAXWRK, 
+                    MAXPL: $MAXPL,
+                    MAXLABEL:  $LABEL,
+                    MAX_FLAG: $MAX_FLAG,
+                  [ USESUN : T ],
+                    BODY: (.(* #S_operator *).) 
+                 .> 
+##
+--------------------------------------------------- 
+#S_prawilo
+        $imq :: <. MAXWRK: $MAXWRK, 
+                   MAXLABEL: $LABEL,
+                   MAXPL: $MAXPL, 
+                   MAX_FLAG: $MAX_FLAG, 
+                 [ USESUN : T ],
+                   BODY: (.(* #S_prostoe_prawilo *).) 
+                .>
+##
+--------------------------------------------------
+#S_prostoe_prawilo
+        SIMPLE:: <.  LABEL: $metka_wyhoda_po_neuspehu,
+                     BODY: (. (*  ( #S_{ablon ! 
+                                    #S_operator  )
+                               *) .), 
+                   [ USEVAR : <* $ID : T *> ],
+                   [ 'ONFAIL': (. (* #S_operator *) .)] 
+                  .>
+##
+----------------------------------------------------
+--**************************************************
+--      o p e r a t o r y 
+--
+--**************************************************
+#S_operator 
+        ASSGN::  <. lew: #S_wyravenie , 
+                    op:  ( ':=' ! '+:=' ! '++:=' !
+                           '!.:=' ! '!!:=' ) ,
+                    praw : #S_wyravenie  .>  ;; 
+
+        'LOAD':: <. VAR : #S_peremennaq , 
+                    FILE_SPEC : #S_wyravenie .> ;;
+
+        'SAVE':: <. VAR : #S_peremennaq , 
+                    FILE_SPEC : #S_wyravenie .> ;;
+
+        'OPEN' :: <. NAME : $ID , 
+                     FILE_SPEC : #S_wyravenie .> ;; 
+
+        'PUT' ::  <. NAME : $ID , 
+                     tip : ( '<<' ! '<]' ), 
+                    [  arg : (. (* ( #S_wyravenie ! #atom 
+                                     '@' ) *) .) ]
+                  .> ;; 
+
+        'CLOSE':: (. $imq .) ;; 
+
+        'PRINT':: (. #S_wyravenie .) ;; 
+
+        'RETURN' :: (. #S_wyravenie .) ;; 
+
+        'FAIL' :: (. T .) ;;
+
+        'FORALL':: <. VAR : #S_peremennaq , 
+                      LABEL: $L,
+                      'IN' : #S_wyravenie , 
+                      BODY : (. (* #S_operator *) .)
+                   .> ;;
+
+        'LOOP' :: <. LABEL: $L, 
+                    [ BODY: (. (* #S_operator *) .)]
+                   .>      ;; 
+
+        'BREAK' :: (. T .) ;; 
+
+        'IF' :: <. LABEL: $LABEL, 
+                   BRANCHES: (. (* #S_IF_wetwx *).) 
+                 .> ;;
+
+        'CALL' :: <. NAME : $imq ,
+                     PL: $NPL,
+                     mesto: WRKI, 
+                     FLAG: $N,
+                   [ ARGS : (. (* #S_wyravenie *) .)] 
+                  .>    ;;
+
+        'BLTIN':: <. NOM: $N, -- 3..22
+                    [ ARG: $E ],
+                     mesto: $WRK, 
+                    [tip: ( ~islo ! log ) ] .> ;; 
+
+        'IMPLODE':: <. PL: $N,
+                     [ ARGS: (. (* #S_wyravenie *).) ], 
+                       mesto: $WRK, 
+                       FLAG: $NFL .> ;; 
+
+        'EXPLODE':: <. ARG: #S_wyravenie, 
+                       mesto: $WRK .> 
+
+##
+------------------------------------------------------- 
+#S_IF_wetwx 
+        <. COND : #S_wyravenie ,
+           BODY : (. (* #S_operator *) .) .>
+##
+------------------------------------------------------
+--****************************************************
+--
+--              { a b l o n y 
+--****************************************************
+#S_{ablon 
+        ATM ::<. VAL: #ATOM,
+                 [ mesto: $NOM ] --nomer w ACNST, 
+                                 -- esli atom ne ~islo
+                .>           ;; 
+
+        'NULL':: (. T .) ;; 
+
+        #S_peremennaq ;;
+
+        #S_imq_prawila ;; 
+
+        'LIST' :: <. WORK_PL: $N, 
+                     [ NAME : #S_{ablon_imeni ],
+                     BODY : (. #S_PLO .) .> ;;
+
+        'STARLIST':: <. WORK_PL: $N,
+                        LABEL: $N,
+                        BODY : (. #S_PLO .),
+                       [ DELIM_LABEL: $N ], 
+                       [ DELIMITER : ( #ATOM !
+                                       #S_imq_prawila )]
+                      .> ;; 
+
+        'PLUSLIST':: <. WORK_PL: $N,
+                        LABEL: $N,
+                        FLAG: $N, 
+                        BODY : (. #S_PLO .) , 
+                        [ DELIM_LABEL: $N ],
+                        [ DELIMITER: ( #ATOM !
+                                       #S_imq_prawila )]
+                     .> ;;
+
+        'FACULT' :: <. WORK_PL: $N, 
+                       LABEL: $L, 
+                       BODY:  (. #S_PLO .) .> ;;
+
+        'ALTERNATIVE':: <. metka_uspeha:  $LABEL, 
+                           BODY: (.(* (. $BRANCH_LABEL
+                                 #S_PLO .) *) .) .> ;;
+
+        'TREE':: <.  WORK_PL: $N, 
+                     [ NAME : #S_{ablon_imeni ],
+                     [ BODY:(. (* #S_TREE_EL_T *) .)],
+                     [ 'LOOP' : (. #S_peremennaq
+                                        #S_PLO    .)],
+                     [ LABEL: $L ]
+                     .> ;;
+
+        'SPAT':: (. #S_wyravenie .) ;;
+
+        'VPAT':: (. #S_wyravenie .) ;;
+
+        ':=' :: <. VAR : #S_peremennaq ,
+                   PAT : #S_{ablon .> ;;
+
+        '+:=' :: <. VAR : #S_peremennaq,
+                    PAT : #S_{ablon .> ;; 
+
+        '++:=' :: <. VAR : #S_peremennaq, 
+                     PAT : #S_{ablon .> ;;
+
+        '!.:=' :: <. VAR : #S_peremennaq, 
+                     PAT : #S_{ablon .> ;;
+
+        '!!:=' :: <. VAR : #S_peremennaq, 
+                     PAT : #S_{ablon .> ;;
+
+        BLTIN_NAME:: (. $NOM .) ;; -- 3..22 
+
+        'IMPLODE':: (. T .) ;;
+
+        'EXPLODE':: (. T .) 
+##
+------------------------------------------------------- 
+#S_TREE_EL_T
+        '[' :: (. $metka  $ACONST  #S_PLO  .) ;;
+
+         (. $ACONST  #S_PLO  .) 
+##
+----------------------------------------------------
+#S_{ablon_imeni 
+        ATOM:: (. $ACONSTNUM .) ;;
+        NUM:: (. $N .) ;; 
+        #S_peremennaq 
+##
+----------------------------------------------------
+#S_PLO
+        (* ( #S_operator ! #S_{ablon ) *) 
+##
+----------------------------------------------- 
+--******************************************************
+--      w y r a v e n i q 
+--
+--******************************************************
+#S_wyravenie
+
+        CONSTANT:: <. VAL: #ATOM, 
+                     [ tip: ~islo ],
+                     [ mesto: (CNST_I ! $N )],
+                     [ mesto2: WRK_I ], 
+                     [ ACONST: $N ] --dlq IDATOM
+                                --selektorow
+                     .>  ;; 
+
+        'NULL' ::<. mesto: 'NULL' .> ;; 
+
+        #S_peremennaq ;;
+
+        'LAST':: <. RULE: $ID,
+                    VAR:  $ID1, 
+                   [ mesto: GLOB_I ] .>  ;; 
+
+        'CONLIST':: <. [ BODY: (. (* #S_wyravenie *)
+                                .) ], 
+                       mesto:  WRK_I  .>    ;;
+
+        'CONTREE':: <. [ BODY:
+                         (. (* #S_wyravenie 
+                               #S_wyravenie   *) .)], 
+                         mesto: WRK_I  .>     ;;
+
+
+        $unarnaq_op :: <. ARG:   #S_wyravenie , 
+                        [ tip: ( ATOMIC ! ~islo ! log)],
+                          mesto: WRK_I, 
+                        [ mesto2: WRK_I ] .>
+                        / IF NOT #S_unarnaq_op
+                                    ($unarnaq_op) 
+                          -> FAIL FI / ;; 
+
+        $binarnaq_op::<. ARG1:  #S_wyravenie ,
+                         ARG2:  #S_wyravenie ,
+                       [ tip: (ATOMIC ! ~islo ! log)],
+                         mesto: WRK_I  ,
+                       [ mesto2: WRK_I ]  .>
+                        / IF NOT #S_binarnaq_op 
+                                ($binarnaq_op)
+                           -> FAIL FI / ;;
+
+        'CALL':: <. RULE : $ID ,
+                    PL: $NPL, 
+                    mesto: WRK_I, 
+                    FLAG: $N, 
+                    ARGS : (. (* #S_wyravenie *) .) .> ;; 
+
+        BLTIN:: <. NOM: $N, 
+                   [ ARG: $E ], 
+                   mesto: $WRK, 
+                   [ tip: ( ~islo ! log) ] .> ;;
+
+        'IMPLODE':: <. PL: $N,
+                      [ ARGS: (. (* #S_wyravenie *) .) ], 
+                       mesto: $WRK, 
+                       FLAG: $NFL  .>  ;; 
+
+        'EXPLODE':: <. ARG: #S_wyravenie, 
+                       mesto: $WRK .> 
+##
+--------------------------------------------------------
+#S_peremennaq 
+        'VAR'::<. NAME: $ID,
+                [ mesto: ( LOC_I ! GLOB_I )] .> 
+        -- w tom ~. '_' dlq $ 
+##
+----------------------------------------
+#S_imq_prawila
+        'RULENAME'::(. $ID .) 
+##
+------------------------------------------
+#S_unarnaq_op 
+        ( 'NOT' ! '-' ! '+' ! 'COPY' ! '$$' ) 
+        / RETURN T/ 
+##
+------------------------------------------
+#S_binarnaq_op
+        ('!!' ! '!.' ! '++' ! 
+         '=' ! '<>' ! 'AND' ! 
+         'OR' ! '+' ! '-' ! 
+         '*' ! 'DIV' ! 'MOD' !
+         '>' ! '<' ! '>=' ! 
+         '<=' ! '::' !
+         'INDEX' ! 'SELECTOR' ) 
+        / RETURN T/ 
+##
+------------------------------------------

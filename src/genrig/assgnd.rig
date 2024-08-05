@@ -1,0 +1,305 @@
+#QQQ $S:=u ##
+--
+--      operatory priswaiwaniq
+--        := !.:= !!:=  +:= ++:=
+--
+---------------------------------------------------
+#G_ASSGN
+
+     $R:=  ASSGN:: <. op: $OP .>
+     / IF $OP='!!:=' -> #G_ALONGLIST($R)
+    ELSIF $OP='++:=' -> #G_ALONGTREE($R)
+    ELSIF T          -> #G_ANORM($R) FI/ ##
+
+#G_ANORM
+       ASSGN:: <. op: ':='
+                   / GEN<< '/* operator := */'/,
+
+         lew:  ( ( INDEX::<. ARG1:
+                               $A1:= #obxekt_ili_NULL,
+                             ARG2:
+                             $A2:= #INTEGER_ili_obxekt
+                          .>
+                   / $E:= #obqzatelxno_obxekt ($.praw);
+                     GEN<< 'setind(' $A2  $A1 ','
+                                          $E ')'/ )  !
+
+                 ( SELECTOR:: <. ARG1: $A1:=
+                                       #obxekt_ili_NULL,
+                                 ARG2: $A2:=
+                                   #ACONST_ili_obxekt .>
+                     /$E:= #obqzatelxno_obxekt( $.praw);
+                      GEN<< 'setsel(' $A2 $A1 ','
+                                           $E ')'/ ) !
+
+                 ( $E1 / #G_wyravenie( $E1);
+                        $E:= $.praw;
+                $E:= #obqzatelxno_obxekt( $E);
+                GEN<< $E1.mesto '.sa=' $E /))
+                .>  ;;
+
+        ASSGN:: <. op: '!.:='
+                        /GEN<< '/* operator !.:= */'/,
+         praw: $E:= #obqzatelxno_obxekt,
+         lew: ( ( INDEX:: <. ARG1:
+                                 $A1:= #obxekt_ili_NULL,
+                             ARG2:
+                              $A2:= #INTEGER_ili_obxekt,
+                             mesto: $W  .>
+                   /GEN<<
+                 'indxop(' $A2  $A1 ',&' $W '.sa);'
+                 'lconc(&' $W '.sa,' $E ');'
+                 'setind(' $A2  $A1 ',' $W '.sa)'
+                    / ) !
+
+                 ( SELECTOR:: <. ARG1: $A1:=
+                                       #obxekt_ili_NULL,
+                                 ARG2: $A2:=
+                                     #ACONST_ili_obxekt,
+                                 mesto: $W .>
+                   /GEN<<
+          'selop(' $A2 $A1 ',&' $W '.sa);lconc(&'
+          $W '.sa,' $E ');if(' $W
+          '.sa==NULL ) setsel(' $A2 $A1 ',NULL)'
+                     / ) !
+
+                 ( $E1 / #G_wyravenie( $E1);
+                        GEN<< 'lconc(&' $E1.mesto '.sa,'
+                               $E ')'/ ) )
+                  .> ;;
+
+        ASSGN:: <. op: '+:='
+                        /GEN<< '/* operator +:= */'/,
+                 praw: $E /#G_wyravenie( $E);
+                           $A3:= #~islo_ili_0( $E)/,
+
+                lew: ( ( INDEX:: <. ARG1:
+                                 $A1:= #obxekt_ili_NULL,
+                                    ARG2:
+                              $A2:= #INTEGER_ili_obxekt,
+                                    mesto: $W .>
+          /GEN<< 'indxop(' $A2 $A1 ',&' $W '.sa);addnum(&'
+                  $W '.sa,' $A3 ');setind(' $A2 $A1 ','
+                  $W '.sa)' /           ) !
+                        ( SELECTOR:: <. ARG1:
+                                $A1:= #obxekt_ili_NULL,
+                                        ARG2:
+                               $A2:= #ACONST_ili_obxekt,
+                                        mesto: $W .>
+        /GEN<< 'selop(' $A2 $A1 ',&' $W '.sa);addnum(&' $W
+                '.sa,' $A3 ');setsel(' $A2 $A1 ',' $W
+                '.sa)' /                ) !
+                        ( $E1 / #G_wyravenie( $E1);
+                    GEN<< 'addnum(&' $E1.mesto '.sa,'
+                          $A3 ')' /  )  )  .>
+                                ##
+
+---------------
+#G_ALONGLIST
+
+        ASSGN:: <. op: '!!:='
+                        /GEN<< '/* operator !!:= */'/,
+         praw: CONLIST:: <. [ BODY: $B ] .>,
+         lew:  (( INDEX:: <. ARG1:
+                                 $A1:= #obxekt_ili_NULL,
+                             ARG2:
+                              $A2:= #INTEGER_ili_obxekt,
+                             mesto: $W .>
+                  /GEN<< 'indxop(' $A2  $A1 ',&'
+                                    $W '.sa);'/ ) !
+
+                ( SELECTOR:: <. ARG1: $A1:=
+                                       #obxekt_ili_NULL,
+                                ARG2: $A2:=
+                                     #ACONST_ili_obxekt,
+                                mesto: $W .>
+             / GEN<< 'selop(' $A2 $A1 ',&' $W '.sa);'/) !
+
+                 ( $E1 /#G_wyravenie( $E1);
+                        $W := $E1 .mesto / ) ),
+        -- 2-j prohod
+         praw:  <. [ BODY: (.
+                       $EL:= #obqzatelxno_obxekt
+                    / GEN<< 'lconc(&' $W '.sa,' $EL ');'/
+                            (*
+                       $EL:=#obqzatelxno_obxekt
+                 / GEN<< 'if(' $W '.sa!=NULL ) lconc(&'
+                          $W '.sa,' $EL ');' /
+                             *) .) ]  .> ,
+         lew: (( INDEX:: <. ARG1: $B .>
+                 /GEN<<  'setind(' $A2  $A1 ',' $W '.sa)'
+                                  /) !
+
+                ( SELECTOR:: <. ARG1: $B .>
+                  /GEN<< 'if(' $W '.sa==NULL )'
+                         'setsel(' $A2 $A1 ',NULL)'
+                                         / ) !
+                $E1 )  .>   ;;
+
+        ASSGN:: <. op: '!!:='   ,
+             praw: $E:= #obqzatelxno_obxekt,
+             lew: (( INDEX::<. ARG1:
+                               $A1:= #obxekt_ili_NULL,
+                           ARG2:
+                            $A2:= #INTEGER_ili_obxekt,
+                           mesto: $W .>
+                 /
+-- GEN<<
+--                    'indxop(' $A2  $A1 ',&' $W '.sa);'
+--                      'concop(&' $W '.sa,' $E ');'
+--                 'if(' $W '.sa==NULL )'
+--                 'setind(' $A2  $A1 ',NULL)'
+  GEN <<        'indxcon(' $A2 $A1 ',' $E ')' 
+
+/) !
+
+                (SELECTOR:: <. ARG1: $A1:=
+                                       #obxekt_ili_NULL,
+                               ARG2: $A2:=
+                                     #ACONST_ili_obxekt,
+                               mesto: $W .>
+                  /GEN<<
+                     'selop(' $A2 $A1 ',&' $W '.sa);'
+                     'concop(&' $W '.sa,' $E ');'
+                     'if(' $W '.sa==NULL )'
+                     'setsel(' $A2 $A1 ',NULL)'/) !
+
+                 ( $E1 /#G_wyravenie( $E1);
+                        GEN<< 'concop(&' $E1.mesto '.sa,'
+                                           $E ')' / ))
+                .>      ##
+
+---------------
+#G_ALONGTREE
+
+        ASSGN:: <. op: '++:='
+                        /GEN<< '/* operator ++:= */'/,
+                praw: CONTREE:: <. [ BODY: $B ],
+                                   mesto: $REZ  .>,
+                lew: ( (INDEX:: <. ARG1: $A1:=
+                                #obxekt_ili_NULL,
+                                   ARG2: $A2:=
+                                #INTEGER_ili_obxekt,
+                                   mesto: $W .>
+            /GEN<< 'indxop(' $A2 $A1 ',&' $W '.sa);'/ ) !
+
+                        (SELECTOR:: <. ARG1: $A1 :=
+                                #obxekt_ili_NULL,
+                                       ARG2: $A2:=
+                                #ACONST_ili_obxekt,
+                                       mesto: $W .>
+             /GEN<< 'selop(' $A2 $A1 ',&' $W '.sa);'/ ) !
+
+                        ( $E1 / #G_wyravenie( $E1);
+                                $W := $E1.mesto / )  )
+                /GEN<< $REZ '=' $W ';'/ ,
+
+        -- 2-j prohod
+                praw: <. [ BODY: (. (*
+                        $EL := #ACONST_ili_obxekt
+                        $EL2 := #obqzatelxno_obxekt
+               /GEN<< 'addel(' $EL $EL2 ',&' $W '.sa);' /
+                        *) .) ] .>      ,
+
+                lew: ( ( INDEX:: <. ARG1: $B .>
+                  /GEN<< 'setind(' $A2 $A1 ',' $W '.sa)' / ) !
+
+                        (SELECTOR:: <. ARG1: $B .>
+                  /GEN<< 'if(' $W '.sa==NULL )'
+                       'setsel(' $A2 $A1 ',NULL)' / ) !
+
+                        $E1 )  .> ;;
+
+        ASSGN:: <. op: '++:=' ,
+                   praw: $E:= #obqzatelxno_obxekt,
+                   lew: ( (INDEX::<. ARG1: $A1:=
+                                #obxekt_ili_NULL,
+                                   ARG2: $A2:=
+                                #INTEGER_ili_obxekt,
+                                   mesto: $W .>
+--                /GEN<< 'indxop(' $A2 $A1 ',&' $W '.sa);'
+--                         'addtre(&' $W '.sa,' $E ');'
+--                         'if(' $W '.sa==NULL )'
+--                         'setind(' $A2 $A1 ',NULL)'/ 
+                 /GEN << 'indxaddtre(' $A2 $A1 ',' $E ')' /
+
+                 ) !
+
+                          (SELECTOR:: <. ARG1: $A1:=
+                                #obxekt_ili_NULL,
+                                         ARG2: $A2:=
+                                #ACONST_ili_obxekt,
+                                         mesto: $W .>
+                /GEN<< 'selop(' $A2 $A1 ',&' $W '.sa);'
+                       'addtre(&' $W '.sa,' $E ');'
+                       'if(' $W '.sa==NULL )'
+                       'setsel(' $A2 $A1 ',NULL)'/ ) !
+
+                         ( $E1 /#G_wyravenie( $E1);
+                                GEN<<
+               'addtre(&' $E1.mesto '.sa,' $E ')' / )
+                                ) .>
+##
+---------------------------------------------------------
+-- wspomogatelxnye prawila
+------------------------------
+#obqzatelxno_obxekt
+--    wozwra}aet mesto obxekta w wide
+--   (.  LOC I  '.sa'  .)    ili 'NULL'
+--       GLOB I
+--      WRK I
+--
+        $E
+        / #G_wyravenie( $E); $M:= $E.mesto;
+        IF $E.tip -> #G_ATOM_FROM_REZ ($E);
+                     RETURN (. $E .mesto2  '.sa' .)
+        ELSIF $M = 'NULL' -> RETURN 'NULL'
+        ELSIF T ->   RETURN (. $M '.sa' .) FI/
+##
+-------------------------------------------------------
+#obxekt_ili_NULL
+--      wozwra}aet mesto obxekta w  wide
+--      (. LOC I   '.sa' .)     ili 'NULL'
+--         GLOB I
+--         WRK I
+--
+        $E
+        / #G_wyravenie( $E); $M:= $E.mesto;
+        IF $E.tip OR ($M = 'NULL') -> RETURN 'NULL'
+        ELSIF T -> RETURN (. $M '.sa' .) FI/
+##
+-------------------------------------------------
+#INTEGER_ili_obxekt
+--      wozwra}aet  (. 0L ',TRUE,' WRK I '.sa,' .)
+--      ili         (. N ',FALSE,NULL,'  .)
+--
+        $E
+        /#G_wyravenie( $E);$M:= $E.mesto; $T:= $E.tip;
+        IF ($T = ~islo) AND #NUMBER($M) ->
+                RETURN #IMPLODE( $M 'L,false,NULL,')
+        ELSIF $T = ~islo ->
+                RETURN (. $M '.nu,false,NULL,' .)
+        ELSIF $T OR ($M ='NULL') ->
+                RETURN  '0L,true,NULL,'
+        ELSIF T ->  RETURN (. '0L,true,' $M '.sa,' .)
+        FI /
+##
+------------------------------------------------
+#ACONST_ili_obxekt
+-- wozwra}aet   (. 'ACNST['  N '],false,NULL,'  .)
+--  ili         (. '0L,true,' WRK I  '.sa,'  .)
+--                           LOC I
+--                           GLOB I
+--              '0L,true,NULL,'
+--
+        $E
+        /#G_wyravenie( $E); $M:= $E.mesto; $T := $E.tip;
+         $A := $E.ACONST;
+     IF $A  -> RETURN (. 'acnst[' $A '],false,NULL,' .)
+     ELSIF $T -> #G_ATOM_FROM_REZ( $E);
+                 RETURN (. '0L,true,' $E.mesto2 '.sa,' .)
+     ELSIF $M = 'NULL' -> RETURN '0L,true,NULL,'
+     ELSIF T -> RETURN (. '0L,true,' $M '.sa,' .)
+     FI /
+##
+-----------------------------------------------------

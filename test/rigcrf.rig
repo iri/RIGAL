@@ -1,0 +1,198 @@
+--      postroenie tablicy perekrestnyh ssylok
+--      dlq RIGAL -programm 
+--      riga wc lgu 16.03.88
+--------------------------------------------------
+-- Changed 6-dec-1989 : added #TATOM, better list output.
+--                      added numbers
+#C
+--      whod: XXXXX.S1
+--      wyhod: XXXXX.CRF
+--
+-- globalxnye peremennye
+--      $TAB    <* imq_prawila : <* imq_peremennoj :
+--                                  nomer_peremennoj *> 
+--              *>
+--
+--      $CALLS  <* prawilo-hozqin : 
+--                        <* prawilo-sluga : t *> *>
+--      $CALLED <* prawilo-sluga :
+--                      <* prawilo-hozqin : t *> *> 
+--      $USE_LAST <* prawilo-potrebitelx :
+--                      <* prawilo-hozqin : 
+--                              <* peremennaq : t *>
+--                                      *> *> 
+--      $USED_LAST <* prawilo-hozqin :
+--                      <* peremennaq :
+--                           <* prawilo-potrebitelx *>
+--                                      *> *>
+--      $RLIST     <* prawilo: T *>
+--              spisok prawil , ime`}ih opredeleniq
+--      $NUMS      <* prawilo : $NUMBER *>
+--              spisok nomerow prawil, ime`}ih opredeleniq i LAST-ssylki
+--------------------------------------------------
+        $L:=#PARM(T);
+        $L:= $L[1];
+        $M:=#CALL_PAS(14  #IMPLODE($L '.rig'));
+        OPEN LST #IMPLODE( $L '.crf' );
+        OPEN CRT #IMPLODE( $L '.crt' );
+        OPEN ERR ' ';
+        LST <<@  'START OF CROSS REFERENCE  FOR   ' $L '.RIG';
+        LST <<'-------------------------------------------------------';
+        CRT <<@  'START OF CROSS REFERENCE  FOR   ' $L '.RIG';
+        ERR <<@  'START OF CROSS REFERENCE  FOR   ' $L '.RIG';
+        ERR <<@  'LU RIGA / JAN 1990 / IBM/PC VERSION ';
+        #programma ( $M );
+
+        FORALL $R IN $NUMS DO
+          $X:=$CALLS.$R;
+          IF $X -> CRT<<@ 'R' $NUMS.$R '--->'; 
+                   FORALL $V IN $X DO
+                       IF $NUMS.$V-> CRT<]@ ' R' $NUMS.$V FI OD FI OD;
+       CRT << '******************************';
+        FORALL $R IN $NUMS DO
+          $X:=$CALLED.$R;
+          IF $X -> CRT<<@ 'R' $NUMS.$R '<----';
+                   FORALL $V IN $X DO
+                       IF $NUMS.$V-> CRT<]@ ' R' $NUMS.$V FI OD FI OD;
+
+        FORALL $R IN $TAB DO
+           LST<< @ '[' $NUMS.$R '] RULE #' $R; 
+           IF $RLIST .$R =NULL -> 
+                   LST<] '   ***UNDEFINED***' FI; 
+           $X:= $CALLS .$R; 
+           IF $X -> LST<< '    CALLS RULES:'; 
+                FORALL $V IN $X DO
+                  LST<]  ' ' @ ' #' $V ;
+                  IF $NUMS.$V -> LST<] @ '[' $NUMS.$V ']' FI
+                OD 
+           FI;
+
+           $X:= $CALLED .$R;
+           IF $X -> LST<<'    CALLED BY RULES:';
+                FORALL $V IN $X DO
+                  LST<] ' ' @ ' #' $V '[' $NUMS.$V ']' OD
+           FI;
+
+           $X:= $TAB .$R; 
+     IF $X -> LST<< @ '    VARIABLES( ' #LEN( $X) '):'; 
+                FORALL $V IN $X DO
+                  LST<] ' ' @ ' $' $V  OD
+           FI;
+
+           $X:= $USED_LAST .$R; 
+           IF $X -> LST<< @  '    GLOBAL VARIABLES( ' 
+                                       #LEN( $X) '):';
+              FORALL $V IN $X DO
+                $Y:= $X .$V;
+                FORALL $W IN $Y DO
+                   LST<< @ '      $' $V ' USED BY #' $W '[' $NUMS.$W ']'
+                                OD
+                              OD
+           FI;
+
+           $X:= $USE_LAST .$R;
+           IF $X -> LST<< '    USES GLOBAL VARIABLES:';
+                FORALL $V IN $X DO
+                  $Y:= $X .$V;
+                  FORALL $W IN $Y DO
+                     LST<< @ '      LAST #' $V '[' $NUMS.$V '] $' $W
+                                OD
+                                OD
+           FI   ; 
+        LST<<'------------------------------------------------'
+              OD; 
+   ERR <<@ 'O.K.  CROSS REFERENCE READY IN   ' $L '.CRF & .CRT' ;
+   ERR <<;
+##
+----------------------------------------------------
+#USE_LAST 
+        $pra    $per
+        /$tp:= LAST #programma $tek_prawilo;
+        $A:= LAST #C $USE_LAST . $tp; 
+        $B:= $A . $pra; 
+        $C:= $B . $per; 
+        IF $A= NULL -> LAST #C $USE_LAST ++:= <. $tp:
+                        <. $pra: <. $per: T .> .> .>
+        ELSIF $B = NULL -> $A ++:= <. $pra: <. $per: T .> 
+                                                .>
+        ELSIF $C = NULL -> $B ++:= <. $per: T .>  FI; 
+
+        $A:= LAST #C $USED_LAST . $pra; 
+        $B := $A .$per; 
+        $C := $B . $tp; 
+        IF $A = NULL -> LAST #C $USED_LAST ++:= <. $pra:
+                          <.   $per:  <. $tp: T .> .> .>
+        ELSIF $B = NULL -> $A ++:= <. $per: <. $tp: T .>
+                                                .>
+        ELSIF $C = NULL -> $B ++:= <. $tp: T .> FI /
+##
+--------------------------------------------------------
+#CALL 
+        $CLD
+        / $CLS:= LAST #programma $tek_prawilo;
+          $A:= LAST #C $CALLS . $CLS; 
+        $B:= LAST #C $CALLED . $CLD;
+        IF $A -> $A ++:= <. $CLD: T .>
+        ELSIF T -> LAST #C $CALLS ++:= <. $CLS: 
+                                       <. $CLD: T .> .> 
+        FI; 
+        IF $B -> $B ++:= <. $CLS: T .>
+        ELSIF T -> LAST #C $CALLED ++:= <. $CLD:
+                                <. $CLS: T .> .> FI / 
+##
+--------------------------------------------------
+#TAB
+-- zanesenie w $TAB 
+        $imq_prawila    $imq_peremennoj 
+        /$T := LAST #C $TAB. $imq_prawila;
+         $NOM := $T.$imq_peremennoj;
+         IF $T = NULL -> LAST #C $TAB ++:=
+                 <. $imq_prawila : <. '_':0,
+                            $imq_peremennoj : 1 .> .> 
+         ELSIF $NOM = NULL -> $T ++:= 
+                 <. $imq_peremennoj : #LEN($T) .> FI/ ;;
+
+        $imq_prawila
+        / $T := LAST #C $TAB.$imq_prawila;
+          IF $T = NULL -> LAST #C $TAB ++:= 
+                <. $imq_prawila : <. '_' : 0 .> .> FI/
+##
+----------------------------------------------------
+--  analiz RIGAL- programmy 
+-- i postroenie tablic
+--------------------------------------------- 
+#programma
+-- globalxn. peremennye
+-- $tek_prawilo = imq tek.prawila dlq dostupa w $TAB
+----------------------------------------------------
+        (.  (*
+               $tek_prawilo := #_RULETOATM
+               /  #NUM ( $tek_prawilo );
+                  #TAB ( $tek_prawilo );
+                  $I+:=1;ERR<< $I  @
+                         '**prawilo #' $tek_prawilo;
+                  LAST #C $RLIST ++:= 
+                              <. $tek_prawilo: T.>/ 
+              (* ( ( $ID:= #_VARNTOATM
+                     / #TAB( $tek_prawilo $ID)/) !
+                   ( $ID:= #_RULETOATM
+                     / #CALL( $ID)/ ) ! 
+                   (   V'($$ = 'LAST')
+                       #_KEYWORD
+                     $ID:= #_RULETOATM
+                     $E:= #_VARNTOATM 
+                     /#NUM($ID); #TAB( $ID $E );
+                      #USE_LAST( $ID $E )/ )  ! 
+                    ( V'($$ ='##')
+                      #_KEYWORD 
+                        / BREAK/ ) !
+                    $E  )   *)
+          (*    #TATOM   *)
+              *) .) 
+##
+-----------------------------------------------
+#NUM $RULE
+    / IF NOT LAST #C $NUMS -> LAST #C $NUMS:=<.$RULE:1.>
+      ELSIF  NOT((LAST #C $NUMS).$RULE)->
+                              LAST #C $NUMS++:=<.$RULE :#LEN(LAST #C $NUMS)+1.>
+      FI / ##

@@ -1,0 +1,6 @@
+       $rez !.:= (. .) ;
+        $rez := #I_BUILD ( $rez #TAIL ( $dim ) #TAIL ( $sub ) ) ;
+PRINT (. 'here  $rez [ -1 ]=' $rez [ -1 ] .);
+        IF $rez [ -1 ] = NULL ->
+          $rez := #LTAIL ( $rez )
+        FI ;

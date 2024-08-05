@@ -1,0 +1,85 @@
+----------------  PATTERN3.RIG  --------------- 
+#{ablon_derewa
+-- <. ... .>
+        [ $E := #NAME_PAT ] 
+        V'($$ = '<.')         #_KEYWORD 
+        (* $B !.:= #|l_t_{_derewa * #COMMA )
+        V'($$ = '.>')         #_KEYWORD 
+       /  RETURN 'TREE'::<. NAME: $E, 
+                            type: <. tree : T .>,
+                            BODY: $B .>/  ;;
+
+-- <* ... *>
+        [ $E := #NAME_PAT ] 
+        V'($$ = '<*')         #_KEYWORD 
+        (* $B !.:= #|l_t_{_derewa   #COMMA *) 
+        $VAR := #_VARNTOATM 
+        / $loopvartype := #TAB( LAST #program $name  $VAR)
+                             ++ <. id : T .> /
+        V'($$ = ':')          #_KEYWORD 
+        [ $P !! := #dejstwiq ]
+        $P !. := #{ablon
+        [ $P !! := #dejstwiq ]
+        V'($$ = '*>')         #_KEYWORD 
+        / RETURN 'TREE'::<. NAME: $E, 
+                            BODY: $B, 
+                            type: <. tree : T .>,
+                            loopvar: VAR ::<. NAME: $VAR,
+                                              type: $loopvartype .>,
+                           'LOOP': $P  .>/
+##
+------------------------------------------------------- 
+#NAME_PAT 
+        V'( NOT #_KEYWORD($$))        $E := #ATOM 
+        V'($$ = '::')                 #_KEYWORD    ;;
+
+        $E := #_VARNTOATM 
+        V'( $$ = '::')                #_KEYWORD 
+        / $type := #TAB( LAST #program $name $E )
+                    ++ <. id :T, num: T, sym: T .>; 
+          RETURN VAR::<. NAME: $E,
+                         type: $type .>/ 
+
+##
+------------------------------------------------------- 
+#|l_t_{_derewa
+        [ V'( $$ = '[')     #_KEYWORD ]
+        $I := #IDENT
+        V'($$ = ':')        #_KEYWORD 
+        [ $A !!:= #dejstwiq ] 
+        $A !.:= #{ablon 
+        [ $A !!:= #dejstwiq ] 
+        [ V'($$ = ']')       #_KEYWORD ]
+         / RETURN   $A / 
+##
+--------------------------------------------------------- 
+#COMMA
+        V'( $$ = ',')         #_KEYWORD 
+##
+------------------------------------------------------
+#BUILTIN
+        ( 'ATOM'   / RETURN <. id: T, num: T, sym: T .> /  !
+          'NUMBER'   / RETURN <. num: T .> /  !
+          'IDENT'   / RETURN <. id: T .> /  ! 
+          'LIST'   / RETURN <. list: T .> /  !
+          'TREE'   / RETURN <. tree: T .> /  !
+          'TATOM'   / RETURN <. sym : T .> /  ! 
+          'FATOM'   / RETURN <. sym : T .> /  ! 
+          'IMPLODE' / RETURN <. sym : T, id: T .> / !
+          'EXPLODE' / RETURN <. list : T .> / !
+          '_KEYWORD'   / RETURN <. sym : T .> /  ! 
+          '_SPECDESC' / RETURN <. T : T .> / !
+          '_VARNAME'   / RETURN <. id : T .> /  ! 
+          '_RULENAME'   / RETURN <. id : T .> /  !
+          'LEN'   / RETURN <. num : T .> /  !
+          '_RULETOATM'   / RETURN <. id: T .> /  ! 
+          '_VARNTOATM'   / RETURN <. id: T .> /  ! 
+          'DEBUG'  / RETURN <. T : T .>   /  !
+          '_SPECTODSC' / RETURN <. T : T .> / ! 
+          '_CONTENT2'   / RETURN <. num : T .> /  !
+          'CHR'   / RETURN <. id: T, sym: T .> / ! 
+          'PARM'   / RETURN <. list: T .> / ! 
+          '_TOTATOM'   / RETURN <. sym: T .> / !
+          'ORD'     / RETURN <. num : T .> / )
+      ##
+------------------------------------------------------

@@ -1,0 +1,203 @@
+------------------------------------------------------
+#EXPR1
+-- (. ... .)
+        V'($$ = '(.') 
+        #_KEYWORD 
+        (*  $E1 := #wyravenie 
+             /#sozdatx_mesto2( $E1);
+              $E !.:= $E1 /    *) 
+
+        V'($$ = '.)') 
+        #_KEYWORD 
+        / RETURN CONLIST :: <. BODY:  $E, 
+                               mesto: #IMPLODE( wrk
+                                    #GETWRK()) .> / ;;
+
+-- <. ... .>
+        V'($$ = '<.') 
+        #_KEYWORD 
+        (*   $ID := ( #atom_selektor ! #wyravenie ) 
+                        /#sozdatx_mesto2( $ID)/ 
+             V'($$ = ':') 
+             #_KEYWORD
+             $E := #wyravenie 
+                /#sozdatx_mesto2( $E)/
+             / $R !.:= $ID; 
+               $R !.:= $E / 
+        *  #COMMA ) 
+        V'($$ = '.>') 
+        #_KEYWORD 
+        / RETURN CONTREE:: <. BODY: $R, 
+                              mesto: #IMPLODE( wrk
+                                    #GETWRK()) .> /  ;; 
+
+-- LAST 
+        V'($$ = 'LAST') 
+        #_KEYWORD 
+        $ID := #_RULETOATM
+        $E :=  #_VARNTOATM
+        / #TAB ( $ID  $E);
+          #LASTTAB ( $ID  $E);
+          -- zanesti w tablicy
+          RETURN 'LAST':: <. RULE: $ID, 
+                             VAR: $E .>/ ;; 
+
+-- COPY 
+        V'( $$ = 'COPY')
+        #_KEYWORD 
+        V'($$ = '(')
+        #_KEYWORD 
+        $E := #wyravenie
+        V'( $$ = ')') 
+        #_KEYWORD 
+        / IF $E.tip -> RETURN $E  -- 30.6.,zame~. 19.7.
+          ELSIF T ->  RETURN 'COPY':: <. ARG: $E, 
+                                         mesto: #IMPLODE(wrk 
+                                              #GETWRK()) .> FI /  ;;
+
+-- #LLL ( X Y Z ) 
+        $ID := #_RULETOATM
+        V'($$ = '(')
+        #_KEYWORD 
+        / $R := #BUILTIN( $ID)/ 
+         (V'($R) / $BLTIN:= BLTIN/ !
+          V'( $ID= 'EXPLODE') / $BLTIN:= $ID/ ) 
+            $E:= #wyravenie /#sozdatx_mesto2( $E)/
+            V'($$= ')') #_KEYWORD 
+            / IF ($R=15)OR($R=25) -> $tip:= ~islo FI;
+              $FLAG:= #GET_FLAG();
+              LAST #programma $tek_FLAG :=
+                LAST #programma $tek_FLAG -1; 
+              RETURN $BLTIN:: <. NOM: $R, 
+                                 ARG: $E, 
+                                 mesto: #IMPLODE( wrk 
+                                    #GETWRK()), 
+                                 tip: $tip, 
+                                 FLAG: $FLAG .> / ;;
+
+        $ID := #_RULETOATM
+        V'( $$ = '(' )   #_KEYWORD
+            ( V'($ID = 'IMPLODE') / $CALL:= 'IMPLODE'/ !
+              / $CALL:= CALL / )
+             / $N:= #GET_WORK_PL(); 
+               $FLAG:= #GET_FLAG()/ 
+        (*    $E1 := #wyravenie 
+              /#sozdatx_mesto2( $E1); 
+               $E !.:= $E1/  *) 
+        V'($$ = ')')
+        #_KEYWORD 
+        / LAST #programma $tek_PL:= 
+             LAST #programma $tek_PL -1;
+          LAST #programma $tek_FLAG :=
+             LAST #programma $tek_FLAG -1;
+          #CROSS($ID);
+          RETURN $CALL ::<. NAME : $ID, 
+                           PL: $N,
+                           FLAG: $FLAG, 
+                           ARGS: $E,
+                           mesto: #IMPLODE(wrk
+                                   #GETWRK()) .>/ ;;
+
+-- $$ 
+        V'($$ = '$$') 
+        #_KEYWORD 
+        / RETURN '$$'::<. ARG: T, 
+                          mesto: #IMPLODE(wrk
+                                   #GETWRK()) .>/  ;; 
+
+-- $VVV 
+        $ID := #_VARNTOATM
+        / #TAB( LAST #programma $tek_prawilo $ID);
+        IF $ID='_' -> LAST #prawilo $USESUN := T
+        ELSIF T -> #ADD_USEVAR ($ID) 
+        FI;
+        RETURN VAR:: <. NAME: $ID .>/        ;;
+
+-- NULL 
+        V'(#_CONTENT2($$)= 0) 
+        #_SPECDESC
+            /RETURN 'NULL'::<. mesto: 'NULL' .>/  ;;
+
+-- ATOM 
+        V'( NOT #_KEYWORD($$))
+        $E := #ATOM 
+        / IF #NUMBER( $E) -> $mesto:= $E; $tip:= ~islo
+          ELSIF T -> $mesto :=  #IMPLODE( cnst '['
+                    #GETCNST($E LAST #C $CONSTANT_LIST
+                                 ) ']') 
+          FI; 
+          RETURN CONSTANT::<. VAL: $E,
+                              mesto: $mesto,
+                              tip: $tip .> /  ;;
+
+-- ( EXPR ) 
+        V'($$ = '(')
+        #_KEYWORD 
+        $E := #wyravenie
+        V'($$ = ')')
+        #_KEYWORD 
+        / RETURN $E/
+##
+--------------------------------------------------- 
+#atom_selektor
+        $A := #IDENT
+        /RETURN CONSTANT::<. ACONST: #GETCNST( $A 
+                        LAST #C $A_CONSTANT_LIST) .>/ 
+##
+------------------------------------------------------
+#sozdatx_mesto2 
+        $E
+        /IF $E.tip -> $E++:= <. mesto2: #IMPLODE( wrk 
+                                  #GETWRK()) .> FI/ 
+##
+----------------------------------------------------- 
+#ne~islowoj_atom
+        $E:= #ATOM
+        / IF #NUMBER( $E) OR #_KEYWORD( $E) ->
+                FAIL FI / 
+        ( ( ( '.' ! '[' ! '::' !
+              '*' ! 'DIV' ! 'MOD' ! '!.' ! '!!' ! 
+              '++' ! '+' !  '-' ) / FAIL/ ) ! 
+          V'( T) )
+        / RETURN CONSTANT:: <. ACONST: #GETCNST( $E 
+                LAST #C $A_CONSTANT_LIST)  .>   / 
+##
+----------------------------------------------------- 
+#ADD_USEVAR
+  $V
+ / LAST #prostoe_prawilo $USEVAR ++ := <. $V : T .> /
+##
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

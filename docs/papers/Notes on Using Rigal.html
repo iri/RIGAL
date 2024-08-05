@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title>Notes on Using Rigal</title>
+	<meta name="generator" content="LibreOffice 24.2.5.2 (Windows)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="2024-08-05T16:22:08.972000000"/>
+	<meta name="Originator" content="Microsoft Word 15"/>
+	<meta name="ProgId" content="Word.Document"/>
+	<style type="text/css">
+		@page { size: 8.5in 11in; margin-left: 0.79in; margin-right: 0.39in; margin-top: 0.39in; margin-bottom: 0.39in }
+		p { color: #000000; line-height: 115%; margin-bottom: 0.1in; background: transparent }
+		h1 { color: #000000; margin-bottom: 0.08in; background: transparent; page-break-after: avoid }
+		h1.western { font-family: "Liberation Serif", serif; font-size: 24pt; font-weight: bold }
+		h1.cjk { font-family: "NSimSun"; font-size: 24pt; font-weight: bold }
+		h1.ctl { font-family: "Arial"; font-size: 24pt; font-weight: bold }
+		h2 { color: #000000; margin-top: 0.14in; margin-bottom: 0.08in; background: transparent; page-break-after: avoid }
+		h2.western { font-family: "Liberation Serif", serif; font-size: 18pt; font-weight: bold }
+		h2.cjk { font-family: "NSimSun"; font-size: 18pt; font-weight: bold }
+		h2.ctl { font-family: "Arial"; font-size: 18pt; font-weight: bold }
+		td p { color: #000000; orphans: 0; widows: 0; background: transparent }
+	</style>
+</head>
+<body lang="en-US" text="#000000" link="#000080" vlink="#800000" dir="ltr"><h1 class="western">
+Notes on Using Rigal</h1>
+<h2 class="western">Introduction</h2>
+<p class="msonormal">Rigal is available on either Linux/x86 or
+Solaris/SPARC platforms. 
+</p>
+<p class="msonormal">&nbsp;</p>
+<p class="msonormal">In order to use either one you must modify the
+PATH environment variable by executing the following command:</p>
+<p class="msonormal">&nbsp;</p>
+<p class="msonormal">For Linux / bash shell:</p>
+<p class="msonormal"><font face="Courier New">export PATH=&quot;&lt;RIGAL
+repo folder&gt;/bin:$PATH</font></p>
+<p class="msonormal">&nbsp;</p>
+<p class="msonormal">This will enable you to run the compiler (rc)
+and the interpreter (ic) from any directory.</p>
+<h2 class="western">What is a Rigal program?</h2>
+<p class="msonormal">Rigal programs consist of a single file of any
+number of rule (function) definitions. Each rule is introduced by a #
+sign followed by an identifier that is the name of the rule. It is
+terminated by a double # (Note: Identifiers are case sensitive):</p>
+<p class="msonormal">&nbsp;</p>
+<p>#Rule1</p>
+<p style="margin-left: 1.5in">&lt;Rule1 line 1&gt;</p>
+<p style="margin-left: 1.5in">&lt;Rule1 line 2&gt;</p>
+<p style="margin-left: 1.5in">&lt;Rule1 line 3&gt;</p>
+<p>##</p>
+<p>#Rule2</p>
+<p style="margin-left: 1.5in">&lt;Rule2 line 1&gt;</p>
+<p style="margin-left: 1.5in">&lt;Rule2 line 2&gt;</p>
+<p style="margin-left: 1.5in">&lt;Rule2 line 3&gt;</p>
+<p>##</p>
+<p>&nbsp;</p>
+<p class="msonormal">The first rule is the first called when the
+interpreter runs the file (like 'main' function in C). Any rule can
+call any other rule. Rules do not have to be declared before they are
+used.</p>
+<h2 class="western">Data types in Rigal</h2>
+<p class="msonormal">Basic data are atoms which can either be symbols
+(identifiers) or numbers (integers only).</p>
+<p class="msonormal">e.g. <font face="Courier New">X, anAtom, 32,
+-124</font> are all atoms.</p>
+<p class="msonormal">&nbsp;</p>
+<p class="msonormal">Structured types are the list and the tree.</p>
+<p class="msonormal">&nbsp;</p>
+<p class="msonormal">A list is recursively defined as a sequence of
+either atoms or lists (or trees ļæ½ see below) and is represented
+by the brackets (. and .) surrounding the sequence separated by
+spaces. Thus <font face="Courier New">(. a b c .)</font> is a list of
+three atoms, and <font face="Courier New">(. (.a .) (.b.) (.c.).)</font>
+is a list consisting of three lists, each of which contains one atom.
+Lists may be arbitrarily complex.</p>
+<p class="msonormal">&nbsp;</p>
+<p class="msonormal">A tree is like a list in that it can contain
+arbitrarily nested subtrees, and the leaves of the tree are atoms.
+The differences are that subtree branches must be uniquely labeled,
+the brackets are <font face="Courier New">&lt;.</font> and <font face="Courier New">.&gt;</font>
+and the sequence of subtrees are separated by commas. Thus <br/>
+<font face="Courier New">&lt;.
+L1 : a, L2 : b, L3 : c .&gt;</font> is a tree consisting of three
+leaves, and</p>
+<p class="msonormal"><font face="Courier New">&lt;. S1 : &lt;. L1 : a
+.&gt;, S2 : &lt;. L2 : b .&gt;.&gt;</font> is a tree with two
+branches labeled S1 and S2 leading to two subtrees consisting of a
+single leaf. In pictures, these two trees are:</p>
+<p class="msonormal"><table dir="ltr" align="left" cellpadding="0" cellspacing="0">
+	<tr>
+		<td style="border: none; padding: 0in"></td>
+		<td width="112" style="border: none; padding: 0in"></td>
+		<td width="116" style="border: none; padding: 0in"></td>
+		<td width="136" style="border: none; padding: 0in"></td>
+	</tr>
+	<tr>
+		<td style="border: none; padding: 0in"></td>
+		<td colspan="2" style="border: none; padding: 0in"></td>
+		<td rowspan="3" valign="top" style="border: none; padding: 0in"><p class="msonormal"><a name="_x0000_i1026"></a>
+			<img src="image001.gif" name="Image1" align="bottom" width="136" height="88" border="0"/>
+</p>
+		</td>
+	</tr>
+	<tr>
+		<td style="border: none; padding: 0in"></td>
+		<td valign="top" style="border: none; padding: 0in"><p class="msonormal"><a name="_x0000_i1025"></a>
+			<img src="image002.gif" name="Image2" align="bottom" width="112" height="73" border="0"/>
+</p>
+		</td>
+		<td style="border: none; padding: 0in"></td>
+	</tr>
+	<tr>
+		<td style="border: none; padding: 0in"></td>
+		<td style="border: none; padding: 0in"></td>
+		<td style="border: none; padding: 0in"></td>
+	</tr>
+</table>&nbsp;
+</p>
+<p class="msonormal">&nbsp;</p>
+<h2 class="western">&nbsp;</h2>
+<h2 class="western">&nbsp;</h2>
+<p class="msonormal"><br/>
+<br/>
+
+</p>
+<p class="msonormal">In addition, nodes can be labeled. So <font face="Courier New">N::&lt;.
+... .&gt;</font> labels the subtree (not just the branch leading to
+it) with <font face="Courier New">N</font>.</p>
+<h2 class="western">What is a rule?</h2>
+<p class="msonormal">A rule has a name, following the initial # sign,
+any number of parameters (or alternative parameter sets ļæ½ see
+below) and executable code which consists of a sequence of
+assignments and/or I/O statements, separated by semi-colons.
+Variables, including those in parameter specifications are
+identifiers that start with a $ sign. Thus the rule:</p>
+<p class="msonormal">&nbsp;</p>
+<p>#R1</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; $X := 3;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; PRINT $X</p>
+<p>##</p>
+<p class="msonormal">&nbsp;</p>
+<p class="msonormal">assigns 3 to the variable X and then prints this
+value. When there are parameters, these are written after the rule
+name and any executable code must be placed between slashes:</p>
+<p class="msonormal">&nbsp;</p>
+<p class="msonormal">&nbsp;</p>
+<p>#Go</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #R2(a b)</p>
+<p>##</p>
+<p>#R2 $X $Y</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /PRINT $X;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PRINT $Y/</p>
+<p>##</p>
+<p>&nbsp;</p>
+<p class="msonormal">Note that a rule must call R2 and pass arguments
+to it. All variables have local scope, and are dynamically typed,
+i.e. they can pick up the type of whatever is assigned to them
+without declarations being necessary:</p>
+<p>#Go</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #R3(a)</p>
+<p>##</p>
+<p>#R3 $X</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / $X := 1;</p>
+<p style="margin-left: 1.5in">PRINT $X;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; $Y := (. a b c
+.);</p>
+<p style="margin-left: 1.5in">PRINT $Y /</p>
+<p>##</p>
+<p>&nbsp;</p>
+<p class="msonormal">This program prints <font face="Courier New">1</font>,
+followed by the list <font face="Courier New">(. a b c .)</font>; the
+argument passed to <font face="Courier New">R2</font> is overwritten
+by the assignment of <font face="Courier New">1</font> to <font face="Courier New">$X</font>.</p>
+<p class="msonormal">&nbsp;</p>
+<p class="msonormal">Code may also be embedded between parameters:</p>
+<p>&nbsp;</p>
+<p>#Go</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #R4(a)</p>
+<p>##</p>
+<p>#R4 $X / $X := 1 / $Y / $Z := $X + $Y; PRINT $Z /</p>
+<p>##</p>
+<p>&nbsp;</p>
+<p class="msonormal"><font face="Courier New">$X</font> and <font face="Courier New">$Y</font>
+are the parameters. This prints <font face="Courier New">3</font>
+because the value passed to <font face="Courier New">R4</font>
+through <font face="Courier New">$X</font> is overwritten with <font face="Courier New">1</font>.</p>
+<p class="msonormal">&nbsp;</p>
+<p class="msonormal">Rules can be called recursively. The base case
+can be distinguished by a conditional test using the IF form:</p>
+<p class="msonormal">&nbsp;</p>
+<p>#Go</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; #R5(0)</p>
+<p>##</p>
+<p>#R5 $N</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; /PRINT $N;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; IF $N &lt; 10 -&gt; #R5($N + 1) FI/</p>
+<p>##</p>
+<p class="msonormal">This program prints the sequence <font face="Courier New">0</font>
+through <font face="Courier New">10</font>.</p>
+<p class="msonormal">&nbsp;</p>
+<h2 class="western">Operations</h2>
+<p class="msonormal">Rigal has a standard set of arithmetic
+operations: +, -, *, /. It also has a number of operations to support
+list and tree processing. Adding an item to the end of a list is done
+with <font face="Courier New">!.</font> and appending two lists
+together is done with <font face="Courier New">!!</font>:</p>
+<p class="msonormal">&nbsp;</p>
+<p>#Go</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; #R6( (. a b c .) ) 
+</p>
+<p>##</p>
+<p>#R6</p>
+<p>&nbsp;&nbsp;&nbsp; $L&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /&nbsp;&nbsp;
+$M := $L !. d; 
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$N := $M !! (. e f .); 
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+PRINT $N</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+/</p>
+<p>##</p>
+<p>&nbsp;</p>
+<p class="msonormal">This prints the list <font face="Courier New">(.
+a b c d e f .)</font></p>
+<p class="msonormal">&nbsp;</p>
+<p class="msonormal">Trees can be concatenated with the operation ++:</p>
+<p>#Go</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; #R7 ( &lt;. B1:&lt;. L1 : a, L2 : b .&gt;
+.&gt; )</p>
+<p>##</p>
+<p>#R7</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; $T&nbsp;&nbsp;&nbsp;&nbsp; /&nbsp;&nbsp;
+$U := $T ++ &lt;. B2:&nbsp; &lt;.&nbsp; L1 : c, 
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+L2 : d 
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+.&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+.&gt;; 
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+PRINT $U</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+/</p>
+<p>##</p>
+<p class="msonormal">This prints the tree 
+</p>
+<p class="msonormal"><font face="Courier New">&lt;. B1 : &lt;.L1 : a
+,L2 : b .&gt;, B2 : &lt;.L1 : c ,L2 : d .&gt; .&gt;</font></p>
+<h2 class="western">Pattern parameters</h2>
+<p class="msonormal">Rigal can also pass arguments to rules via
+pattern parameters, that specify the structure of the argument. A
+pattern can be a simple variable, which matches anything. Thus all
+the above examples pass their arguments through a simple variable
+pattern. A pattern can be a constant, and then the argument is
+expected to be that constant value. Thus:</p>
+<p style="margin-left: 1.5in">#Go</p>
+<p style="margin-left: 1.5in">&nbsp;&nbsp;&nbsp;&nbsp; #R8 (1 a 2)</p>
+<p style="margin-left: 1.5in">##</p>
+<p style="margin-left: 1.5in">#R8</p>
+<p style="margin-left: 1.5in">&nbsp;&nbsp;&nbsp;&nbsp; $n1 a $N2</p>
+<p style="margin-left: 1.5in">&nbsp;&nbsp;&nbsp;&nbsp; /PRINT
+'Matched'/</p>
+<p style="margin-left: 1.5in">##</p>
+<p class="msonormal">prints 'Matched' since 1 matches with $N1, a
+matches with a and 2 matches with $N2. If any argument fails to
+match, the rule returns NULL. Alternative matches can be specified
+separated by <font face="Courier New">;; </font>:</p>
+<p>#Go</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; #R8 (1 b 2)</p>
+<p>##</p>
+<p>#R9</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; $N1 a $N2</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; /PRINT 'Matched with a'/ ;;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; $N1 b $N2</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; /PRINT 'Matched with b'/</p>
+<p>##</p>
+<p class="msonormal">prints <font face="Courier New">'Matched with b'</font>
+since the first set of patterns fails. Patterns can also specify
+lists or trees, and these can contain variables and/or constants as
+necessary. The following set of rules illustrates some examples.</p>
+<p>#Go</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; #R10( (. a b c .) );</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; #R11( (. a (. b .) c .) );</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; #R12( &lt;. l1 : a, l2 : 2 .&gt; );</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; #R13 ( &lt;. l1 : &lt;. l1 : a, l2 : b
+.&gt;, l2 : &lt;. l1 : a .&gt; .&gt; )</p>
+<p>##</p>
+<p>#R10</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; (. a $L $M .)</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; /PRINT $L; PRINT $M/</p>
+<p>##</p>
+<p>#R11</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; (. a $L c .)</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; /PRINT $L/</p>
+<p>##</p>
+<p>#R12</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; &lt;. l1 : a, l2 : $T .&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; /PRINT $L; PRINT $T/</p>
+<p>##</p>
+<p>#R13</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; &lt;. l1 : &lt;. l1 : $V1 / PRINT $V1/,</p>
+<p>&nbsp;&nbsp; l2 : $V2 /PRINT $V2/ .&gt;, l2 : $T1 .&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /PRINT $T1/</p>
+<p>## 
+</p>
+<p class="msonormal">Note that a tree pattern can only have variables
+in the node (subtree) positions, not in the labels on those subtrees.</p>
+<p class="msonormal">&nbsp;</p>
+<p class="msonormal">Special forms are available for matching with
+lists and trees of arbitrary size. In each case, a sequence of items
+in a list or subtrees in a tree can be specified. 
+</p>
+<p class="msonormal">The form <font face="Courier New">(* ... *)</font>
+means&nbsp; match with a list of any length, including zero (the
+empty list). The form <font face="Courier New">(+ ... +)</font> means
+there must be at least one item. Similarly, <font face="Courier New">&lt;*
+... *&gt;</font> is a tree with any number of subtrees, and <font face="Courier New">&lt;+
+... +&gt;</font> is a tree with at least one subtree. The following
+examples illustrate these. Note that executable code can be embedded
+in these patterns.</p>
+<p>#Go</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #R14( (. a b c .) );</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #R15( (. d e f .) );</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #R16(g h i)</p>
+<p>##</p>
+<p>#R14</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (. (* $Item /PRINT
+$Item/ *) .)</p>
+<p>##</p>
+<p>#R15</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (. d (+ $Item /PRINT
+$Item/ +) .)</p>
+<p>##</p>
+<p>#R16</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (* $Item /PRINT $Item/
+*)</p>
+<p>##</p>
+<p class="msonormal">Note the special form for matching a sequence of
+arguments to a rule (R16).</p>
+<p>#Go</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; #R17( &lt;. L1: a, L2: b, L3: c .&gt; );</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; #R18(&lt;. L1:&lt;.L2:&lt;.L3:a.&gt;.&gt;.&gt;
+)</p>
+<p>##<br/>
+#R17</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; &lt;* L1:$V1 /PRINT $V1/,</p>
+<p>&nbsp;&nbsp; $Lab:$VS /PRINT $Lab; PRINT $VS .&gt;</p>
+<p>##</p>
+<p>#R18</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; &lt;* $Lab: /PRINT $Lab/ #R18 /PRINT
+$Lab/ *&gt; ;;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; $leaf /PRINT $leaf/</p>
+<p>##</p>
+<p class="msonormal">R18 is an example of a recursive rule call which
+will fail when it is passed a leaf node. The alternative 'catches'
+the leaf and stops the recursion. The labels are printed first in
+normal order (L1,L2,L3) while recursion goes towards the leaf. Then
+the value of $leaf is printed and finally labels are printed again
+but now in reverse order (L3, L2, L1) when the recursion is unwound.</p>
+</body>
+</html>

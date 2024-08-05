@@ -1,0 +1,88 @@
+-------------  EXPR1.RIG -----------------------------
+------------------------------------------------------
+#EXPR1
+-- (. ... .)
+        V'($$ = '(.')         #_KEYWORD 
+        (*  $E1 := #wyravenie 
+             / $E !.:= $E1 /    *) 
+        V'($$ = '.)')         #_KEYWORD 
+        / RETURN CONLIST :: <. BODY:  $E, 
+                               type: <. list: T .> .> / ;;
+
+-- <. ... .>
+        V'($$ = '<.')         #_KEYWORD 
+        (*   $ID := #wyravenie  
+             V'($$ = ':')     #_KEYWORD
+             $E := #wyravenie 
+             / $R !.:= $ID;   $R !.:= $E / 
+        *  #COMMA ) 
+        V'($$ = '.>')         #_KEYWORD 
+        / RETURN CONTREE:: <. BODY: $R, 
+                              type: <. tree: T .> .> /  ;; 
+
+-- LAST 
+        V'($$ = 'LAST')       #_KEYWORD 
+        $ID := #_RULETOATM
+        $E :=  #_VARNTOATM
+        / $type := #TAB ( $ID  $E);
+          RETURN 'LAST':: <. RULE: $ID, 
+                             VAR: $E,
+                             type: $type .>/ ;; 
+
+-- COPY 
+        V'( $$ = 'COPY')        #_KEYWORD 
+        V'($$ = '(')            #_KEYWORD 
+        $E := #wyravenie
+        V'( $$ = ')')           #_KEYWORD 
+        /  RETURN un_op:: <.  op: 'COPY',
+                              ARG: $E, 
+                              type: <. T : T .> ++ $E . type .>  /  ;;
+
+-- #LLL ( X Y Z ) 
+        $ID := #_RULETOATM
+        V'($$ = '(')        #_KEYWORD 
+        / $type := #BUILTIN( $ID);
+          IF $type ->  $call := BLTIN
+          ELSIF  T ->  $call := CALL ;
+                       $type := LAST #Lint $Rules . $ID;
+                 IF NOT $type -> $type:= <. T : T .>;
+                         LAST #Lint $Rules ++:= <. $ID : $type .>
+                 FI FI   /
+        (*  $E !.:= #wyravenie  *)
+            V'($$= ')')       #_KEYWORD 
+        /   RETURN $call :: <.   NAME: $ID,
+                                 ARGS: $E, 
+                                 type: $type .> / ;;
+
+-- $$ 
+        V'($$ = '$$')         #_KEYWORD 
+        / RETURN 'VAR'::<. NAME: '$$', 
+                           type: <. T : T .> .>/  ;; 
+
+-- $VVV 
+        $ID := #_VARNTOATM
+        / $type := #TAB( LAST #program $name $ID);
+         RETURN VAR:: <. NAME: $ID,
+                         type: $type .>/        ;;
+
+-- NULL 
+        V'(#_CONTENT2($$)= 0) 
+        #_SPECDESC
+            /RETURN 'NULL'::<. type: <. T : T .> .>/  ;;
+
+-- ATOM 
+        V'( NOT #_KEYWORD($$))
+        $E := #ATOM 
+        / IF #NUMBER( $E) ->  $type:= num
+          ELSIF #IDENT( $E ) -> $type := id
+          ELSIF T -> $type := sym FI ;
+          RETURN CONSTANT::<. VAL: $E,
+                              type: <. $type: T .> .> /  ;;
+
+-- ( EXPR ) 
+        V'($$ = '(')        #_KEYWORD 
+        $E1 := #wyravenie
+        V'($$ = ')')        #_KEYWORD 
+        / RETURN $E1/
+##
+--------------------------------------------------- 

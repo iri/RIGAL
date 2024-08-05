@@ -1,0 +1,83 @@
+-----------------  PATTERN2.RIG  -----------------
+#prostoj_{ablon 
+-- (. ... .)  , <. ... .> ,  <* ... *>
+        $E := ( #{ablon_spiska !
+                #{ablon_derewa ) /RETURN $E/ ;; 
+
+-- NULL 
+        V'(#_CONTENT2($$)= 0)         #_SPECDESC
+             /RETURN 'NULL'::<. type: <.T : T .> .>/ ;;
+
+-- ATOM 
+        V'(NOT #_KEYWORD($$)) 
+        $E := #ATOM 
+        / IF  #NUMBER( $E) -> $type:= num
+          ELSIF #IDENT( $E ) -> $type := id
+          ELSIF T ->            $type := sym
+          FI;
+          RETURN ATM:: <. VAL: $E,
+                          type: <. $type: T .> .> / ;;
+
+-- $XXX 
+        $E := #_VARNTOATM 
+        / $type:= #TAB( LAST #program $name  $E ); 
+          $X := #EXPLODE( $E )[1];
+          IF $X = I OR $X = i  -> $T1 := id
+          ELSIF $X = N OR $X = n -> $T1 := num FI;
+          IF $T1 ->  $type ++:= <. $T1 : T .> FI;
+          RETURN 'VAR'::<. NAME: $E,
+                           type: $type .>/ ;; 
+
+-- #RRRR
+        $E := #_RULETOATM 
+        / $S:= #BUILTIN( $E); 
+          IF    $S -> $call := builtin;
+          ELSIF T  -> $call := call;
+                      $S := LAST #Lint $Rules . $E;
+                IF NOT $S  -> $S := <. T : T .>;
+                       LAST #Lint $Rules ++:= <. $E : $S .>
+                FI  FI;
+          RETURN $call :: <. NAME: $E, type: $S .> /;;
+
+--S'( EXPR )
+       V'($$ = #IMPLODE( S #CHR( 39)) )
+  --      V'($$ = S''' )
+        #_KEYWORD
+        V'($$ = '(')        #_KEYWORD
+        $E := #wyravenie
+        V'($$ = ')')        #_KEYWORD
+        / RETURN  SPAT:: <. pat: $E .>/ ;;
+
+--V'( EXPR )
+        V'( $$ = #IMPLODE( V #CHR(39)) )
+--      V'( $$ = V''')
+        #_KEYWORD
+        V'( $$ = '(')        #_KEYWORD
+        $E := #wyravenie
+        V'( $$ = ')')        #_KEYWORD
+        / RETURN  VPAT:: <. pat: $E .>/ ;;
+
+-- ( ... ! ... ! ... )
+        V'($$ = '(')        #_KEYWORD
+        (*  / $S := NULL/
+            [ $S := #dejstwiq ]
+            $S1 := #prostoj_{ablon
+              / $S !.:= $S1; $X := $S1 . type;
+                IF   $X ->  $type ++:=  $X  FI /
+            [ $S !!:= #dejstwiq ]  / $E !.:= $S/
+        * #ALTERNATIVE_SYMBOL )
+        V'($$ = ')')        #_KEYWORD
+       /  RETURN 'ALTERNATIVE':: <. type : $type,
+                                    BODY : $E .>/
+##
+------------------------------------------------------
+#{ablon_spiska
+        [ $E := #NAME_PAT ] 
+        V'($$ = '(.')         #_KEYWORD 
+        (*  $R !!:= #PLO  *)
+        V'($$ = '.)')         #_KEYWORD 
+        / RETURN 'LIST':: <. NAME: $E,
+                             type: <. list : T .>,
+                             BODY: $R .>/ 
+##
+--------------------------------------------------- 

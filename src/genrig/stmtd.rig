@@ -1,0 +1,135 @@
+--
+--      generaciq operatorow RIGAL
+-----------------------------------------------
+#G_STMT
+        ( #G_IF !
+          #G_RETURN !
+          #G_PRINT !
+          #G_CALL !
+          #G_FAIL !
+          #G_LOAD_SAVE !
+          #G_OUTXT !
+          #G_LOOP !
+          #G_BREAK !
+          #G_OPEN !
+          #G_CLOSE !
+          #G_BLTIN !
+          #G_ASSGN   !
+          ( $E
+          / GEN << '/* operator ne realizowan!!!! */'/)
+        )
+        / GEN <] ';xxx;'/
+##
+-------------------------------------------------------
+#G_IF
+        'IF':: <. LABEL: $LABEL
+                        / $BNUM := #LEN( $.'BRANCHES')/,
+                'BRANCHES': (. /GEN <<'/* IF-operator */'/
+                        (* / $I +:=1/
+                           <. COND: $E
+                              / #G_wyravenie( $E);
+                              IF $E.tip = log ->
+                         GEN<< 'if(' $E.mesto '.bo)'
+                              ELSIF $E.mesto = 'NULL' ->
+                         GEN<< ' if(false)'
+                              ELSIF ($E.tip = NULL) AND
+                                    ( $E.VAL = NULL) ->
+                         GEN<< 'if(' $E.mesto '.sa!=NULL)'
+
+                                FI /,
+
+                              BODY: (. / GEN<< '{'/
+                                     (* #G_STMT *)  .)
+                                /IF $I < $BNUM ->
+                                    GEN<<@ goto ' _L' $LABEL ';' FI;
+                                GEN<< ';}'/
+                             .>  *)     .)
+                .>
+                / GEN<<@ '_L' $LABEL ':'/
+##
+-------------------------------------------------------
+#G_PRINT
+        'PRINT':: (. (
+
+        ( CONSTANT::<. VAL: $A := #NUMBER .>
+                /GEN<<@ 'if (out_screen)  printf("%12ld\n",' $A ');';
+                 GEN<<@ 'else fprintf(out,"%12ld\n",' $A ')' /) !
+--
+--        (<. tip: ATOMIC,
+--            mesto : $M .>  -- ssylka na A-prostranstwo
+--                / obra}enie k POINTA ..
+
+--        ( 'NULL':: <. mesto: 'NULL' .>
+--                / GEN << 'if (out_screen)  printf("NULL\n");'
+--                          'else fprintf(out,"NULL\n")' /) !
+
+ (  $M   / #G_wyravenie ( $M);
+--     IF $M.tip = ~islo ->
+--       GEN<< 'if (out_screen)  printf("%ld\n",' $M.mesto '.nu);'
+--             'else  fprintf(out,"%ld\n",' $M.mesto '.nu)'
+--     ELSIF $M.tip = log ->
+--       GEN<< 'if(' $M.mesto '.bo)';
+--       GEN<< '{if (out_screen) printf("T\n"); else fprintf(out,"T\n");}';
+--       GEN<< ' else';
+--       GEN<< '{if (out_screen) printf("NULL\n"); else fprintf(out,"NULL\n");}';
+--     ELSIF T ->
+       GEN<< 'if (out_screen) {pscr(' $M.mesto '.sa);putchar(''\n'');}'
+             'else { pout('  $M.mesto '.sa);putc(''\n'',out);} '
+--     FI 
+/)  )
+                .)
+##
+-------------------------------------------------------
+#G_LOAD_SAVE
+        $OP:: <. VAR: $V,
+                 FILE_SPEC: $E .>
+        / GEN << '/* operator' $OP '*/';
+          #G_wyravenie( $E);
+          #G_wyravenie( $V);
+        IF $E.tip -> GEN << '/*' newernaq specifikaciq
+                            fajla  w $OP '!!!!!*/' FI;
+          GEN<< 'loasav(&' $V.mesto ',' $E.mesto '.sa,';
+          IF $OP ='LOAD' -> GEN<] '0L'
+         ELSIF LAST #G_telo_glawn $[-1]=$ -> GEN <] '2L'
+          -- optimization
+          -- changed 18-dec-90 due to SAVE in last IF statement.
+         ELSIF T       ->  GEN<] '1L' FI;
+          GEN<< ')' /
+##
+-------------------------------------------------------
+#G_RETURN
+        'RETURN':: (. / GEN<< '/* RETURN-op. */'/
+                      $E / #G_wyravenie ( $E)/  .)
+
+        / IF $E.tip -> #G_ATOM_FROM_REZ( $E) FI;
+          GEN<< rez1 '=' ;
+
+          IF $E.mesto2 ->  GEN<] $E.mesto2 '.sa'
+          ELSIF $E.mesto = 'NULL' -> GEN<] 'NULL'
+          ELSIF  T ->  GEN <] $E.mesto '.sa'  FI;
+
+          IF LAST #G_SIMPLE $NEXTRET > 0 ->
+
+ -- 23.12.88 esli RETURN wyzywaetsq wnutri {ablona spiska ili
+ --          derewa
+
+             GEN<<';if (pl1.ptrtype!=ptrtree) next(&pl1)'
+                  '/*wyhod iz der.ili sp.*/';
+          FI;
+          GEN  <] ';goto _L98' / -- 22.06
+##
+-------------------------------------------------------
+#G_FAIL
+        'FAIL':: (. T .)
+        / GEN << '/* FAIL */ rez1=NULL;success1=false;' ;
+         IF LAST #G_SIMPLE $NEXTRET ->  -- 19.07
+           -- corrected from #G_PATTERN 20.2.90
+             GEN<<'if (pl1.ptrtype!=ptrtree) next(&pl1);'
+                  '/*wyhod iz der.ili sp.*/';
+         FI;
+
+          $X := LAST #G_SIMPLE $metka;
+          IF $X -> GEN<< @ goto ' _L' $X
+          ELSIF T -> GEN<< 'goto _L99;' FI /
+##
+-------------------------------------------------------

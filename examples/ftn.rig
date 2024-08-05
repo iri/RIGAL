@@ -1,0 +1,385 @@
+
+--(* FTN.RIG *)
+
+#F
+-- main rule; place for global variables of whole program.
+$B:=#PARM(T);
+$S:=#CALL_PAS(35 #IMPLODE($B[1] '.PAS') 'U-P-');
+$T:=#CALL_PAS(35 #IMPLODE('TYPES.PAS')  'U-P-');
+$FILES:=0;
+$SY0:=(.':=' ';' 'end' 'then' 'do' 'to' 'else' 'downto' 'of' .) ;
+
+$SY1:= (. '<' '>' '<=' '>=' '=' '<>' '[' ']'
+             'and' 'or' 'not' 'div' '^' 'trunc' 'exit' 'halt'
+       true false arctan .) ;
+$SY2:=(. '.lt.' '.gt.' '.le.'  '.ge.' '.eq.' '.ne.' '(' ')'
+          '.and.' '.or.'  '.not.' '/' ' ' 'nint' 'return' 'stop'
+          '.true.' '.false.'  atan.);
+
+OPEN F #IMPLODE($B[1] '.FOR');
+OPEN S ' ';
+PRINT $S;
+#DECLS1($T); -- common type declarations are necessary !
+PRINT (. 'TYPE TREE=' $TYPES .);
+#PROGRAM($S);
+##
+
+#DECLS1 (. #DECLS .) ##
+
+#PROGRAM (.
+[#CM program  $XXX ';' #CM]
+ (* #CM
+    ( #PROCEDURE
+    /F<<;
+     F<<'C ------------------------------';
+     F<</
+
+    !
+/F<<'C DD------------------------------';/
+(* $C!!:=#DECLS *)
+/ F<<'C EE------------------------------';/
+    )
+   #CM
+   *) .)
+/ $C[-1]:=NULL;#COMMON($C) /
+##
+#COMMON
+ / OPEN C #IMPLODE(LAST #F $B[1] '.INC');
+   C<<#D() @ 'COMMON /' LAST #F $B[1] '/' /
+ (. (* $E1
+[$E2] [$E3] [$E4] [$E5] [$E6]
+[$Ea] [$Eb] [$Ec] [$Ed] [$Ee] [$Ef]
+  / C<<@ '     N '
+$E1 $E2 $E3 $E4 $E5 $E6
+$Ea $Eb $Ec $Ed $Ee $Ef
+ /
+  *) .)
+##
+
+#PROCEDURE
+ / $lab:=100 /
+ #HEADER
+ (* #DECLS *)
+ #BLOCK
+ [(';'!'.')]
+ / F<<#D() 'END'/
+##
+
+#HEADER
+  #CM
+  ( (function!Function)  / $TXT!.:=function /
+  ! (procedure!Procedure) / $TXT!.:=subroutine /)
+  $TXT!.:=$A / $TXT!.:='(' /
+  [ '('
+    / $ch:=' ' /
+    (* [var] $ids:=#IDLIST
+       / $il!.:=$ids; $TXT!!:=(. $ch $ids .) ; $ch:=',';PRINT($$) /
+       ':'
+       $t!.:=#TYPE
+     * ';' )
+    ')' ]
+   / $TXT!.:= ')' /
+  ( (':' $R:=#TYPE [';']) / F<<#D() $R  / ! [';'] / F<<#D() / )
+  /F<]$TXT/
+   #CM
+   / $I:=0;
+  PRINT (. '******' $t '******' .);
+    F<<#D() 'INCLUDE ''T0.INC''';
+    FORALL $E IN $il DO $I+:=1;
+       PRINT $t[$I];
+       F<<#D() $t[$I][1]  @ $E $t[$I][2] ;OD;
+  / [ ';' ]
+    #CM
+##
+
+#FILE $x
+/
+$Z:=#ORD(#CALL_PAS(87 $x 2));
+IF NOT $Z->$Z:=32 FI;
+RETURN $Z
+/
+##
+
+#DECLS
+ #CM
+/ S<]$ /
+ const #CM (* $cn '=' $a:=#EXPR ';' #CM
+         /  IF #TATOM($a[1])->F<<#D() 'character*4 ' $cn FI;
+            F<<#D() ' parameter(' $cn '=' $a ')' /
+        *) ;;
+ type  (* #CM #TYPEDEF #CM ';' *) #CM ;;
+ label (* #CM #NUMBER #CM * ',' ) ';'  ;;
+ var   (* #CM $i:=#IDLIST #CM ':' #CM $T:=#TYPE #CM
+/ F<<#D() $T[1] ;
+  $C!!:=$i; $C!.:=',';
+  FORALL $V IN $i DO
+   IF #IDENT($V) -> F<]@ $V $T[2]
+   ELSIF T-> F<]@ $V
+   FI;
+ OD/
+
+ ';' #CM *)
+ /RETURN $C/
+##
+
+#TYPEDEF
+ $A '='  ['^' ] $AR:=#ARDEF
+ / LAST #F $TYPES++:=<. $A : $AR.>;
+   PRINT LAST #F $TYPES/
+##
+
+#ARDEF
+array '[' $dn '..' $up!.:=$up1
+         [$up!.:='*' $up!.:=$Id ]
+       [ ',' $dn2 '..' $up2 ] ']'
+ of $T:=#TYPE
+/RETURN <. up:$up, up2:$up2, typ:$T .>/
+##
+
+#IDLIST
+ (* #CM $ID #CM / $L !!:=(. $ch $ID .) ; $ch:=',' / * ',' )
+ / RETURN $L /
+##
+
+#TYPE
+ ( ( #NUMBER '..' $a) ! integer ! longint )
+   / RETURN (. INTEGER NULL .) /;;
+ text   / RETURN (. INTEGER NULL .) / ;;
+ boolean / RETURN (. LOGICAL NULL .)/ ;;
+ real    / RETURN (. REAL NULL .) / ;;
+ ( $TD:=#ARDEF !
+   ( ['^'] $M  / $TD:=LAST #F $TYPES.$M / ))
+  / IF $TD ->
+      IF $TD.up2 ->
+         RETURN (. $TD.typ (. '(' $TD.up ',' $TD.up2 ')'.) .)
+      ELSIF T->
+         RETURN (. $TD.typ (.'(' $TD.up ')'.) .)
+      FI
+    ELSIF T->
+      RETURN (. (.$M '***'.) (.$M '***'.) .)
+    FI
+  /
+##
+
+#D / $S:=(.'      '.)/
+   [ $X / $S:=(.'    '.)/ ]
+   /$I:=COPY(LAST #F $LEVEL);
+   LOOP
+  IF $I<=0 -> RETURN #IMPLODE($S)
+  ELSIF T-> $S!.:=' '
+  FI;
+   $I+:=-1;
+   END/##
+
+#CO $N
+ / F<< $N #D(X) CONTINUE /
+##
+#GENLAB
+ / LAST #PROCEDURE $lab+:=1;
+   RETURN COPY(LAST #PROCEDURE $lab) / ##
+#BLOCK begin (* #CM [#LABEL] #CM #STMT #CM* ';' ) [';'] [#LABEL]#CM end #CM ##
+#LABEL
+    $N #CM ':'
+ / #CO($N); F<<'CC LABEL ' $N/
+##
+#STMT
+
+  /LAST #F $LEVEL+:=1; S<]$/
+  #CM
+  ( (V'($$=if) #IF) !
+    (V'($$=for)  #FOR) !
+    (V'($$=goto)  #GOTO) !
+    (V'($$=begin) #BLOCK) !
+    (V'($$=while) #WHILE) !
+    (V'($$=repeat) #REPEAT) !
+    (V'($$=case)  #CASE) !
+    (V' ($$=halt) #HALT) !
+    (V' ($$=Halt) #HALT) !
+     #OPEN ! #IO !
+    (V'($$=close) #CLOSE) !
+    #ASSIGN !  V'($$=end) ! V'($$=until) ! V'(#NUMBER($$)) ! #CALL !
+    /S<<'(*****' $$ '******)'/ )
+  /LAST #F $LEVEL+:=-1/
+  #CM
+##
+#OPEN
+('assign'!'Assign') '(' $f ',' $e:=#EXPR
+/ $e[-1]:=NULL;
+  F<< #D() ' OPEN( ' #FILE($f) ',file=' $e ',status='/ ;;
+( 'rewrite'!'Rewrite') '(' $f ')'
+ / F<<'''unknown''' /;;
+('reset'!'Reset') '(' $f ')'
+ / F<<'''old''' /
+
+
+##
+#HALT
+ ('halt'!'Halt') / F<< #D() 'STOP' /
+##
+
+#CM
+(*
+ /$A:=NULL/
+ (
+('(' '*') !
+('(' '**')!
+'{')
+ (* $A!.:=S'(($$<>'}')AND($$<>'**')AND($$<>'*')) *)
+     (
+       ( '**' ')')!
+       ( '*' ')')!
+       '}')
+/F<<C;
+ $L:=0;
+ FORALL $X IN $A DO
+   $L:=$L+#LEN($X)+1;
+   IF $L>70 -> F<<C;$L:=#LEN($X);FI;
+   F<]$X;
+   IF $X=';' -> F<<C;$L:=1;FI;
+ OD
+ ;S<<C '"' $A '"'/ *)
+##
+
+
+#CLOSE
+(close!Close) '(' $f ')'
+/ F<<#D() 'close('#FILE( $f) ')'/
+##
+
+#CASE
+ /$W:='IF'/
+ case #CM $A:=#EXPR of 
+ (*
+    #CM 
+    V'(($$<>'end')AND($$<>'else'))
+    $D ':'
+   / F<< #D() $W '(' $A '.eq.' $D ') THEN';
+     $W:='ELSE IF'/
+    #STMT  [';']
+    #CM
+ *)
+ [  #CM 'else' #CM
+    / F<<#D() 'ELSE' /
+    #STMT [';'] #CM
+ ]
+#CM
+('end' /F<<#D() 'ENDIF '/ ! 
+  $X   /S<<'ERROR: case end not found on ' $X /)
+##
+
+#IO
+(read!readln) '(' $f V'(#EXPLODE($f)[1]='f') ',' $E:=#EXPR
+/
+  $E[-1]:=NULL;
+  F<<#D() 'READ(' #FILE($f) ',*)' @ $E / ;;
+(read!readln) '(' $E:=#EXPR
+/ $E[-1]:=NULL;
+  F<<#D() 'READ(*,*)' @ $E / ;;
+
+(write!writeln) '(' $f V'(#EXPLODE($f)[1]='f') ',' $E:=#EXPR
+/
+  $E[-1]:=NULL;
+  F<<#D() @ 'WRITE(' #FILE($f) ',*)' $E / ;;
+(write!writeln) '(' $E:=#EXPR
+/ $E[-1]:=NULL;
+  F<<#D() @ 'WRITE(*,*)'  $E / ;;
+(new!New) '(' $X ')' ;;  -- ignored
+
+(inc!Inc) '(' $E:=#EXPR
+/$E[-1]:=NULL;
+ F<<#D() $E '=' $E '+1' /;;
+(dec!Dec) '(' $E:=#EXPR
+/$E[-1]:=NULL;
+ F<<#D() $E '=' $E '-1' /
+##
+
+#WHILE
+while $E:=#EXPR do
+/ $LAB:=#GENLAB();
+  F<< $LAB #D(X) 'IF (' $E ') THEN ' /
+ #STMT
+ / F<< #D() 'GOTO ' $LAB ;
+   F<< #D() 'ENDIF' / ##
+
+
+
+#REPEAT
+repeat     #CM
+/ $LAB:=#GENLAB();
+  F<<'CC repeat ';
+  #CO($LAB) /
+  (* #CM [ #LABEL]#CM #STMT #CM * ';' )#CM [';']#CM [#LABEL]#CM
+  until   #CM
+  $E:=#EXPR  #CM
+  / F<<'CC UNTIL';
+    F<<#D(X) 'IF (.not.(' $E ')) GOTO' $LAB /
+##
+
+#CALL
+  (exit!Exit)      / F<< #D() 'RETURN' / ;;
+  $E:=#EXPR V'($E) / F<< #D() CALL @ $E / ##
+
+#ASSIGN
+ $E:=#EXPR ':=' $E2:=#EXPR
+ / F<<#D() @ $E '=' $E2 /
+##
+
+#EXPR (* #CM $A !. := #EXPREL #CM *) / RETURN $A / ##
+#EXPREL $E
+/  IF  #CALL_PAS(79 LAST #F $SY0 $) -> FAIL;FI;
+   $N:=#CALL_PAS(79 LAST #F $SY1 $);
+   IF $N>0 ->
+    RETURN LAST #F $SY2[$N];
+   ELSIF T->
+    RETURN $
+   FI;
+/ ##
+
+#BACKEL
+/  $B:=(. ' .lt. ' ' .gt. ' ' .le. '  ' .ge. ' ' .eq. ' ' .ne. ' '(' ')'
+          ' .and. ' ' .or. '  ' .not. '.);
+   $S:=(. ' .ge. ' ' .le. ' ' .gt. '  ' .lt. ' ' .ne. ' ' .eq. ' '(' ')'
+          ' .or. ' ' .and. ' ' '.);
+
+   $N:=#CALL_PAS(79 $B $);
+   IF $N>0 ->RETURN $S[$N]
+   ELSIF T-> RETURN $
+   FI/ ##
+
+
+#BACK (* $A !.:=#BACKEL *) / RETURN $A / ##
+
+#IF
+  if $e:=#EXPR then
+  / F<<#D() @ 'IF (' $e ') THEN' /
+  #STMT
+  [ else / F<< #D() 'ELSE' /
+    #STMT ]
+  /F<< #D() ENDIF/
+##
+
+#FOR
+  for
+  / $LAB:=#GENLAB(T);
+    $OUT:=#GENLAB(T);
+  /
+
+  $lv ':=' $e1:=#EXPR
+
+ (( 'to' $e2:=#EXPR 'do'
+  / F<<#D()@ 'if (' $e2 '.lt.' $e1 ') goto ' $OUT;
+    F<<#D()@ 'DO '  $LAB ',' $lv '=' $e1 ',' $e2 ;
+   /)
+  !
+   ('downto' $e2:=#EXPR 'do'
+  / F<<#D()@ 'if (' $e2 '.gt.' $e1 ') goto ' $OUT;
+    F<<#D()@ 'DO '  $LAB ',' $lv '=' $e1 ',' $e2 ',-1' ;
+   /
+  ))
+
+  #STMT
+  /#CO($LAB);
+   #CO($OUT)/
+##
+
+#GOTO goto $L / F << #D() GOTO $L / ##

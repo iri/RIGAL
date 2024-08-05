@@ -1,0 +1,42 @@
+-----------------------  LINT.RIG  -------------
+--     LINT  for RIGAL
+-- checks types in expressions
+-- : list, tree, num, id, sym
+-------------------------------------------------
+-- M.Auguston, 4.12.89
+-------------------------------------------------
+#Lint
+-- global vars:
+-- $Tab : <* rule_name: <* var_name : <. T:T,
+--                                    [ list:T],
+--                                    [tree:T],
+--                                    [num:T],
+--                                    [id:T],
+--                                    [sym:T] .> *> *>    
+-- $Rules : <* rule_name: <. T:T,
+--                           [list:T],... .> *>
+------------------------------------------------------
+$P := #PARM( T);
+$L := #CALL_PAS(14  #IMPLODE( $P[1] '.rig') );
+OPEN err #IMPLODE( $P[1] '.lnt');
+err<<'   LINT  diagnostics:';
+OPEN Display ' ';
+$X := #program ( $L);   -- first pass
+#transitive_closure( $X);
+  PRINT (. after closure '$Tab=' $Tab .);
+  PRINT (. '$Rules=' $Rules .);
+#check ( $X );
+  IF $err_count > 0 -> Display<< $err_count 'warnings discovered'
+  ELSIF T -> Display << 'no warnings discovered';
+             err<< '*** no warnings discovered' FI;
+##
+%INCLUDE l_anal.rig
+%INCLUDE l_operat.rig
+%INCLUDE l_instr.rig
+%INCLUDE l_patt.rig
+%INCLUDE l_patt2.rig
+%INCLUDE l_patt3.rig
+%INCLUDE l_exprs.rig
+%INCLUDE l_expr1.rig
+%INCLUDE l_closur.rig
+%INCLUDE l_check.rig

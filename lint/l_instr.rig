@@ -1,0 +1,19 @@
+---------------------------------------------------
+--          INSTR.RIG
+---------------------------------------------------
+#TAB
+-- zanesenie w $TAB
+        $imq_prawila    $vname
+        /$T := LAST #Lint $Tab . $imq_prawila;
+         IF NOT $T ->  $X := <. T : T .>;
+                LAST #Lint $Tab ++:=
+                     <. $imq_prawila : <. $vname : $X .> .>;
+                RETURN $X
+         ELSIF T ->  $W := $T . $vname;
+                 IF $W   ->  RETURN $W
+                 ELSIF T ->  $X := <. T : T .>;
+                             $T ++:= <. $vname : $X .>;
+                             RETURN $X   
+         FI  FI /
+##
+----------------------------------------------------------
