@@ -7,13 +7,13 @@ This repository includes RIGAL to C compiler, examples, detailed language descri
 ## Documentation
 
 ### Language description
-[\<RIGAL\>/docs/RIGAL_language_description.html](docs/RIGAL_language_description.html)
+[\<RIGAL\>/docs/RIGAL_language_description.html](docs/RIGAL_language_description.pdf)
 
 ### Programmers guide
-[\<RIGAL\>/docs/RIGAL_programmers_guide.html](docs/RIGAL_programmers_guide.html)
+[\<RIGAL\>/docs/RIGAL_programmers_guide.html](docs/RIGAL_programmers_guide.pdf)
 
 ### Manual page
-[\<RIGAL\>/docs/man/rigal_manpage.html](docs/man/rigal_manpage.html)
+[\<RIGAL\>/docs/man/rigal_manpage.html](docs/rigal_manpage.pdf)
 
 ## Prerequisites 
 
