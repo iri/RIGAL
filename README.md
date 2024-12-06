@@ -4,6 +4,13 @@ RIGAL is a programming language for compiler writing, developed by Mikhail Augus
 
 This repository includes RIGAL to C compiler, examples, detailed language description and user guide.
 
+## Repository Structure
+
+- **`origin` branch**: Contains the original release of the
+  software, preserved in its unmodified form.
+- **`main` branch**: Contains modifications to the original
+  release.
+
 ## Documentation
 
 ### Language description
