@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title></title>
+	<meta name="generator" content="LibreOffice 24.2.5.2 (Windows)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="2024-08-05T18:11:20.859000000"/>
+	<style type="text/css">
+		@page { size: 8.5in 11in; margin-left: 0.79in; margin-right: 0.46in; margin-top: 0.79in; margin-bottom: 0.79in }
+		p { line-height: 115%; margin-bottom: 0.1in; background: transparent; background: transparent }
+		pre { background: transparent; background: transparent }
+		pre.western { font-family: "Liberation Mono", monospace; font-size: 10pt }
+		pre.cjk { font-family: "NSimSun", monospace; font-size: 10pt }
+		pre.ctl { font-family: "Liberation Mono", monospace; font-size: 10pt }
+		a:link { color: #000080; text-decoration: underline }
+		a:visited { color: #800000; text-decoration: underline }
+	</style>
+</head>
+<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><pre class="western" style="text-align: left"><font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">University of Latvia</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Institute of Mathematics and Computer Science</font></font></pre><p align="left" style="line-height: 100%; margin-top: 0.04in; margin-bottom: 0.08in; background: transparent; page-break-after: avoid">
+<font face="Liberation Sans, sans-serif"><font size="5" style="font-size: 18pt">RIGAL
+PROGRAMMING SYSTEM</font></font></p>
+<p align="left" style="line-height: 100%; margin-top: 0.04in; margin-bottom: 0.08in; background: transparent; page-break-after: avoid">
+<font face="Liberation Sans, sans-serif"><font size="5" style="font-size: 18pt">LANGUAGE
+DESCRIPTION</font></font></p>
+<pre class="western" style="text-align: left"><font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">by  MIKHAIL  AUGUSTON</font></font>
+
+
+
+
+
+                         <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">TABLE OF CONTENTS</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">ABSTRACT</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">1. Introduction</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2. Implementation</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3. Lexical Rules</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.   Data</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.1 Atoms</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.2 Variables</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.3 Lists</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.4 Trees</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">5. Expressions</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">5.1 Accumulative Assignment Statements</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">5.2  Semantics of Variables</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">6. Rules</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">6.1. Simple Patterns</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">6.2. Assignment in Patterns</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">6.3 Rule Branches. Onfail Operations</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">6.4 Special Variables</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">7. Compound Patterns</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">7.1 List Pattern</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">7.2 Iterative Pattern of Sequence</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">7.3 Patterns for Alternative and Option</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">7.4 Tree Pattern</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">7.5 Iterative Tree Pattern</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">7.6 Names of Lists and Trees in Patterns</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">7.7 Patterns of Logical Condition Testing</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">8. Statements</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">8.1 Assignment Statement</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">8.2 Conditional Statement</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">8.3 FAIL Statement</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">8.4 Loop Statements</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">8.5 Rule Call</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">9. Input and Output</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">9.1 SAVE and LOAD Statements</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">9.2 Text Output</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">10. Program Structure</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">10.1 Local Variables</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">10.2 References to Variables of Other Rules</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">10.3 Attribute Grammars and RIGAL. Global Attributes</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">11. Built-in Rules</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">12. Sample Compiler</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">12.1 TOYLAN Language</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">12.2 Intermediate Form of Program.</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Abstract syntax tree</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">12.3 Target Language BAL</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">12.4 Main Module of Compiler</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">12.5 Parsing Phase</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">12.6 Code Generation Phase</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">13. Conclusions and Future Work</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">References</font></font>
+
+
+                               <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">ABSTRACT</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">A new programming language for compiler writing is described.</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  main data structures are atoms, lists and trees. The control</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">structures  are based on advanced pattern matching. All phases of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">compilation, including parsing, optimization and code generation,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">can  be  programmed  in this language in short and readable form.</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Sample compiler written in RIGAL is presented. </font></font>
+
+
+                         <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">1. Introduction</font></font>
+
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Programming  language  RIGAL  is  intended  to  be a tool for</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">parsing(  context  checking,  diagnosing  and  neutralization  of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">errors included ), for code optimization, code generation, static</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">analysis   of  programs,  as  well  as  for  the  programming  of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">preprocessors and convertors. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Almost   all   the   systems   envisaged  to  solve  compiler</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">construction  problems  contain  means  to  describe context-free</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">grammar of the source language. Earlier systems, like the Floyd -</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Evans  language,  [1]  present tools to work with stack, which is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">used for parsing. Parsing methods for limited grammar classes are</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">implemented  in  the  languages  and systems of later generations</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(usually LL(1) or LR(1) ). </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Such systems as YACC (Johnson [2]), CDL-2 ( Koster [3]), SHAG</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(Agamirzyan   [4])  and  many  others  make  use  of  synchronous</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">implementation  of  parsing  and  different  computations,  e.g.,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">formation of tables, context checking, etc. Usually these actions</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">are  performed  by  call of semantic subroutines, written in some</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">universal programming language ( e.g., in Pascal or C). </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Attribute   grammars  advanced  by  Knuth  [5]  have  greatly</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">influenced  development  of  systems  for  compiler construction.</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Systems,  like,  SUPER  (Serebryakov  [6]), ELMA (Vooglaid, Lepp,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Lijb  [7]),  MUG2 (Wilhelm [9]) are based on the use of attribute</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">grammars not only for parsing, but for code generation as well. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Pattern  matching  is  a  convenient  tool for programming of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">parsing,  optimization and code generation. The REFAL programming</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">language  [10], acknowledged for translator writing, may serve as</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">a good example. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Vienna method for defining semantics of programming languages</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[11] suggests the usage of labelled trees in order to present the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">abstract   syntax  of  programs.  Representation  of  compilation</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">intermediate  results  in  the  tree  form  has become usual (see</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[12]). </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Dependence  of  control  structures  in the program from data</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">structures used for program's work is one of the basic principles</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">in  programming. The recursive descent method could be considered</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">to be the application of dependence principle. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The above mentioned ideas and methods were taken into account</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">when creating RIGAL language. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  language  possesses  few  basic notions. Data structures</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">contain  atoms,  lists  and  trees. Advanced mechanism of pattern</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">matching lies at the basis of control structures. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  fact  that  RIGAL  is  a  closed  language  makes  RIGAL</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">distinctive.   That   means   that   almost   all  the  necessary</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">computations and input-output could be executed by internal means</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">and  there  is  no  need  to  use  external semantic subroutines.</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Therefore the portability of RIGAL programs to other computers is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">increased. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Means  for  work  with  trees,  different patterns including,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">enable  both  programming  of parsing algorithms and optimization</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">phases  and code generation as well. The language supports design</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of multipass translators. Trees are used as intermediate data. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  language  allows to split the program into small modules</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(rules)  and  presents  various  means  to arrange interaction of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">these modules. Pattern matching is used for parameter passing. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">RIGAL   supports   attribute   translation  scheme  and  easy</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">implementation   of   synthesized  and  inherited  attributes  is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">possible.  The problem of global attributes is solved by usage of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">special references. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Lexical  analysis  is  a  separate  task and requires special</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">language  facilities  for  description  as it is, for example, in</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">LEX/YACC  [2]  system. In the current implementation of RIGAL two</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">scanners are included that accept lexics of Pascal, C,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Modula-2  and RIGAL. </font></font>
+
+
+                        <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2. Implementation</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">RIGAL was designed and implemented in the Computing Center of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Latvia  University  in  years 1987-1988. The first implementation</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">was for PDP-11 in RSX-11. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">At the present stage RIGAL interpreter has been developed and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">optimizing compiler RIGAL -&gt; Pascal has been implemented by means</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of  RIGAL  itself.  The  interpreter  and  the compiler have been</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">ported to VAX/VMS , IBM PC XT/AT (MS-DOS and MS-Windows) and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Unix/SUN environments. </font></font>
+
+
+                        <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3. Lexical Rules</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  text  of  RIGAL  program is a sequence of tokens - atoms</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(e.g.,  identifiers and integers ), keywords (e.g., if, RETURN ),</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">special  symbols  (e.g.,  +,  ##  ), names of variables and rules</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(e.g.,  $A,  #L  ).  Tokens  may  be  surrounded by any number of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">blanks.  A  comment is any string of symbols that begins with two</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">consecutive  symbols  '-' (minus ). The end of the comment is the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">end of the line. For example, </font></font>
+ 
+<font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#Sum    -- rule for addition of two numbers</font></font>
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$N1   -- the first number</font></font>
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$N2   -- the second number</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/  RETURN  $N1 + $N2 /   -- return of the result</font></font>
+<font face="Courier New, monospace"><font size="3" style="font-size: 12pt">##</font></font>
+
+                            <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.   Data</font></font>
+
+                            <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.1 Atoms</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">An  atom is a string of symbols. If the atom is an identifier</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(  the  first symbol is a letter followed by letters or digits or</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">underscore  symbols),  in  the  text of RIGAL program it could be</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">written directly: AABC total_number x25 </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Numerical atoms are integers, for instance, 2, 187, 0, -25</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">In other cases the atom is quoted: '+'    ':='     '1st'</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Some  identifiers  are reserved as keywords in RIGAL. If they</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">are  used  as  RIGAL  atoms,  they should be quoted. For example,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">'IF',  'RETURN'.  Besides, any atom, which is an identifier, also</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">can be quoted - ABC and 'ABC' represent one and the same atom. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">It  should be noted that 25 and '25' are different atoms, the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">latter is just a string of symbols '2' and '5'. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Two special atoms are distinguished in the language.</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NULL  -  this  atom  is  frequently  yielded  as  a result of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">different  operations,  if something was incorrect in the process</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of  computations.  This  atom  also  represents an empty list, an</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">empty tree and Boolean value &quot;false&quot;. </font></font>
+     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">T  -  usually this atom is yielded by logical operations and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">represents value &quot;true&quot;. </font></font>
+
+                          <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.2 Variables</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The name of a variable must begin with the symbol $, followed</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">by  an  identifier.  Value  can  be  assigned  to a variable, for</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">example, by the help of assignment statement: $E := A </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">In this case the atom A becomes value of the variable $E.</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">In  RIGAL variables have no types, the same variable may have</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">an atom, a list or a tree as a value in different time moments. </font></font>
+
+                            <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.3 Lists</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Ordered sequences, i.e., lists can be composed from atoms and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">from  other  lists  and trees, as well. A special function - list</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">constructor  serves for list formation. For instance, (. A B C .)</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">forms a list of three atoms A, B and C. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Arguments  of  the  list  constructor may be expressions. The</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">sample  </font></font>
+
+<font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$E  := (. (. 8 14 7 .) (. A B .) .) </font></font>
+
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">could be rewritten as</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">follows: </font></font>
+
+<font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$A := (. 8 14 7 .); $B := (. A B .); $E := (. $A $B .);</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Separate  elements  of  the list can be selected by indexing.</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Hence, $B [1] is atom A, $A [2] is atom 14, $E [2] is list </font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(. A B .), but $E [10] is atom NULL</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If  the value of the index is a negative number, for instance</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">-N, then the N-th element, beginning from the end of the list, is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">selected. For example, $A [-1] is atom 7. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  necessity  to  add one more element to the list is quite</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">common. Operation !. is envisaged for this purpose. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Example. (. A  B .) !. C  yields the list (. A  B  C .)</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">To link two lists in a new list the operation !! is applied (</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">list  concatenation). For instance, (. A B .) !! (. C D .) yields</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(. A B C D .). </font></font>
+
+                            <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4.4 Trees</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Tree constructor is used to create a tree. For example,</font></font>
+
+                      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">&lt;.  A : B,  C : D  .&gt;</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">One  can  imagine  tree  as  a graph, the nodes and arches of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">which are marked by some objects. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Objects   before  ':'  in  the  tree  constructor  are  named</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">selectors.  In  the  given implementation solely atoms, which are</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">identifiers  (  except  NULL  ),  may  serve as selectors. In the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">graphical  representation  selectors  correspond to arches of the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">graph.  All  selectors of one and the same level in the tree must</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">be different. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Any  object  -  atom,  list  or  tree,  except atom NULL, may</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">correspond  to  terminal  nodes  of  the  graph ( &quot;leaves&quot; of the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">tree). Hence, multilayer trees can be built. For instance, </font></font>
+
+              <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">&lt;. A : B,  C : &lt;. D : E, F : G .&gt; .&gt;</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Pair  &quot;selector  : object&quot; in the tree is named branch of the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">tree. Branches are unordered in the tree. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Likewise  for  the list constructor, the tree constructor may</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">be  described  by  expressions  (  in  both  selector  and object</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">places),  for instance, </font></font>
+
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$X := D; $B := (. 2 8 .); </font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$C := &lt;. A : &lt;. M : K .&gt;, $X : '+' , E : $B .&gt;; </font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Select  operation serves to extract the tree component. It is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">in the following form: tree . sel , where tree is the expression,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">whose  value  must be some tree, but sel is the expression, whose</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">value must be an atom-identifier. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Consequently,  </font></font>
+
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$C . A is the tree &lt;. M : K .&gt; , </font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$C . D is the atom '+' , </font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$C . E is the list (. 2 8 .) , </font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$C . E[2] is the atom 8</font></font>
+       <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">, $C . A . M is the atom K </font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If there is no branch with a given selector in the tree, then</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the result is NULL: $C . W is atom NULL. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Operation  of the tree &quot;addition&quot; is performed as well: T1 ++</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">T2 , where T1 and T2 are trees. Tree T2 branches are added to the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">tree  T1  one  by  one.  If in the tree T1 there already exists a</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">branch with the same selector, the branch is substituted by a new</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">one. Therefore, the operation &quot;++&quot; is not commutative. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">It  should  be  pointed  out  that  the  tree  constructor is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">computed  from  left to right, i.e., </font></font>
+
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">&lt;. s1 : a1, s2 : a2, s3 : a3.&gt; </font></font>
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">gives the same result as the expression </font></font>
+
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(( NULL ++ &lt;. s1 : a1 .&gt; ) ++ &lt;. s2 : a2 .&gt;) ++ &lt;. s3 : a3 .&gt;</font></font>
+
+                         <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">5. Expressions</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Operations  = and &lt;&gt; serve for the comparison of objects. The</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">result of the comparison is either T (&quot;true&quot;) or NULL (&quot;false&quot;). </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Atoms  are  matched directly, for instance, a = b gives NULL,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">25 = 25 gives T, 17 &lt;&gt; 25 gives T. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Lists  are  considered equal iff they contain equal number of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">components and if these components are equal respectively. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Trees  are  considered equal iff they contain equal number of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">branches  and  if  one of the trees contains the branch &quot;S : OB&quot;,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">then  the  other tree also contains the branch &quot;S : OB1&quot; and OB =</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">OB1. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Arithmetical  operations  +,  -, *, DIV, MOD are assigned for</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">numerical  atoms.  The  essence of these operations is similar to</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">those  in  Pascal.  The  result of an arithmetical operation is a</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">numerical  atom.  Atom  NULL  is also admitted as the argument of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">arithmetical  operation, in this case integer 0 is supposed to be</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">its  value.  Under matching these atoms are considered different,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">i.e., NULL = 0 gives NULL. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Besides  the  operations  =  and &lt;&gt; numerical values could be</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">compared by the help of &gt;, &lt;, &gt;= and &lt;=. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Logical  operations AND, OR and NOT usually are applied under</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">conditions  in  conditional  statements.  Their  arguments may be</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">arbitrary  objects.  If  the  object  differs  from  NULL,  it is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">supposed  to  have  the value &quot;true&quot; in a logical operation. Atom</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NULL  represents  the  &quot;false&quot;  value.  The  result  of a logical</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">operation always is either T or NULL. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">In order to make complex hierarchic objects ( trees and lists</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of  complex  structure  )  more visual and to improve the work of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">pattern  matching,  trees and lists may be labelled. A name is an</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">atom  opposed  to  the  root  node of the tree or the whole list.</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Labelling operation is written the following way: </font></font>
+
+                             <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">A  ::  OB </font></font>
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">where A is an atom , OB is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">an object (a tree or a list). For example, </font></font>
+
+        <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">Add_op :: &lt;. arg1 : 5, arg2 : 4 .&gt; </font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  execution  order  of  operations  in  the  expression is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">controlled  by  parentheses  &quot;(&quot; and &quot;)&quot;. Priority is assigned to</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">every  operation,  and,  if the execution order is not defined by</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">parentheses,   operations   are   executed   according  to  their</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">priorities  -  beginning  with  the  higher and proceeding to the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">lower. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Operations are listed in decreasing order of priorities (some</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">operations will be discussed later). </font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">1) Rule call, list constructor, tree constructor, last</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2) Selector &quot;.&quot;, index &quot;[]&quot;,  ::</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3) NOT, unary -</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4) *, DIV, MOD</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">5) !. , !! , ++ , +, binary -</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">6) = , &lt;&gt; , &gt; , &lt; , &gt;= , &lt;=</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">7) AND</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">8) OR</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Binary operations of the same priority are executed from left</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">to right, while unary operations from right to left. </font></font>
+
+
+             <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">5.1 Accumulative Assignment Statements</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">It is quite often that working with a list or a tree elements</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">are  added  step  by step, thus the growing object is retained in</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the  same  variable. Therefore short form of assignment statement</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">has  been  introduced.  For  the  operations  !.  , !! , ++ and +</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">statements of the form $X := $X op Expr can be written as </font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">$X op := Expr .</font></font>
+
+
+                   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">5.2  Semantics of Variables</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">In  the  implementation of RIGAL every object - atom, list or</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">tree  has  a  descriptor.  It  is  a  special data structure that</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">contains  some  information about this object: the value of atom,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the  number  of  elements  and pointers to elements for lists and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">trees. Variables have pointers to object descriptors as values. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Statement  $X  :=  OB assigns to the variable $X a pointer to</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the descriptor of object OB. After the execution of the statement</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">$Y  :=  $X  both variables $X and $Y contain pointers to the same</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">object OB. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Operations  !.:=  , !!:= , +:= and ++:= change the descriptor</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of  their  first argument, i.e., have a side effect. Sometimes it</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">can be undesirable. For example, </font></font>
+
+            <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$A := (. 3 17 .); $B := $A;  $B  !.:= 25;</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  value  of  $B  becomes list (. 3 17 25 .), but operation</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">!.:= has added element 25 immediately to the list (. 3 17 .), and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the  descriptor  of  this  list  is  changed. As the value of the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">variable  $A  was  a  pointer  to this descriptor, then after the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">execution  of  the statement $B !.:= 25 the value of the variable</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">$A is changed, too. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">To  prevent this, we must have a copy of the object, to which</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">$A refers to before assigning it to $B. Operation  COPY( OB )</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">is  used  for  this purpose. It makes a copy of the descriptor of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the object OB. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Now  we can write a &quot;safe&quot; call of the operation !.:= in such</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">a way: </font></font>
+
+<font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$A := (. 3 17 .); $B := COPY( $A); $B !.:= 25; </font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">As  a result $B takes the value (. 3 17 25 .), but $A remains</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">equal  to  (.  3  17  .).  The  same effect can be obtained after</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">execution of statements $A := (. 3 17 .); $B := $A !. 25; </font></font>
+
+
+                            <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">6. Rules</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The concept of rule is analogous to concepts of procedure and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">function in conventional languages, such as Pascal or C. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">First  of all, by the help of a rule we can check, whether an</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">object  or  a sequence of objects complies with some grammar. For</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">this  purpose  rule  has  a pattern. Objects, assigned under rule</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">call  (arguments  of  the rule), are matched with the pattern. If</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">there  is  a  necessity,  some  operations could be executed, for</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">instance,     computations     and    input-output    operations,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">simultaneously with rule arguments and pattern matching. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Rule  that  is  called can compute and return back some value</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(object), i.e., it can be used as function. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Depending  on  the  result  of  rule  arguments  and  pattern</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">matching,  the  rule  call ends with success or failure. Thus the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">rule call could be used in another rule patterns. </font></font>
+
+
+                      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">6.1. Simple Patterns</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Definition of the rule begins with the indication of the name</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of   the   rule   in   the  form  of  #LLL  ,  where  LLL  is  an</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">atom-identifier. In the most common case the pattern is indicated</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">after  the  name  of  the  rule. Rule definition ends with symbol</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">'##'. For instance, </font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#L1    A  B   ##</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">In  this  case the pattern consists of atoms A and B. Call of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the rule #L1 takes place, for instance, the following way : </font></font>
+
+                          <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#L1 ( A  B )</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  sequence of objects - atoms A and B, is assigned as rule</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">arguments. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">After rule call the argument and pattern matching begins. The</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">first  argument - atom A is matched with the first pattern, which</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">is  also  an  atom.  These  atoms are equal, so their matching is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">successful.  After  that  the  next  object  from the sequence of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">arguments  -  atom  B  and  the  next  pattern,  also atom B, are</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">matched.  Their  matching is also successful, therefore, the call</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of the rule #L1 is successful, too. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#L1(  A  C ) call fails, because the second argument - atom C</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">was not successfully matched with the pattern - atom B. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#L1(  A  )  call  fails, as there is no object for the second</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">pattern with which it could be matched successfully. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">But  #L1(  A  B  C)  call  is  successful,  as the third rule</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">argument - atom C was not demanded by any pattern and matching of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the first two rule arguments was successful. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Arbitrary  atoms,  both  non-numerical  and numerical, may be</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">described as patterns. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Such  operations as assignment statements, input - output and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">others  may be indicated before the pattern, after it and between</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">patterns.  These statements are quoted in the pair of symbols '/'</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">.  If there is a necessity to write several statements within the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">pair '/' , these statements are separated by the symbol ';' . </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">A  group  of  statements  is executed in the rule pattern, if</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">matching  of  the  previous  pattern  with the corresponding rule</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">arguments was successful. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  value  returned  by  the rule is worked out by statement</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">RETURN   .   It   has  the  following  form:  RETURN  expression.</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Simultaneously  this  statement  completes  the  execution of the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">rule. </font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Example.</font></font>
+
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#L2  'begin'  'end'  / RETURN  'The pair begin-end' /  ##</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Rule call is illustrated in the following example.</font></font>
+
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$A   :=   #L2   (   'begin'  'end'  );  </font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">As  a  result  the  atom</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">'The pair begin-end' is assigned to the variable $A. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If  RETURN  statement  is not described in the rule, then the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NULL value is returned. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If  the rule call ends in failure, then usually value NULL is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">returned, although in case of failure, it is possible to work out</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the returned value, which is not NULL; for this purpose statement</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">RETURN must be used in onfail-operations (see sect.6.3.). </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Variable  could  be  used  as pattern. It is matched with one</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">object  (atom, list or tree) from the sequence of rule arguments.</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Matching  always  ends  in  success,  and  as  a  side effect the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">variable  obtains  this object as value. For example, </font></font>
+
+   <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#L3 $A $B /RETURN (. $B $A .)/ ## </font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">After  the  call  $X := #L3 ( 1 2) the variable $X obtains as</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">value (. 2 1 .) </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  rule  pattern,  in  its  turn,  may  refer  to some rule</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(recursively,  as well). Then the subsequence of the calling rule</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">arguments  become arguments of rule - pattern. If the call of the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">rule  -  pattern is successful, then matching of further patterns</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of the calling rule with the remaining arguments proceeds. If the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">call  of  the  rule - pattern fails, then the pattern matching of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the calling rule fails, too. For example, </font></font>
+
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#L4   A  #L5  D  ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#L5   B  C       ##</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Then the call #L4( A B C D) is successful, but the call</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#L4( A E F D) is unsuccessful.</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">There  is  a  number  of  built-in rules in the language (see</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">section  11.). For instance, #NUMBER is successfully matched with</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">a  numerical atom and returns it as a value, other arguments fail</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">and  return  NULL.  #IDENT  is  successfully  matched with atom -</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">identifier and returns it as value. </font></font>
+
+
+                   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">6.2. Assignment in Patterns</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Every   pattern,   when   successfully   matched   with   the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">corresponding  rule  argument,  returns  some value. The value of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">atom  pattern  coincides  with  this  atom, the value of variable</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">pattern  coincides  with the value obtained by this variable as a</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">result  of matching with the arguments. The value of rule pattern</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">is defined by statement RETURN in this rule. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If  the matching ends in failure, the pattern usually returns</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">value NULL. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">These  values,  returned by patterns, can be assigned at once</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">to  some variable. It is enough to write the name of the variable</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">and the assignment symbol ':=' before the pattern element. </font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Example.</font></font>
+
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#L6   $A  $R := #L7  / RETURN  (. $A .) !! $R /  ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#L7   $B  $C   / RETURN  (.  $B  $C .) /   ##</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">After execution of the statement $X := #L6 ( 1 2 3) the value</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of $X will be (. 1 2 3 .) </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Symbols  of  accumulative assignment '!.:=' , '!!:=' , '++:='</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">and '+:=' can be used instead of ':=' in patterns . </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Therefore,  we can rewrite the previous example the following</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">way: </font></font>
+
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#L6_1  $R !.:= $A    $R !!:= #L7_1  / RETURN  $R /  ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#L7_1  $M !.:=  $B   $M !.:=  $C    / RETURN  $M /  ##</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">It  should  be  noted  that  all  variables  in  the rule are</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">initialized by value NULL, so the value of the expression NULL !.</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">$A  that equals to (. $A .) is assigned to the variable $R by the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">first application of the pattern $R !.:= $A in #L6_1. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Patterns  of the type $N := #NUMBER or $ID := #IDENT are used</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">very  often,  therefore, following defaults are introduced in the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">language.  If  the  first  letter of the variable name is N, then</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">this  variable,  having been used as pattern element, will have a</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">successful  matching  only  with a numerical atom, in other cases</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">matching ends in failure, and variable obtains value NULL. If the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">first  letter  of the name of the variable is I, this variable is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">matched successfully only with an atom-identifier. </font></font>
+
+
+              <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">6.3 Rule Branches. Onfail Operations</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Several groups of patterns may be united in one rule.</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  first group of patterns is applied to the rule arguments</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">first.  If  matching of this group of patterns with the arguments</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">is  successful,  the rule call is successful. But if matching has</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">failed, transition to the next group of patterns takes place, and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">it  is  matched  with  the  same arguments. It goes on until some</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">group   of   rule   patterns   is   matched  with  the  arguments</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">successfully.  If not a single pattern group matches successfully</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">with rule arguments, the rule call ends in a failure. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Such  alternative  pattern  groups  are called rule branches,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">and,  when  writing  the  rule,  they are separated by the symbol</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">';;'. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If  the  branch  fails,  the  execution  of  its patterns and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">statements  is  abandoned  at  the  place,  where  branch pattern</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">failed,  and  control is transferred to the next branch (if there</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">is  one)  or  the  whole rule fails (if the current branch is the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">last  one  in  the rule). Still there is a possibility to execute</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">some operations before exit from the branch. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">ONFAIL  operation is a sequence of statements, written at the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">end  of  the  branch  and  delimited  from  patterns  and  branch</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">statements by keyword ONFAIL. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If  ONFAIL-statements  are  described  in the branch, then in</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">case  of  branch  failure,  control  is  transferred  to them and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">statements,  given  in ONFAIL-unit , are executed. So, in case of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">branch failure, causes of failure can be analyzed and message can</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">be output. Statement RETURN can be executed in ONFAIL operations,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">as  well. Then exit from the rule takes place (with failure), and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">some other value than NULL can be returned. </font></font>
+
+
+                      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">6.4 Special Variables</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Special  variable  without  name  $  denotes  the  first rule</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">argument matched by a rule pattern. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  value  of  special  variable  $$  equals to the value of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">current rule argument, to which current rule pattern is applied. </font></font>
+
+
+                      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">7. Compound Patterns</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Lists,  sequences  of  elements  in  lists  and  trees can be</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">analyzed   by   patterns.  Nesting  of  patterns  practically  is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">unlimited.  It  is allowed to insert statements before, after and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">within any pattern. </font></font>
+
+                        <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">7.1 List Pattern</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">List pattern is written in the rule the following way:</font></font>
+
+                    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(.  S1 S2 ... SN .)</font></font>
+
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">where S1, S2, ..., SN are patterns . For instance, </font></font>
+
+                  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#L8  (. $E1  $E2 .)  ##</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Pattern  of  the  rule  #L8  is matched successfully with any</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">list, containing precisely two elements. Such call is successful: </font></font>
+
+   <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#L8( (. (. 1  2 .)  &lt;. A : B .&gt; .) )</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">But  the following calls end in failure. </font></font>
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#L8( A B ) - because</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">pattern will be applied to the first argument, i.e., to atom A, </font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#L8(  (. 13 .) )  -  because the argument is one element list.</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">In  case of success the list pattern yields value that can be</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">assigned  to  some  variable. This value coincides with the whole</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">list, to which the pattern was applied. </font></font>
+
+
+                <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">7.2 Iterative Pattern of Sequence</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">In  RIGAL  the  following  pattern  is  defined  for sequence</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">recognition:  (*  S1 S2 ... SN*) , where S1 , S2, ... SN are some</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">patterns.  This  pattern  describes  the  repetition  of enclosed</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">sequence of patterns zero or several times. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Rules  with  a variable number of arguments can be defined by</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">iterative pattern of sequence. For example, </font></font>
+
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#Sum  (*   $S +:= $N   *)  / RETURN $S /  ##</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">This rule is used for summing up any amount of numbers.</font></font>
+
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#Sum( 2  5  11) = 18  and  #Sum( 3 ) = 3</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Iterative pattern is very often used within list pattern. For</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">instance, the following rule counts the number of list elements. </font></font>
+
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#Length (. / $L := 0 / (*  $E / $L +:= 1 / *) .) / RETURN $L / ##</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Samples of rule call.</font></font>
+
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#Length( (. A  B  C .) ) = 3  and  #Length( NULL ) = 0</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Iterative  pattern  (+  S1  S2  ... SN +) is analogous to the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">pattern (* ... *), but assigns the repetition of enclosed pattern</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">sequence one or several times. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">In the iterative pattern of sequence the element delimiter is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">indicated  in  the form of (* S1 S2 ... SN * Delimiter ) or (+ S1</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">S2 ... SN + Delimiter +) </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Atom or name of the rule may serve as Delimiter .</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Example.  Analysis  of  a  simple  Algol-like  declaration. A</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">fragment  of variable table coded in a tree form is returned as a</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">result.</font></font>
+ 
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#Declaration $Type := ( integer ! real ) </font></font>
+               <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(+ $Id  / $Rez ++:= &lt;. $Id : $Type .&gt; /  + ',')</font></font>
+        <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/ RETURN $Rez /   ##</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Call #Declaration ( real X ',' Y ) returns value</font></font>
+
+                    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">&lt;. X : real, Y  : real .&gt;</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">It  should  be  noted  that the pattern (* $E * ',' ) differs</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">from  the  pattern (* $E ',' *) in the point that the presence of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">atom  ','  is  obligatory  in  the  second  pattern at the end of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">sequence. </font></font>
+
+
+
+             <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">7.3 Patterns for Alternative and Option</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  choice  of  several  possible  patterns  is  written the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">following way: ( S1 ! S2 ! ... ! SN ) </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Patterns  S1 , S2 , ... , SN are applied one by one from left</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">to right, until one of them succeeds. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">In  case  of  success  alternative  pattern  yields value. It</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">coincides  with  the  value  of the successful pattern within the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">alternative and may be assigned by some variable. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Example.   Simple   arithmetic   expression   parsing.   When</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">successful, an expression tree is returned, which can be regarded</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">as an intermediate form for the next compilation phases. </font></font>
+
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#Expression     $A1 := #Term</font></font>
+        <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(* $Op := ( '+' ! '-' )  $A2 := #Term</font></font>
+           <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/ $A1 := &lt;. op : $Op , arg1 : $A1 , arg2 : $A2 .&gt; / *)</font></font>
+        <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/ RETURN $A1 /   ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#Term   $A := ( $Id  ! $Num ) / RETURN $A /  ;;</font></font>
+        <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">'('  $A := #Expression ')'  / RETURN $A /   ##</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The call #Expression( X '-' Y '+' 7 ) returns the value</font></font>
+
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">&lt;. op: '+', arg1: &lt;. op: '-', arg1: X, arg2: Y .&gt;, arg2: 7 .&gt;</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">In  RIGAL  we may write a rule that matches successfully with</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">an empty sequence of arguments:</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#empty ## </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Now the pattern for option can be written down: ( S ! #empty )</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">In  short  form  this  issue may be written down in RIGAL the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">following way: [ S ] where S is some pattern or pattern sequence.</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Pattern [ S ] always ends in success. </font></font>
+
+                        <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">7.4 Tree Pattern</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Tree  pattern checks, whether the object is a tree with fixed</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">structure.  By  means of this pattern access to the components of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the tree is obtained. The tree pattern is described the following</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">way: </font></font>
+
+       <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">&lt;.  Sel1  :  Pat1, Sel2 : Pat2, ... , SelN : PatN .&gt;</font></font>
+
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">where</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Sel1,  Sel2,  ... SelN are atoms-identifiers, but Pat1, Pat2, ...</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">PatN are patterns. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If the object, to which the tree pattern is applied, is not a</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">tree, then the application of the pattern fails at once. If there</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">is  the  selector  Sel1  in  the  tree,  then the pattern Pat1 is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">applied to the corresponding object. If there is no selector Sel1</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">in  the  tree  or  the  application of Pat1 has failed, the whole</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">pattern also fails. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If  matching the first branch was successful, branch matching</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of the pattern 'Sel2 : Pat2' , etc. begins. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Hence,  pattern  branches are applied to the tree in the same</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">order as they are written in the pattern. Therefore, the order of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">tree  traversing  may  be  controlled.  It  is  possible  to have</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">reiterative  visit  of  branches  (  if  selectors are repeatedly</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">described  in  the  tree  pattern)  or  omission  of branches (if</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">corresponding selectors are not given in the pattern). </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">In  case of success the tree pattern returns the value, which</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">coincides  with  the  whole object - a tree, to which the pattern</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">was  applied,  irrespective  of presence of all tree selectors in</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the pattern or absence of some. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Example.  Let us suppose expression tree to be formed like in</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the  above example. The task is to traverse the tree and return a</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">list that represents the Polish postfix form of this expression. </font></font>
+
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#Postfix_form  &lt;. arg1: $Rez := #Postfix_form,</font></font>
+                  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">arg2: $Rez !!:= #Postfix_form,</font></font>
+                  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">op:   $Rez !.:= $Op  .&gt;   / RETURN $Rez /  ;;</font></font>
+               <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$Rez := ( $Id ! $Num )  / RETURN (. $Rez .) /  ##</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  call </font></font>
+
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#Postfix_form(  &lt;.  op: '-', </font></font>
+                        <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">arg1: X,</font></font>
+                        <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">arg2: &lt;. op:'+',  </font></font>
+                                 <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">arg1:  Y, </font></font>
+                                 <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">arg2: 5 .&gt; .&gt;) </font></font>
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">returns the value </font></font>
+
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(. X Y 5 '+' '-'.) </font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Some  branches  in  the  tree  pattern  may  be  described as</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">optional,  in this case they are enclosed in brackets '[' and ']'</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">.  If  there  is  no  selector of optional branch in the argument</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">tree,  its  pattern  is  omitted  and  transition to next pattern</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">branch  takes  place.  If  there is a selector of the type in the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">argument tree, the pattern branch is developed as usual. </font></font>
+
+
+                   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">7.5 Iterative Tree Pattern</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The simplest form of iterative tree pattern is the following:</font></font>
+                        <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">&lt;*  $Var  :  P  *&gt;</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">where  $Var  is  some</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">variable, and P is a pattern. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">A  loop  over  the  tree  is  performed  by  the help of this</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">pattern.  All  selectors of the argument tree are assigned to the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">variable  $Var  one  by  one.  The  pattern  P is applied to each</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">object,  which  corresponds  in  the argument tree to the current</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">selector  in  the  variable  $Var. If even one application of the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">pattern  P  fails,  the  whole  iterative tree pattern fails. For</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">example, </font></font>
+
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#Variable_table  &lt;* $Id : $E := ( integer ! real )</font></font>
+                   <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/ $R !.:= (. $Id  $E .)/  *&gt;  / RETURN $R /  ##</font></font>
+
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Call example.</font></font>
+
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#Variable_table( &lt;. X : integer, Y : real, Z : real .&gt; ) =</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(. (. X  integer .) (. Y  real .) (. Z  real .)  .)</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Sometimes,  performing  a  loop  over the tree, some branches</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">should  be  updated  in a special way. For this purpose iterative</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">tree pattern with distinguished branches is used. </font></font>
+
+   <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">&lt;*  Sel1  :  Pat1,  Sel2 : Pat2, ..., SelN : PatN, $Var : P *&gt;</font></font>
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">where Sel1, Sel2, ... SelN are atoms-identifiers;</font></font>
+       <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Pat1, Pat2, ... PatN  are  patterns,</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">i.e., like elements in simple tree pattern;</font></font>
+
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">$Var  is  a  variable,  but  P is a pattern, as in simple case of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">iterative tree pattern. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  pattern  is  applied  to the argument tree the following</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">way.  First of all distinguished pattern branches 'Sel : Pat' are</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">developed.  Their  matching  with  branches  of the argument tree</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">happens  exactly  the  same way as with simple tree pattern. Then</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the  element  '$Var  :  P'  is  applied  to other branches of the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">argument tree the same way as in simple iterative tree pattern. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Some distinguished branches can be optional, for this purpose</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">they  are enclosed in brackets '[' and ']'. Semantics is the same</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">as in the case of simple tree pattern. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Example.  Let  it be a tree of arbitrary size. In some of its</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">subtrees  there is the selector LABEL, to which numerical atom is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">attached. All these numbers over the whole tree must be collected</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">in a list, and the list must be returned as result. </font></font>
+
+<font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#Label_list </font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">&lt;*  [ LABEL : $Result !.:= $N ],</font></font>
+        <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$S   : $Result !!:= #Label_list  *&gt; / RETURN  $Result / ;;</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$E</font></font>
+<font face="Courier New, monospace"><font size="3" style="font-size: 12pt">##</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  rule  has  two  branches. Traversing of the tree and its</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">subtrees  is described in the first branch. The resulting list is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">formed  in  the  variable  $Result. The traversing of subtrees is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">carried   out   by  the  help  of  recursive  call  of  the  rule</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#Label_list. The second branch of the rule consisting of just one</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">pattern  $E  is  applied  at  the leaves of the tree. The pattern</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">matches successfully with any object and the whole branch returns</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">value NULL, which is accepted as empty list at the previous level</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of recursion. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Call  sample. </font></font>
+
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#Label_list  (  &lt;.  A: &lt;. LABEL: 5, B: abc .&gt;,</font></font>
+                        <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">LABEL: 17, D: 25 .&gt; ) = (. 17 5 .) </font></font>
+
+            <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">7.6 Names of Lists and Trees in Patterns</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The assignment of names was discussed in Section 5.</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">In  list  and  tree patterns we can have matching of list and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">tree names with the described values or simply get these names in</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the  described  variable.  For  this  purpose  the  name  may  be</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">indicated before list or tree pattern: atom :: pattern </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If  the atom described in the pattern coincides with the name</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of  the  list  (or  tree),  to  which the pattern is applied, the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">application  of  the  pattern  to the argument begins. If it does</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">not,  other  pattern  elements  are  not  applied and the pattern</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">fails. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">To obtain access to the name of the argument, instead of atom</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">we  must  indicate the variable, in which the name is assigned as</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">value. </font></font>
+
+
+            <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">7.7 Patterns of Logical Condition Testing</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Pattern  of  the  type: S' ( expression ) works the following</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">way.  First  of  all  the  expression  is evaluated. If its value</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">differs  from  NULL,  the pattern is successful. The value of the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">matched  argument  is  returned  as  the value of the pattern, if</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">matching was successful. If the value of the expression equals to</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">NULL, the pattern fails and returns NULL. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  value  of  special  variable  $$  in  the  expression of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">S-pattern equals to the value of the argument, to which S-pattern</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">is applied. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  skip  of  token sequence until the nearest symbol ';' is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">described by the pattern: (* S' ( $$ &lt;&gt; ';' ) *) </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Let  under  parsing a case is accentuated when the assignment</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">statement  is  in the form of X := X + E , where X is a variable,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">and  E  is an expression. This case could be described by pattern</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of the type: $Id ':=' S' ( $$ = $Id ) '+' #Expression </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Pattern  of  the  type:  V'  (  expression ) works similar to</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">S-pattern, yet in case of success no advancing along the sequence</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of  rule  arguments  takes  place, so the next pattern element is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">applied to the same argument. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">This  pattern is useful for context condition check. Example.</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The pattern</font></font>
+     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">S' ( #NUMBER($$) and ( $$ &gt; 7))</font></font>
+
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">may be substituted by</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">a sequence of patterns </font></font>
+
+     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$Num V'($Num &gt; 7) </font></font>
+
+
+                         <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">8. Statements</font></font>
+
+                    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">8.1 Assignment Statement</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">In  the  left  side of assignment statement a variable may be</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">indicated,  which  is  followed  by  an  arbitrary number of list</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">indexes and/or tree selectors. For example, </font></font>
+
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$X := (. A B C .); $Y:= &lt;. D : E, F : G .&gt;; </font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">After assignment $X[2] := T  the value of $X is (. A T C .) .</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">After assignment $Y.D :=17 the value of $Y is &lt;.D :17, F:G .&gt;</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  execution of the statement $Y.A := T yields the run time</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">error  message.  The  necessary  result is obtained the following</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">way: </font></font>
+
+   <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$Y ++:= &lt;. A : T .&gt;;</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Tree  branch  is  deleted by assigning an empty object to the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">corresponding selector: $Y.D := NULL; </font></font>
+
+                  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">8.2 Conditional Statement</font></font>
+
+   <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Conditional statement has the following form:</font></font>
+
+                 <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">IF  expression  -&gt;  statements </font></font>
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Then branches may</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">follow (it is not compulsory)</font></font>
+
+                <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">ELSIF   expression   -&gt;   statements  </font></font>
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Conditional</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">statement ends with keyword FI. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">In  conditional  statement  branches expressions are computed</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">one  by  one, until a value different from NULL is obtained. Then</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the statements described in this branch are executed. </font></font>
+
+
+                       <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">8.3 FAIL Statement</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">FAIL statement finishes the execution of the rule branch with</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">failure.  Example.  In order to repair errors in parsing process,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the  sequence  of  tokens should be skipped quite frequently, for</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">instance, until semicolon symbol. It is done the following way. </font></font>
+
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#statement    ...            ;; -- branches for statement analysis</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(*  #Not_semicolon   *)   ';'   -- no statement is recognised</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">##</font></font>
+
+<font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#Not_semicolon   $E / IF  $E = ';' -&gt; FAIL  FI/   </font></font>
+<font face="Courier New, monospace"><font size="3" style="font-size: 12pt">##</font></font>
+
+
+                      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">8.4 Loop Statements</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Statement of the types</font></font>
+
+         <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">FORALL $VAR  IN expression</font></font>
+            <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">DO  statements  OD</font></font>
+         <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">FORALL SELECTORS $VAR BRANCHES $VAR1 IN expression</font></font>
+            <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">DO  statements  OD</font></font>
+         <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">FORALL BRANCHES $VAR1 IN expression</font></font>
+            <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">DO statements OD</font></font>
+
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">loops over a list or a tree. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  value of the expression must be either a list or a tree.</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Value  of the current list element (if the loop is over the list)</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">or  value  of the current selector (if the loop is over the tree)</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">is   assigned   to  the  loop  variable  $VAR  one  by  one.  The</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">corresponding  branch value is assigned to the variable $VAR1 (if</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the  loop  is  over the tree). Statements, describing body of the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">loop, may use the current value of the variables $VAR and $VAR1. </font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Loop statement of the type</font></font>
+
+                     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">LOOP  statements  END;</font></font>
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">repeats statements of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the  loop  body,  until  one of the statements - BREAK, RETURN or</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">FAIL is not executed. </font></font>
+
+                          <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">8.5 Rule Call</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If  a  rule is called just to execute statements described in</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">it,  and  value  returned  by the rule is not necessary, the rule</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">call  is  written down as statement. It is analogous to procedure</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">call in traditional programming languages. Success/failure of the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">rule and value returned by it is disregarded in such a call. </font></font>
+
+
+                       <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">9. Input and Output</font></font>
+
+                 <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">9.1 SAVE and LOAD Statements</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Objects created by RIGAL program (atoms, lists, trees) can be</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">saved in the file and loaded back to the memory. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Statement</font></font>
+
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">SAVE  $Var  file-specification</font></font>
+
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">unloads the object,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">which  is  the  value  of  the variable $Var to the file with the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">given  specification.  File,  formed  by SAVE statement, contains</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">precisely one object (atom, list or tree). </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">We  can  load  the  object from the file in the memory having</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">executed statement:</font></font>
+
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">LOAD $Var file-specification </font></font>
+
+
+                         <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">9.2 Text Output</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">To  output  texts  (messages,  generated object codes, etc. )</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">several  text  files can be opened in the RIGAL program. The text</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">file  FFF  is  opened  by  statement: OPEN FFF file-specification</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">File-specification  may be an expression. It presents the name of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the file on the device. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Statement of the type</font></font>
+
+                <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">FFF  &lt;&lt;  Expr1 Expr2 ... ExprN </font></font>
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">outputs a sequence</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of atoms to the file FFF. Values of expressions Expr1, Expr2, ...</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">are  either  atoms or lists consisting of objects, different from</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">trees. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">This  statement  outputs atoms as sequences of symbols to the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">text  file, inserting a blank after every atom. Atoms in the list</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">are output in the same order as they are in the list. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Example.   </font></font>
+
+<font face="Courier New, monospace"><font size="3" style="font-size: 12pt">FFF &lt;&lt;  A B 12 ;</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">A  string  of  characters  is output in the text file FFF the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">following way: &quot;A B 12 &quot; </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Symbol  @  in the sequence of expressions of output statement</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">switches over to other output mode of blanks separating atoms. By</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">default  at  the  beginning of execution of text output statement</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the output mode with blanks is on. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Example.   </font></font>
+
+<font face="Courier New, monospace"><font size="3" style="font-size: 12pt">FFF &lt;&lt; A B  @  C D  25  @  E F 57 ;</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The following string of characters is output to the text file</font></font>
+
+                      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">&quot;A B CD25E F      57&quot;</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Statement  of  the  type </font></font>
+
+                   <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">FFF &lt;&lt; ... </font></font>
+
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">always begins output with</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the  beginning  of a new record. Output statement of the type</font></font>
+
+                    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">FFF &lt;] ... </font></font>
+
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">continues output in the current record. </font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">By the help of the statement of the type</font></font>
+
+                        <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">PRINT  expression</font></font>
+ <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the value of atom, list</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">or  tree can be output in a readable form on the display, disk or</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">on the printer. It is useful when debugging RIGAL programs. </font></font>
+
+
+                      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">10. Program Structure</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Program  written  in  the RIGAL language consists of the main</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">program and rules. The main program text must be at the beginning</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of  the  RIGAL program text, but the text of the rules is written</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">afterwards.  Main  program,  as  well as rule, begins by the name</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">indication in the form of #main_program_name, then statements are</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">described, separated by symbols ';' . The end of the main program</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">is marked by the symbol '##'. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Usually operations that deal with the initial object loading,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">rule  call  and  unloading  of  created  objects in the files are</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">concentrated  in the main program. Therefore, main program has no</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">pattern elements or arguments of its own. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">When  RIGAL  is  used  for  parsing, text file with the input</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">information first is updated by scanner, which transforms it into</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">a  list  of tokens. Thus rules describing required parsing can be</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">applied  to this list. Intermediate results of the RIGAL program,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">for  instance,  abstract  syntax trees obtained by parsing can be</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">unloaded  in  the  file  by  the help of SAVE statement. They are</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">unloaded  so,  that  other  RIGAL  programs (for instance, those,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">which  implement  phase of code generation in compilers) can load</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">them  as  input  data. Sample of main program is given in Section</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">12.4. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Rules can be written down after main program  in  any  order.</font></font>
+
+
+                      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">10.1 Local Variables</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">There are no special variable declarations in RIGAL. The fact</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">that  a variable is used in some statement, pattern or expression</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">implies  that  the  variable  is defined as local variable of the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">rule or the main program. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">For recursive rule calls local rule variables are pushed in a</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">stack,  so,  that  every  active rule instance has its own set of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">local variables. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">All  variables  are  initialized  by the NULL value, when the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">corresponding  rule  or  the  main program is called and when the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">execution of rule branch starts. </font></font>
+
+           <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">10.2 References to Variables of Other Rules</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  construction of RIGAL makes it possible to obtain access</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">from  the  rule  to  local  variables of another rule. It has the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">following form: LAST #L $X </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">This  reference  denotes  the value of the variable $X in the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">last  (in  time  ) and still active instance of the rule #L. Such</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">references  can  be  used  in  left and right sides of assignment</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">statement. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If  at  the moment of evaluation of the expression LAST #L $X</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">there  is  no  active  instance  of the rule #L, the value of the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">expression  LAST  #L $X equals NULL. If such LAST #L $X is in the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">left  side  of assignment statement, the statement is disregarded</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(and run time error message is output). </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">By  the  help  of  LAST  we  may  refer to both rule and main</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">program variables. </font></font>
+
+      <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">10.3 Attribute Grammars and RIGAL. Global Attributes</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">There  is a close analogy between attribute grammar and RIGAL</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">program.  Rules  in RIGAL correspond to grammar nonterminals, and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">variables - to attributes. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">In  attribute  grammars  the  greatest part of attributes are</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">used  as  transit attributes. To avoid this global attributes are</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">introduced in the attribute grammar implementations. The usage of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">LAST references solves this problem in RIGAL. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Implementation  of  both synthesized and inherited attributes</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">is possible as it is demonstrated in the following scheme. </font></font>
+
+<font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#LA  ... ... ...</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">assigns value to the attribute $A</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">calls #LB     ... ... ...     </font></font>
+<font face="Courier New, monospace"><font size="3" style="font-size: 12pt">##</font></font>
+
+<font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#LB ... ... ...</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$B1 := LAST #LA $A -- uses the inherited attribute $A from #LA</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">calls #LC</font></font>
+     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">-- after this call the  value  of  the attribute  $C</font></font>
+     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">-- from #LC is  assigned to the synthesized attribute $B2</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">... ... ...     </font></font>
+<font face="Courier New, monospace"><font size="3" style="font-size: 12pt">##</font></font>
+
+<font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#LC ... ... ...</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">assigns value to the attribute $C</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">LAST #LB $B2 := $C  -- the value is assigned to  the</font></font>
+                         <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">-- synthesized  attribute  $B2 of #LB</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">... ... ...         </font></font>
+<font face="Courier New, monospace"><font size="3" style="font-size: 12pt">##</font></font>
+
+
+                       <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">11. Built-in Rules</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">There  is  a  number of built-in rules in the language. These</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">rules   implement  functions,  the  implementation  of  which  is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">impossible or ineffective by other language means. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Call  of  built-in rules is written down the same way as call</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of  rules  defined  by  the  user  itself. Along with the value a</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">built-in rule yields success or failure hence, built-in rules are</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">used as patterns. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">There are predicates such as #ATOM(E), #NUMBER(E), #IDENT(E),</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#LIST(E) and #TREE(E). </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The built-in rule #LEN(E) returns numerical atom as value. If</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">E  is an atom, then for non-numerical atoms it returns the number</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of atom symbols. For numerical atoms this rule returns the number</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of  significant  digits plus 1, if the atom is a negative number.</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#LEN( NULL) equals 0, #LEN('ABC') equals 3, #LEN(-185) equals 4. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">If  E  is  a  list,  then  #LEN(E) returns the number of list</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">elements, but, if E is a tree, then it returns the number of tree</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">branches. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#EXPLODE(E).  If  E  is an atom, then it succeeds and returns</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">one  character atom list that represents the value E 'decomposed'</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">in   separate   characters.  If  E  is  a  numerical  atom,  only</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">significant digits are present. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Examples.#EXPLODE(X25) yields (. 'X' '2' '5' .).</font></font>
+              <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#EXPLODE(-34) yields (. '-' '3' '4' .).</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#IMPLODE(E1 E2 ... EN). This rule yields the concatenation of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">atoms or lists E1, E2, ..., EN in a new, non-numerical atom. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Examples.#IMPLODE( A B 34) equals 'AB34'.</font></font>
+              <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#IMPLODE(25 (. A -3 .) ) equals '25A-3'.</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#CHR(N). The rule returns an atom, which consists of just one</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">ASCII character with the code N ( 0 &lt;= N &lt;= 127). </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#ORD(A). Returns an integer, which is an internal code of the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">first character of the nonnumerical atom A. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">For instance, #ORD( A) = 65, #ORD( ABC) = 65.</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#PARM(T) . Returns list of parameters which was assigned when</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the whole program called for execution. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">#DEBUG(E). If E equals the atom 'RULES', then, as soon as the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">rule  is  called, information concerning calls of the rules (both</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">user defined and built-in rules) and their execution results will</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">be  output.  The  call #DEBUG(NORULES) stops the debugging of the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">rules. </font></font>
+
+
+                       <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">12. Sample Compiler</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Compiler  for  the  TOYLAN  language,  which is a very simple</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">programming  language,  is  discussed  in  the  following  units.</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Compiler  works  in  two  passes.  The first phase is parsing and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">construction  of  the  program's  intermediate  form  as abstract</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">syntax tree. The second phase is code generation. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Description  of  input  and intermediate language grammars by</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">means   of   RIGAL   is   presented.   Thus  formalized  compiler</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">documentation (admitting checking on a computer) is obtained. </font></font>
+
+
+                     <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">12.1 TOYLAN Language</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The   description   of  TOYLAN  syntax  can  be  regarded  as</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">description  of  acceptable  sequences of tokens. Atoms represent</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">lexical   elements  of  TOYLAN  program:  keywords,  identifiers,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">constants,  operation signs, delimiters. The context free grammar</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">of TOYLAN can be described in the form of RIGAL program. </font></font>
+
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#PROGRAM</font></font>
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">'PROGRAM' $Id</font></font>
+                 <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(* #DECLARATION ';' *)  (+ #STATEMENT + ';' )  ##</font></font>
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#DECLARATION  ('INTEGER'!'BOOLEAN')   (+ $Id  + ',')        ##</font></font>
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#STATEMENT     ( #ASSIGNMENT      !  #INPUT     !</font></font>
+                   <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#OUTPUT          !  #CONDITIONAL  )          ##</font></font>
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#ASSIGNMENT   $Id ':='  #EXPRESSION                         ##</font></font>
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#INPUT        'GET' '(' (+ $Id  + ',') ')'                   ##</font></font>
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#OUTPUT       'PUT' '(' (+ #EXPRESSION + ',') ')'            ##</font></font>
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#CONDITIONAL  'IF' #EXPRESSION   'THEN' (+ #STATEMENT + ';')</font></font>
+                <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">['ELSE' (+ #STATEMENT + ';' )]    'FI'         ##</font></font>
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#EXPRESSION   #SUM     [  '='  #SUM  ]                      ##</font></font>
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#SUM          #FACTOR   (* '+'  #FACTOR   *)                ##</font></font>
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#FACTOR       #TERM    (* '*' #TERM      *)                 ##</font></font>
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#TERM         $N ;; -- numeric constant</font></font>
+                <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">('TRUE' ! 'FALSE' ) ;; -- Boolean constants</font></font>
+                <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$Id;; -- variable</font></font>
+                <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">'(' #EXPRESSION ')'                           ##</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Context conditions are the following:</font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">1)  all  variables used in statements and expressions must be</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">declared, </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2)  one  and  the  same  variable name should not be declared</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">twice, </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3)  left  and  right parts of assignment statement must be of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the same type, </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4)  operands  of  input-output statements must be of the type</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">INTEGER. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">All  variables  of the type INTEGER have initial value 0, and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">all variables of the type BOOLEAN have initial value FALSE. </font></font>
+
+
+               <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">12.2 Intermediate Form of Program.</font></font>
+                         <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Abstract syntax tree</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Special   languages  to  represent  intermediate  results  of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">compilation are used in compiler building practice. For instance,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">P-code for PASCAL compilers and language DIANA [8] for ADA. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  result  of  the  first phase of the TOYLAN compiler is a</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">tree.   Let's   call  it  abstract  syntax  tree.  Along  program</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">components  it  contains  some semantic attributes, for instance,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">types  of  expressions. One of the most significant attributes is</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">table of variables, obtained as a result of parsing of the TOYLAN</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">program declarations. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  structure  of abstract syntax tree of the TOYLAN program</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">is described by the following rules. </font></font>
+
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#S_PROGRAM</font></font>
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">'PROGRAM'::&lt;. NAME : $Id,</font></font>
+                     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">DECLARATIONS : #S_DECLARATIONS ,</font></font>
+                     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">STATEMENTS   : (.(* #S_STATEMENT *).) .&gt;    ##</font></font>
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#S_DECLARATIONS    -- variables table</font></font>
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">&lt;* $Id : ( INTEGER ! BOOLEAN )  *&gt;                       ##</font></font>
+
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#S_STATEMENT</font></font>
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">ASSIGNMENT :: &lt;. LEFT  : $Id,</font></font>
+                        <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">RIGHT : #S_EXPRESSION   .&gt;   ;;</font></font>
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">INPUT :: (. (* $Id *) .)    ;;</font></font>
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">OUTPUT :: (. (* #S_EXPRESSION *) .)      ;;</font></font>
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">CONDITIONAL :: &lt;. COND : #S_EXPRESSION,</font></font>
+                         <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">THEN : (.(* #S_STATEMENT *).),</font></font>
+                         <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">[ ELSE : (.(* #S_STATEMENT *).)] .&gt;   ##</font></font>
+
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#S_EXPRESSION</font></font>
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">COMPARE :: &lt;. ARG1 : #S_EXPRESSION, ARG2 : #S_EXPRESSION,</font></font>
+                     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">TYPE : BOOLEAN    .&gt;  ;;</font></font>
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">ADD :: &lt;. ARG1 : #S_EXPRESSION,  ARG2 : #S_EXPRESSION,</font></font>
+                 <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">TYPE : INTEGER       .&gt;  ;;</font></font>
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">MULT :: &lt;. ARG1 : #S_EXPRESSION,  ARG2 : #S_EXPRESSION,</font></font>
+                  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">TYPE : INTEGER       .&gt;  ;;</font></font>
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">&lt;. VARIABLE : $Id ,  TYPE     : ( INTEGER ! BOOLEAN ) .&gt;   ;;</font></font>
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">&lt;. CONSTANT : $N ,   TYPE     : INTEGER .&gt;   ;;</font></font>
+      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">&lt;. CONSTANT : ( 0 ! 1) , TYPE : BOOLEAN .&gt;            ##</font></font>
+
+                    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">12.3 Target Language BAL</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  goal of the TOYLAN compiler is to obtain program text in</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">a  low level language BAL. This language is a simplified model of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">assembler  languages.  The  memory of BAL-machine is divided into</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">separate words. Every word may contain an integer, besides, there</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">are  work registers R0, R1, R2, ... of the word size each. Let us</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">suppose  the  number  of  registers  to be unlimited, in order to</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">eliminate the problem of optimal register usage during generation</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">phase. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Command  of  BAL ABC: DEFWORD N reserves a word in the memory</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">and  imbeds  integer  N in it. We can refer to this word in other</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">commands by name ABC. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Commands  of BAL have two operands which are described by the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">name of memory word, by the name of register or by the literal of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the type =NNN, where NNN is an integer. Commands can be marked by</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">labels. </font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">1) MOV A1,A2  This command moves memory word A1 to memory word A2.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">2) LOAD  RI,A  Loading of word A into register RI.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">3) SAVE RI,A Unloading of the contents of register RI into memory</font></font>
+                <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">word A.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">4) ADD RI,A  or  ADD RI,RJ  The sum of operands is imbedded in RI.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">5) MULT RI,A  or  MULT RI,RJ   Multiplication of operands is</font></font>
+                <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">imbedded in RI.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">6) COMPARE RI,A  or  COMPARE RI,RJ  If operand values are equal,</font></font>
+                <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">it is 1 that is imbedded in RI,  if  they  are  not</font></font>
+                <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">equal, 0 is imbedded.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">7) BRANCH RI,M  If the value of RI is equal to 0, then transfer</font></font>
+                <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">to the command marked  by  label  M  takes  place,</font></font>
+                <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">otherwise, to the next command.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">8) JUMP M  Unconditional transfer to the command marked by label M.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">9) EOJ       Completes the execution of the BAL program.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">10) READ A    Reads the integer from standard  input  device  and</font></font>
+                <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">imbeds it in word A.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">11) WRITE A  or  WRITE RI Outputs the integer from memory word or</font></font>
+                <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">from register to standard output device.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">12) NOP      An empty statement.</font></font>
+
+
+                  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">12.4 Main Module of Compiler</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The main program of the TOYLAN compiler contains calls of the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">first and second compilation phases and file opening statements. </font></font>
+
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#TOYLAN_COMPILER</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">OPEN REP ' ';  --message file is connected with the screen</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$LEXEMS:=#CALL_PAS(35 'A.TOY');</font></font>
+     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">-- a list of tokens is loaded from the file A.TOY by scanner</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$S_TREE := #A_PROGRAM($LEXEMS);</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">-- 1st  phase; result of parsing - abstract syntax tree - is</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">-- imbedded in the variable $S_TREE; during parsing messages</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">-- about discovered errors in file REP can be output.</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">IF $S_TREE  -&gt;  OPEN GEN 'A.BAL'; -- if the tree is created,</font></font>
+         <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">-- then file is opened to output the generated BAL text</font></font>
+                 <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#G_PROGRAM($S_TREE) -- 2nd phase - code generation</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">ELSIF  T  -&gt;  REP &lt;&lt; errors are discovered   FI;</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">REP &lt;&lt; end of compilation                   ##</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  compilation  listing that contains source text and error</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">messages  is  not  envisaged in the TOYLAN compiler. Formation of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the listing can be a separate phase. </font></font>
+
+
+                       <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">12.5 Parsing Phase</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">The  rule  #A_PROGRAM  carries  out  parsing  of tokens list,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">checks  context  conditions,  generates error messages and builds</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">abstract syntax tree of TOYLAN program. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Patterns  of the rule #A_PROGRAM and of the rules subordinate</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">to  it, actually, coincide with patterns of the rule #PROGRAM and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">with  the  associated rules that describe context free grammar of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the TOYLAN language. Just operations to check context conditions,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">to  output  error  messages and to construct abstract syntax tree</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">are added. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">In   our   parser  diagnostics  is  based  on  the  following</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">principles.  First of all, &quot;panic&quot; reaction to an error should be</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">avoided  and  several  messages concerning one and the same error</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">should  not  be  output  (though,  we  can't  manage  it always),</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">secondly,  error  neutralization is transition to the analysis of</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">the next statement, i.e., skip of tokens until the nearest symbol</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">';'. </font></font>
+
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#A_PROGRAM    -- the rule is applied to the list of tokens</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(. PROGRAM  $Id</font></font>
+         <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(*  $DECL++:= #A_DECLARATION  ';'  *)</font></font>
+                  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">--formation of variables table</font></font>
+          <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(+  $STATEMENTS !.:= #A_STATEMENT   + ';' )</font></font>
+                  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">--formation of statements list</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">.)  / RETURN 'PROGRAM' :: &lt;. NAME : $Id,</font></font>
+                                  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">DECLARATIONS : $DECL ,</font></font>
+                                  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">STATEMENTS : $STATEMENTS .&gt;/ ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#A_DECLARATION     $TYPE := ( INTEGER ! BOOLEAN )</font></font>
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(+ $Id /IF LAST #A_PROGRAM $DECL.$Id OR $REZ.$Id -&gt;</font></font>
+              <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">REP &lt;&lt; VARIABLE $Id DOUBLE DEFINED  FI;</font></font>
+           <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$REZ++:= &lt;.$Id : $TYPE .&gt;/  + ',' ) / RETURN $REZ / ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#A_STATEMENT   $REZ := ( #A_ASSIGNMENT ! #A_INPUT !</font></font>
+               <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#A_OUTPUT ! #A_CONDITIONAL )  / RETURN $REZ / ;;</font></font>
+
+     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(* $A!.:=S'($$ &lt;&gt; ';' ) *)   -- skip until nearest ';'</font></font>
+               <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/ REP &lt;&lt; UNRECOGNIZED STATEMENT $A /</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">##</font></font>
+
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#A_ASSIGNMENT $Id  ':='/ $LPType := LAST #A_PROGRAM $DECL .$Id;</font></font>
+        <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">IF NOT $LPType  -&gt; REP &lt;&lt; VARIABLE $Id ' IS NOT DEFINED ' FI /</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$E:= #A_EXPRESSION</font></font>
+         <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/IF $LPType &lt;&gt; $E . TYPE -&gt;</font></font>
+              <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">REP&lt;&lt; 'LEFT AND RIGHT SIDE TYPES ARE DIFFERENT '</font></font>
+                     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">'IN ASSIGNMENT STATEMENT ' FI;</font></font>
+         <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">RETURN ASSIGNMENT::&lt;. LEFT: $Id, RIGHT: $E .&gt; /</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">ONFAIL IF $LPType  -&gt; REP&lt;&lt; 'WRONG EXPRESSION IN ASSIGNMENT'  FI  ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#A_INPUT      GET  '('</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(+ $E !.:= $Id  /IF  LAST #A_PROGRAM $DECL.$Id &lt;&gt; INTEGER -&gt;</font></font>
+            <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">REP &lt;&lt; $Id 'IN STATEMENT GET IS NOT OF THE TYPE INTEGER'</font></font>
+                      <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">FI / + ',' ) ')' / RETURN INPUT :: $E /   ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#A_OUTPUT   PUT  '(' (+  $C := #A_EXPRESSION  / $E !.:= $C;</font></font>
+              <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">IF  $C . TYPE  &lt;&gt; INTEGER -&gt;</font></font>
+        <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">REP &lt;&lt; OPERAND OF PUT STATEMENT IS NOT OF THE TYPE INTEGER</font></font>
+                <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">FI /   + ',' ) ')'/ RETURN OUTPUT :: $E /       ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#A_CONDITIONAL     'IF' $BE := #A_EXPRESSION</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/IF $BE . TYPE &lt;&gt; BOOLEAN -&gt;</font></font>
+              <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">REP&lt;&lt; CONDITION IS NOT OF BOOLEAN TYPE FI /</font></font>
+                   <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">'THEN' (+ $P1 !.:= #A_STATEMENT + ';' )</font></font>
+         <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">[ 'ELSE' (+ $P2 !.:= #A_STATEMENT + ';' ) ]      'FI'</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/ RETURN CONDITIONAL :: &lt;. COND : $BE , THEN : $P1 ,</font></font>
+                               <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">ELSE : $P2  .&gt; /            ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#A_EXPRESSION      $A := #A_SUM   [  '=' $B := #A_SUM</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/ $A := COMPARE::&lt;. ARG1 : $A, ARG2 : $B, TYPE : BOOLEAN.&gt;/ ]</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/ RETURN $A /           ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#A_SUM   $A := #A_FACTOR    (* '+' $B := #A_FACTOR</font></font>
+         <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/ $A := ADD::&lt;. ARG1: $A, ARG2: $B, TYPE: INTEGER .&gt;/ *)</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/ RETURN $A  /          ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#A_FACTOR  $A := #A_TERM     (* '*' $B := #A_TERM</font></font>
+         <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/$A := MULT::&lt;. ARG1: $A, ARG2: $B, TYPE: INTEGER .&gt;/ *)</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/ RETURN $A /           ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#A_TERM</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$N  / RETURN &lt;. CONSTANT : $N , TYPE : INTEGER .&gt;/;;</font></font>
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">( ( TRUE / $K :=1/ ) ! ( FALSE / $K :=0 / ) )</font></font>
+                 <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/RETURN &lt;. CONSTANT: $K, TYPE: BOOLEAN .&gt;/  ;;</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$Id  / $X:= LAST #A_PROGRAM $DECL.$Id;</font></font>
+         <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">IF NOT $X  -&gt;  REP &lt;&lt; VARIABLE $Id IS NOT DECLARED</font></font>
+         <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">ELSIF T -&gt; RETURN &lt;. VARIABLE: $Id, TYPE: $X .&gt; FI / ;;</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">'(' $E := #A_EXPRESSION ')' / RETURN $E /        ##</font></font>
+
+
+                  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">12.6 Code Generation Phase</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Code  generation is performed when traversing abstract syntax</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">tree. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">To  avoid  possible  conflicts  between variable names in the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">TOYLAN  program  and register names (of the type RNNN) and labels</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(of  the  type  LNNN)  in  the object program, variable names are</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">substituted by standard names of the type VARNNN. </font></font>
+
+
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#G_PROGRAM    / $LABEL := 0 /   --global variable $LABEL serves</font></font>
+                                 <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">--to generate unique labels.</font></font>
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">PROGRAM::&lt;.DECLARATIONS: $TAB := #TABLE_OF_NUMBERS,</font></font>
+              <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">--creation of the table of unique variable numbers</font></font>
+             <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">STATEMENTS: (.(* #G_STATEMENT *).) / GEN &lt;&lt; 'EOJ' /,</font></font>
+             <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">DECLARATIONS : #G_DECLARATIONS      .&gt;       ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#TABLE_OF_NUMBERS &lt;* $Id: $TYPE /$N :=$N+1; $T++:=&lt;. $Id: $N.&gt;/ *&gt;</font></font>
+                   <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/RETURN $T/    ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#G_STATEMENT ( #G_ASSIGNMENT ! #G_INPUT !</font></font>
+              <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#G_OUTPUT     ! #G_CONDITIONAL )      ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#G_ASSIGNMENT    ASSIGNMENT::&lt;. LEFT: $Id := #NAME,</font></font>
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">RIGHT :( ( &lt;. VARIABLE: $Id1:=#NAME .&gt;</font></font>
+              <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/GEN &lt;&lt; MOV @ $Id1 ',' $Id / ) !</font></font>
+           <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">( &lt;. CONSTANT : $N .&gt; /GEN &lt;&lt; MOV @ '=' $N ',' $Id /) !</font></font>
+           <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">( $NREG := #G_EXPRESSION</font></font>
+              <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/GEN &lt;&lt; 'SAVE' @ 'R' $NREG ',' $Id / ) )  .&gt;    ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#G_INPUT INPUT::(. (* $Id := #NAME /GEN &lt;&lt; READ $Id / *) .)   ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#G_OUTPUT     OUTPUT :: (. (*</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">( ( &lt;. VARIABLE : $Id := #NAME .&gt; /GEN &lt;&lt; WRITE $Id / ) !</font></font>
+       <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">( &lt;. CONSTANT : $N .&gt; /GEN &lt;&lt; WRITE @ '=' $N / )  !</font></font>
+       <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">( $NREG := #G_EXPRESSION /GEN &lt;&lt; WRITE @ 'R' $NREG /) )</font></font>
+                         <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">*) .)                                ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#G_CONDITIONAL     CONDITIONAL ::</font></font>
+     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">&lt;. COND : $NREG := #G_EXPRESSION</font></font>
+            <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/ $LABEL1 :=#NEW_LABEL(); $LABEL2 :=#NEW_LABEL() /,</font></font>
+         <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">THEN   : / GEN &lt;&lt; BRANCH @ 'R' $NREG ',L' $LABEL1  /</font></font>
+                  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">(. (* #G_STATEMENT *) .)</font></font>
+               <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/ IF $.ELSE -&gt; GEN &lt;&lt; JUMP @ 'L' $LABEL2 FI;</font></font>
+                             <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">GEN &lt;&lt; @ 'L' $LABEL1 ': NOP' / ,</font></font>
+       <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">[ ELSE : (. (* #G_STATEMENT *) .)</font></font>
+               <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/ GEN &lt;&lt; @ 'L' $LABEL2 ': NOP' / ]     .&gt;  ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#G_EXPRESSION --returns the number of the register containing</font></font>
+               <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">--result of the evaluation of expression</font></font>
+  <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$EXPR</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/ $NREG := 0 / -- number of the first accessible register</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/RETURN #G_EXPR($EXPR)/</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">##</font></font>
+
+
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#G_EXPR     ( &lt;. VARIABLE: $ID :=#NAME .&gt;  !</font></font>
+              <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">&lt;. CONSTANT: $N / $ID := #IMPLODE('=' $N)/ .&gt;)</font></font>
+            <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/ $REG := COPY( LAST #G_EXPRESSION $NREG ) ;</font></font>
+              <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">GEN &lt;&lt; 'LOAD' @ 'R' $REG ',' $ID  ;</font></font>
+              <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">LAST #G_EXPRESSION $NREG + := 1; RETURN $REG /  ;;</font></font>
+         <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">$OP::&lt;. ARG1 : $R1 := #G_EXPR, ARG2 : $R2 := #G_EXPR .&gt;</font></font>
+          <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/ GEN &lt;&lt; $OP @ 'R' $R1 ',R' $R2 ; RETURN $R1 /   ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#G_DECLARATIONS</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">&lt;* $ID: $TYPE /$ID1 := #NAME($ID); GEN&lt;&lt; $ID1 ':' DEFWORD 0 /*&gt; ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#NEW_LABEL    --auxiliary rule</font></font>
+    <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/LAST #G_PROGRAM  $LABEL+:=1;</font></font>
+     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">RETURN COPY (LAST #G_PROGRAM $LABEL )/              ##</font></font>
+ <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">#NAME    $ID --returns standard name of the variable $ID in $TAB</font></font>
+     <font face="Courier New, monospace"><font size="3" style="font-size: 12pt">/ RETURN #IMPLODE( VAR  LAST #G_PROGRAM $TAB.$ID)/    ##</font></font>
+
+
+                 <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">13. Conclusions and Future Work</font></font>
+
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">As  it was demonstrated above, RIGAL supports syntax-oriented</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">style   of   compiler  design.  Programs  written  in  RIGAL  are</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">well-structured and it is easy to read and debug them. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Our experience [13] proves that the optimizing RIGAL compiler</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">in  VAX/VMS environment makes it possible to implement production</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">quality compilers for high level languages. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">RIGAL  can  be considered as yet another language prototyping</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">tool  in  the  sense  of  [14], because it allows the designer to</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">develop an experimental translator in short period of time. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Besides  interpreter  for  debugging  purposes and optimizing</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">compiler  RIGAL support system includes a cross-referencer, which</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">helps to avoid misuse of global variables. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">In  order  to  improve  static  and  dynamic  type  checking,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">variable  type  descriptions in the form of formal comments would</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">be added to the language. </font></font>
+    <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Taking  in  account  that control structures of RIGAL program</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">are  very  close  to input data structures, it seems promising to</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">develop  automatic  and  semiautomatic  methods  for test example</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">generation for the given RIGAL program. </font></font>
+
+
+                           <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">References</font></font>
+
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[1]  A.Aho,  J.Ullman. The  theory  of  parsing,  translation  and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">compiling// Prentice-Hall, Inc. Englewood Cliffs,N.J. 1972. -</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">vol.1,2.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[2] S.C.Johnson. YACC - Yet  Another  Compiler  Compiler  //  Bell</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Laboratories, Murray Hill,N.J., 1978, A technical manual.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[3] C.H.Koster. Using the CDL Compiler Compiler// Lecture  Notes</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">in Computer Science , Vol.21, Springer-Verlag, Berlin, 1977.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[4] I.R.Agamirzyan. Compiler Design Technological Support System SHAG. // Space</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">mechanics algorithms, Leningrad, vol. 79,1985, pp. 1-53.,(in Russian)</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[5] D.E.Knuth. Semantics of context-free languages//  Mathematical</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Systems Theory, 2, 2, 1968, pp.127-146.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[6] V.A.Serebryakov. Methods of Attribute Translation.// In:</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Programming Languages, Moscow, &quot;Nauka&quot;, 1985, pp. 47-79,(in Russian).</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[7] A.O.Vooglaid, M.V. Lepp, D.B.Lijb. Input Languages of the</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">ELMA System. // Proceedings of the Tallin Polytechnical Institute,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">(in Russian).</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[8] The intermediate language DIANA : Design and Implementation //Lecture </font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Notes in Computer Science, Vol.180, Springer-Verlag,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Berlin, 1984.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[9] R.Vilhelm. Presentation of the compiler generation system MUG2: </font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Examples, global flow analysis and optimization// Le point</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">sur la compilation, INRIA, 1978, ï¿½.307-336.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[10] Basic REFAL and its implementation on computers.// CNIPIASS,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Moscow, 1977, (in Russian). </font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[11] P.Lucas. Formal definition of programming languages and</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">systems // IFIP Congress, 1971.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[12] M.Ganapatti, C.N.Fisher, J.L.Hennessy. Retargetable  compiler</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">code generation// ACM Computing Survays, 14(4), 1982.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[13]  J.Barzdin,  A.Kalnins,  M.Auguston,  SDL  tools  for   rapid</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">prototyping and testing.// in SDL'89 : The language  at  work,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">ed.  O.Faergemand  and   M.M.Marques,   North-Holland,   1989,</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">pp.127-133.</font></font>
+  <font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">[14] R.Herndon, V.Berzins, The realizable benefits of  a  language</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">prototyping  language.//   IEEE   Transactions   on   Software</font></font>
+<font face="Verdana, sans-serif"><font size="3" style="font-size: 12pt">Engineering , vol.14, No 6, June 1988, pp.803-809</font></font></pre>
+</body>
+</html>

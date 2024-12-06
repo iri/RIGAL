@@ -1,1 +1,0 @@
-@call C:\RIGALDOS\xcr0.bat C:\RIGALDOS\HANOI C:\RIGALDOS\

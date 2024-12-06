@@ -1,2 +1,0 @@
-{$I SCANALL.PAS}
-end.

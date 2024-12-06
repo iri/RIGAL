@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title></title>
+	<meta name="generator" content="LibreOffice 24.2.5.2 (Windows)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="2024-08-05T18:11:25.219000000"/>
+	<style type="text/css">
+		@page { size: 8.5in 11in; margin-left: 0.79in; margin-right: 0.39in; margin-top: 0.39in; margin-bottom: 0.39in }
+		p { line-height: 115%; margin-bottom: 0.1in; background: transparent; background: transparent }
+		h2 { margin-top: 0.14in; margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
+		h2.western { font-family: "Liberation Serif", serif; font-size: 18pt; font-weight: bold }
+		h2.cjk { font-family: "NSimSun"; font-size: 18pt; font-weight: bold }
+		h2.ctl { font-family: "Arial"; font-size: 18pt; font-weight: bold }
+		h4 { margin-top: 0.08in; margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
+		h4.western { font-family: "Liberation Serif", serif; font-size: 12pt; font-weight: bold }
+		h4.cjk { font-family: "NSimSun"; font-size: 12pt; font-weight: bold }
+		h4.ctl { font-family: "Arial"; font-size: 12pt; font-weight: bold }
+		dt { background: transparent; background: transparent }
+		pre { background: transparent; background: transparent }
+		pre.western { font-family: "Liberation Mono", monospace; font-size: 10pt }
+		pre.cjk { font-family: "NSimSun", monospace; font-size: 10pt }
+		pre.ctl { font-family: "Liberation Mono", monospace; font-size: 10pt }
+		a:link { color: #000080; text-decoration: underline }
+		a:visited { color: #800000; text-decoration: underline }
+	</style>
+</head>
+<body lang="en-US" link="#000080" vlink="#800000" dir="ltr">
+<hr/>
+
+<h2 class="western">RIGAL manual page</h2>
+<ul>
+	<ul>
+		<ul>
+			<li><p><a href="#HDR0">NAME</a> <br/>
+<a href="#HDR1">SYNOPSIS</a>
+			<br/>
+<a href="#HDR2">COMPILATION TARGET (Pascal and C)</a>
+			<br/>
+<a href="#HDR3">DESCRIPTION OF rc</a> <br/>
+<a href="#HDR4">OPTIONS</a>
+			<br/>
+<a href="#HDR5">DESCRIPTION OF <i>executable</i> file
+			(compilation result)</a> <br/>
+<a href="#HDR6">OPTION</a>
+			<br/>
+<a href="#HDR7">DESCRIPTION OF ic</a> <br/>
+<a href="#HDR8">OPTIONS</a>
+			<br/>
+<a href="#HDR9">DESCRIPTION of v</a> <br/>
+<a href="#HDR10">DESCRIPTION
+			of rig_crf</a> <br/>
+<a href="#HDR11">DESCRIPTION of rig_lint</a>
+			<br/>
+<a href="#HDR12">ERROR MESSAGES</a> <br/>
+<a href="#HDR13">ENVIRONMENT</a>
+			<br/>
+<a href="#HDR14">INSTALLATION of RIGAL from sources</a>
+			<br/>
+<a href="#HDR15">FILES</a> <br/>
+<a href="#HDR16">PRINTED
+			DOCUMENTATION</a> <br/>
+<a href="#HDR17">AUTHORS</a> 
+			</p></li>
+		</ul>
+	</ul>
+</ul>
+<hr/>
+
+<h4 class="western"><a name="HDR0"></a>NAME</h4>
+<dl><dd>
+	<dt><b>rc</b> - checks and compiles RIGAL file 
+	</dt><dt>
+	<b>ic</b> - interprets intermediate RIGAL code 
+	</dt><dt>
+	<b>v</b> - viewer for RIGAL data saved in file 
+	</dt><dt>
+	<b>rig_crf</b> - RIGAL cross -referencer 
+	</dt><dt style="margin-bottom: 0.2in">
+	<b>rig_lint</b> - RIGAL Lint (data type checker) 
+	</dt></dd></dl>
+<h4 class="western">
+<a name="HDR1"></a>SYNOPSIS</h4>
+<dl><dd>
+	<dt><b>rc</b> <i>filename</i> <b>[-c] [ -D] [ -P </b>parameter]... 
+	</dt><dt>
+	<b>ic</b> <i>codefilename</i> <b>[ -p</b> <i>printfilename</i>] <b>[
+	-d][</b> parameter...] 
+	</dt><dt>
+	<b>v</b> <i>filename</i> 
+	</dt><dt>
+	<b>rig_crf</b> <i>filename</i> 
+	</dt><dt>
+	<b>rig_lint</b> <i>filename</i> <i>executable</i> <b>[ -p
+	</b><i>printfilename</i>] [ parameter...] 
+	</dt><dt style="margin-bottom: 0.2in">
+	<b>(!) </b>the options and parameters must be separated by one or
+	more spaces. 
+	</dt></dd></dl>
+<h4 class="western">
+<a name="HDR2"></a>COMPILATION TARGET (Pascal and C)</h4>
+<dl><dd>
+	<dt style="margin-bottom: 0.2in">There are two variants of RIGAL
+	implementation: RIGAL/Pascal in UNIX Pascal and RIGAL/C in UNIX C.
+	The differences between them are mentioned below. 
+	</dt></dd></dl>
+<h4 class="western">
+<a name="HDR3"></a>DESCRIPTION OF rc</h4>
+<dl><dd>
+	<dt><b>rc</b> <i>filename</i> <b>[ -c] [ -D] [ -P </b>parameter]... 
+	</dt><dt style="margin-bottom: 0.2in">
+	<b>rc</b> - checks source file written in RIGAL language. The source
+	code file must have suffix <b>.rig</b>, but in the command <i>filename</i>
+	is specified without the suffix. <b>rc</b> reports error messages if
+	any appear; file name, row, column and message text are reported to
+	standard output. <b>rc</b> creates intermediate code <i>filename</i><b>.rsc</b>
+	which can be used for interpretation. 
+	</dt></dd></dl>
+<h4 class="western">
+<a name="HDR4"></a>OPTIONS</h4>
+<dl><dd>
+	<dt><b>-c</b> <br/>
+creates an executable file <i>filename</i>
+	(without suffix). In RIGAL/Pascal variant an intermediate Pascal
+	code is generated and then Pascal compiler (<b>pc</b>) and linker
+	are invoked. In RIGAL/C variant an intermediate C code is generated
+	and then C compiler (<b>cc</b>) and linker are invoked. Some
+	intermediate files, among them script file <b>xd</b>, also appear. 
+	</dt><dt>
+	<b>-D</b> does not remove intermediate files after the compilation. 
+	</dt><dt style="margin-bottom: 0.2in">
+	<b>-P</b><i>parameter</i> <br/>
+passes option to Pascal or C
+	compiler. You can use <b>-P</b> several times or use <b>-P </b><i>'param1
+	param2' </i>syntax. Typically you may be need to compile with
+	statically linked standard libraries, e.g. <b>$rig/rc rigcrf -c -P
+	-Bstatic</b> 
+	</dt></dd></dl>
+<h4 class="western">
+<a name="HDR5"></a>DESCRIPTION OF <i>executable</i> file (compilation
+result)</h4>
+<dl><dd>
+	<dt><i>executable</i> <b>[ -p</b> <i>printfilename</i>]
+	[parameter...] 
+	</dt><dt style="margin-bottom: 0.2in">
+	The parameters are passed to RIGAL program and can be received
+	through #PARM built -in rule which returns list of parameters. The
+	execution is identical to the interpreted program. 
+	</dt></dd></dl>
+<h4 class="western">
+<a name="HDR6"></a>OPTION</h4>
+<dl><dd>
+	<dt style="margin-bottom: 0.2in"><b>-p</b> <i>printfilename</i> -
+	name of file for statement PRINT output. By default output is
+	written to standard output. 
+	</dt></dd></dl>
+<h4 class="western">
+<a name="HDR7"></a>DESCRIPTION OF ic</h4>
+<dl><dd>
+	<dt><b>ic</b> <i>codefilename</i> [ <b>-p</b> <i>printfilename</i>]
+	[ <b>-d</b>] [parameter...] 
+	</dt><dt style="margin-bottom: 0.2in">
+	<b>ic</b> - interprets the intermediate code, created by <b>rc</b>.
+	The intermediate code must have suffix <b>.rsc</b>, but in the
+	command it is specified without the suffix. Other parameters are
+	passed to RIGAL program and can be received through #PARM built -in
+	rule which returns list of parameters.The execution is identical to
+	the compiled program. 
+	</dt></dd></dl>
+<h4 class="western">
+<a name="HDR8"></a>OPTIONS</h4>
+<dl><dd>
+	<dt><b>-p</b><i>printfilename</i> <br/>
+name of file for statement
+	PRINT output. By default output is written to standard output. 
+	</dt><dt style="margin-bottom: 0.2in">
+	<b>-d</b> tracing mode is turned on. Trace of rules and branches,
+	rule arguments and success/unsuccess messages is written to file
+	specified by <b>-p</b> option and is mixed with output from PRINT
+	statements. If <b>-p</b> option is absent trace is written to
+	standard output. 
+	</dt></dd></dl>
+<h4 class="western">
+<a name="HDR9"></a>DESCRIPTION of v</h4>
+<dl><dd>
+	<dt><b>v</b> <i>filename</i> 
+	</dt><dt style="margin-bottom: 0.2in">
+	<b>v</b> writes the contents of RIGAL code saved in file to standard
+	output. The structure of code is written with indentation, in well
+	-readable form. If the depth of some element of the structure is
+	more than 15 levels, then characters '..' appear instead of the
+	element. The <i>filename</i> must contain data saved by RIGAL
+	statement SAVE $<i>var 'filename</i>' 
+	</dt></dd></dl>
+<h4 class="western">
+<a name="HDR10"></a>DESCRIPTION of rig_crf</h4>
+<dl><dd>
+	<dt><b>rig_crf</b> <i>filename</i> 
+	</dt><dt style="margin-bottom: 0.2in">
+	<b>rig_crf</b> creates cross reference table for given RIGAL program
+	<i>filename</i>. The program file must have suffix <b>.rig</b>, but
+	in the command <i>filename</i> is specified without the suffix. The
+	result is written to file <i>filename</i><b>.crf</b>. For every rule
+	the following is reported: rules calling this one, rules called by
+	this one, variables, use of global variables. 
+	</dt></dd></dl>
+<h4 class="western">
+<a name="HDR11"></a>DESCRIPTION of rig_lint</h4>
+<dl><dd>
+	<dt><b>rig_lint</b> <i>filename</i> 
+	</dt><dt style="margin-bottom: 0.2in">
+	<b>rig_lint</b> creates warning table for given RIGAL program
+	<i>filename</i>. The program file must have suffix <b>.rig</b>, but
+	in the command <i>filename</i> is specified without the suffix. The
+	result is written to file <i>filename</i><b>.lnt</b>. <b>rig_lint</b>
+	checks type compatibility and cases when values of different types
+	can be assigned to the same variable. 
+	</dt></dd></dl>
+<h4 class="western">
+<a name="HDR12"></a>ERROR MESSAGES</h4>
+<dl><dd>
+	<dt><b>Error in file</b> <i>filename</i> <b>Line=</b><i>nn</i>
+	<b>Message=</b><i>text</i> <b>Column=</b><i>mm</i> - checker found
+	syntax error in your RIGAL file. Intermediate code is not created,
+	compilation failed. 
+	</dt><dt>
+	<b>*** ERROR</b> <i>nn xxx</i> - runtime warnings about dangerous
+	manipulations with RIGAL data structures or runtime input/output
+	errors. 
+	</dt><dt>
+	rig:undefined variable 
+	</dt><dt>
+	<b>pc:command not found</b> - see ENVIRONMENT section of this manual
+		</dt><dt>
+	ERROR:COMPILATION 
+	</dt><dt>
+	<b>ERROR IN RIGAL, rule #</b><i>name</i> - internal compilation
+	message, normally does not appear; try to simplify this rule. 
+	</dt><dt style="margin-bottom: 0.2in">
+	<b>ld() errors or warnings </b>- try command <b>ranlib
+	$rig/lib/riglib.a</b> to remove errors. 
+	</dt></dd></dl>
+<h4 class="western">
+<a name="HDR13"></a>ENVIRONMENT</h4>
+<dl><dd>
+	<dt>For running RIGAL/Pascal you must have Sun Pascal release 2.1
+	(or higher). Command <b>pc</b> (Pascal compiler) must be available. 
+	</dt><dt style="margin-bottom: 0.2in">
+	For running RIGAL/C you must have a C compiler (command <b>cc</b>)
+	available. You must have environment variable <b>rig</b> set to the
+	name of directory where RIGAL system binary files are located. You
+	can set it by command <b>setenv rig </b><i>full_path</i><b>/bin</b>
+	in your <b>.login</b> file It is recommended to include this
+	directory at the start of path list by command <b>set path=( $rig
+	... )</b> in your <b>.login</b> file. Then you can use RIGAL
+	commands <b>rc</b>, <b>ic</b> etc. from any directory. 
+	</dt></dd></dl>
+<h4 class="western">
+<a name="HDR14"></a>INSTALLATION of RIGAL from sources</h4>
+<dl><dd>
+	<dt>All files are packed and compressed in file
+	<b>rigs</b><i>variant.system_version.</i><b>tar.Z</b> (e.g.
+	rigsp.444.tar.Z). Here <b>rigsp</b> denotes Pascal sources, <b>rigsc</b>
+	- C sources. <b>uncompress</b> file (without suffix <b>.Z</b>) <b>tar
+	-xvf</b> file execute instructions in ENVIRONMENT section. 
+	</dt><dt style="margin-bottom: 0.2in">
+	Go to RIGAL source directory (<b>/src</b>) and execute <b>make</b> ;
+	it takes 3-5 minutes to compile all sources by Sun Pascal (or C)
+	compiler and perform self-test. The result is in <b>/bin</b> 
+	</dt></dd></dl>
+<h4 class="western">
+<a name="HDR15"></a>FILES</h4>
+<dl><dd>
+	<dt><b>bin/rc, bin/ic, bin/rig_crf, bin/rig_lint, bin/v</b> basic
+	RIGAL system executable files 
+	</dt><dt>
+	<b>lib/riglib.a</b> RIGAL compiler runtime library. If you move it
+	from one directory to another, execute command <b>ranlib</b>
+	<i>new_directory</i><b>/riglib.a</b> 
+	</dt><dt>
+	<b>include/</b><i>file</i>.<b>inc</b>, <b>include/</b><i>file</i>.<b>h</b>
+	m include files for compilation 
+	</dt><dt>
+	<b>bin/anrig, bin/genrig</b> parts of RIGAL compiler 
+	</dt><dt>
+	<b>docs/rigal.1 </b>this manual 
+	</dt><dt>
+	<b>docs/RIGAL_language_description.html</b> RIGAL language
+	description 
+	</dt><dt>
+	<b>docs/RIGAL_programmers_guide.html</b> User's guide 
+	</dt><dt>
+	<i>file</i><b>.rig</b> source programs in RIGAL 
+	</dt><dt>
+	<i>file</i><b>.rsc</b> intermediate code for interpreter 
+	</dt><dt style="margin-bottom: 0.2in">
+	<b>xcrg*.pas,</b> <i>file</i>.<b>RC2</b>, <i>file</i>.<b>RC4</b>,
+	<i>file</i>.<b>TMP</b> intermediate files, appear and by default are
+	removed during compilation. 
+	</dt></dd></dl>
+<h4 class="western">
+<a name="HDR17"></a>AUTHORS</h4>
+<dl><dd>
+	<dt>Mikhail Auguston and Vadim Engelson, Inst. of Math. and
+	Comp.Sci, University of Latvia, Rainis blvd. 29, Riga, LV-1459,
+	Latvia (Lettland). Currently (1994-1995) Vadim Engelson is at IDA,
+	S-58183, Linkoping University, Linkoping, Sweden. e -mail:
+	vadim@mii.lu.lv , vaden@ida.liu.se. 
+	</dt><dt>
+	<br/>
+
+	</dt><dt>
+	Some info and pointers to papers are available from <a href="http://www.ida.liu.se/labs/pelab/members/vaden/rigal.html">Rigal
+	home page </a>
+	</dt><dt style="margin-bottom: 0.2in">
+	<a name="ENDFILE"></a>Rigal and papers about it available by ftp
+	from <a href="ftp://ftp.ida.liu.se/pub/labs/pelab/rigal">RIGAL FTP
+	directory </a>
+	</dt></dd></dl>
+<pre class="western" style="margin-bottom: 0.2in"> </pre>
+</body>
+</html>

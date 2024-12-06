@@ -1,3 +1,0 @@
-{$DEFINE MIF}
-{$I SCANALL.PAS}
-end.
