@@ -5,10 +5,11 @@
 #include "c1.h"
 
 /* Local variables for bltin: */
-struct LOC_bltin {
+struct LOC_bltin
+{
   long l;
   bl80 mm;
-} ;
+};
 
 Local long alen(k, LINK)
 long k;
@@ -16,15 +17,10 @@ struct LOC_bltin *LINK;
 {
   a t;
 
-
   t = k;
-  pointa(t, LINK->mm, &LINK->l);   /*ibm*/
+  pointa(t, LINK->mm, &LINK->l); /*ibm*/
   return LINK->l;
-}  /* alen */
-
-
-
-
+} /* alen */
 
 Void bltin(rr, success, arg, n)
 v *rr;
@@ -43,11 +39,9 @@ long arg, n;
   mpd x, y;
   long t;
   longint li_;
-  string80 s80;   /* for parameter */
+  string80 s80; /* for parameter */
   atomdescriptor *WITH;
   numberdescriptor *WITH1;
-
-
 
   rr->nu = 0;
   rulenum = n;
@@ -56,161 +50,168 @@ long arg, n;
     pointr(k, &x.sa);
   *success = true;
   rez = arg;
-  switch (rulenum) {
+  switch (rulenum)
+  {
 
-  case 3:   /* #atom */
+  case 3: /* #atom */
     if (k == null_)
       goto _L99;
     *success = (((1L << ((long)x.sad->dtype)) &
-		 ((1L << ((long)fatom + 1)) - (1L << ((long)atom)))) != 0);
+                 ((1L << ((long)fatom + 1)) - (1L << ((long)atom)))) != 0);
     break;
 
-  case 4:   /* #number */
+  case 4: /* #number */
     if (k == null_)
       *success = false;
     else
       *success = (x.sad->dtype == number);
     break;
 
-  case 5:   /* #ident */
+  case 5: /* #ident */
     if (k == null_)
       *success = false;
     else
       *success = (x.sad->dtype == idatom);
     break;
 
-  case 6:   /* #list */
+  case 6: /* #list */
     if (k == null_)
       goto _L99;
     *success = (x.sad->dtype == listmain);
     break;
 
-  case 7:   /* #tree */
+  case 7: /* #tree */
     if (k == null_)
       goto _L99;
     *success = (x.sad->dtype == treemain);
     break;
 
-  case 8:   /* #tatom */
+  case 8: /* #tatom */
     if (k == null_)
       *success = false;
     else
       *success = (x.sad->dtype == tatom);
     break;
 
-  case 9:   /* #fatom */
+  case 9: /* #fatom */
     if (k == null_)
       *success = false;
     else
       *success = (x.sad->dtype == fatom);
     break;
 
-  case 10:   /* #_keyword */
+  case 10: /* #_keyword */
     if (k == null_)
       *success = false;
     else
       *success = (x.sad->dtype == keyword);
     break;
 
-  case 11:   /* #_specdesc */
+  case 11: /* #_specdesc */
     if (k == null_)
       *success = false;
     else
       *success = (x.sad->dtype == spec);
     break;
 
-  case 15:   /* #len */
+  case 15: /* #len */
     if (k == null_)
       rr->nu = 0;
-    else {
-      switch (x.sad->dtype) {
+    else
+    {
+      switch (x.sad->dtype)
+      {
 
       case atom:
       case idatom:
       case keyword:
       case tatom:
       case fatom:
-	rr->nu = alen(x.sad->name, &V);
-	break;
+        rr->nu = alen(x.sad->name, &V);
+        break;
 
       case number:
-	/* pods~itatx ~islo zna~.cifr */
-	li_ = x.snd->val;
-	t = 0;
-	while (li_ != 0) {
-	  li_ /= 10;
-	  t++;
-	}
-	if (t == 0)
-	  t = 1;
-	if (x.snd->val < 0)
-	  t++;
-	rr->nu = t;
-	break;
-	/* number */
+        /* pods~itatx ~islo zna~.cifr */
+        li_ = x.snd->val;
+        t = 0;
+        while (li_ != 0)
+        {
+          li_ /= 10;
+          t++;
+        }
+        if (t == 0)
+          t = 1;
+        if (x.snd->val < 0)
+          t++;
+        rr->nu = t;
+        break;
+        /* number */
 
       case listmain:
-	rr->nu = x.smld->totalelnum;
-	break;
+        rr->nu = x.smld->totalelnum;
+        break;
 
       case treemain:
-	rr->nu = x.smtd->totalarcnum;
-	break;
-
+        rr->nu = x.smtd->totalarcnum;
+        break;
 
       default:
-	rr->nu = 0;
-	break;
-      }/* case */
+        rr->nu = 0;
+        break;
+      } /* case */
     }
     break;
     /* #len */
 
-  case 14:   /* #_rulename */
+  case 14: /* #_rulename */
     if (k == null_)
       *success = false;
     else
       *success = (x.sad->dtype == rulename);
     break;
 
-  case 12:   /* #_varname */
+  case 12: /* #_varname */
     if (k == null_)
       *success = false;
     else
       *success = (((1L << ((long)x.sad->dtype)) &
-	    ((1L << ((long)fvariable + 1)) - (1L << ((long)variable)))) != 0);
+                   ((1L << ((long)fvariable + 1)) - (1L << ((long)variable)))) != 0);
     break;
 
   case 16:
-  case 17:   /* #_ruletoatom, #_varntoatm */
+  case 17: /* #_ruletoatom, #_varntoatm */
     if (k == null_)
       *success = false;
-    else {
+    else
+    {
       if (x.srd->dtype == rulename && rulenum == 16 ||
-	  (((1L << ((long)x.svd->dtype)) &
-	    ((1L << ((long)fvariable + 1)) - (1L << ((long)variable)))) != 0 &&
-	   rulenum == 17)) {
-	gets1(&s, &y.sa);
-	WITH = y.sad;
-	WITH->dtype = idatom;
-	if (rulenum == 16)
-	  WITH->name = x.srd->name;
-	else
-	  WITH->name = x.svd->name;
-	rez = s;
-      } else
-	*success = false;
+          (((1L << ((long)x.svd->dtype)) &
+            ((1L << ((long)fvariable + 1)) - (1L << ((long)variable)))) != 0 &&
+           rulenum == 17))
+      {
+        gets1(&s, &y.sa);
+        WITH = y.sad;
+        WITH->dtype = idatom;
+        if (rulenum == 16)
+          WITH->name = x.srd->name;
+        else
+          WITH->name = x.svd->name;
+        rez = s;
+      }
+      else
+        *success = false;
     }
     break;
 
-  case 19:   /* #debug */
+  case 19: /* #debug */
     debugrule = true;
     break;
 
-  case 21:   /* _content2 */
+  case 21: /* _content2 */
     if ((k & 511) == 0 && k < 65536L && k >= 0)
       *success = false;
-    else {
+    else
+    {
       s = x.snd->val;
       gets1(&k, &x.sa);
       WITH1 = x.snd;
@@ -221,14 +222,19 @@ long arg, n;
     break;
     /* _content2 */
 
-  case 22:   /* #chr */
-    if ((k & 511) == 0 && k < 65536L && k >= 0) {
+  case 22: /* #chr */
+    if ((k & 511) == 0 && k < 65536L && k >= 0)
+    {
       rez = null_;
       *success = false;
-    } else if (x.snd->dtype != number || x.snd->val > 255 || x.snd->val < 0) {
+    }
+    else if (x.snd->dtype != number || x.snd->val > 255 || x.snd->val < 0)
+    {
       rez = null_;
       *success = false;
-    } else {
+    }
+    else
+    {
       t = x.snd->val;
       V.mm[0] = (Char)t;
       V.l = 1;
@@ -236,37 +242,36 @@ long arg, n;
       gets1(&k, &x.sa);
       WITH = x.sad;
       if (is_rig_letter((int)t))
-	WITH->dtype = idatom;
+        WITH->dtype = idatom;
       else
-	WITH->dtype = atom;
+        WITH->dtype = atom;
       WITH->name = s;
       rez = k;
     }
     break;
     /* chr */
 
-  case 23:   /* parm */
+  case 23: /* parm */
     rez = null_;
     V.l = 1;
-    while (V.l < g_argc) {
-      strcpy(s80,g_argv[(int)V.l]);
+    while (V.l < g_argc)
+    {
+      strcpy(s80, g_argv[(int)V.l]);
       brt(s80);
       if (!strcmp(s80, "-p"))
-	V.l++;
+        V.l++;
       else
-	lconc(&rez, str_to_atom(s80));
+        lconc(&rez, str_to_atom(s80));
       V.l++;
     }
 
     break;
 
-
-
-
-  case 24:   /* #_totatom */
+  case 24: /* #_totatom */
     if (k == null_)
       *success = false;
-    else {
+    else
+    {
       gets1(&s, &y.sa);
       WITH = y.sad;
       WITH->dtype = tatom;
@@ -276,32 +281,32 @@ long arg, n;
     }
     break;
 
-  case 25:   /* #ord */
-    if ((k & 511) == 0 && k < 65536L && k >= 0) {
+  case 25: /* #ord */
+    if ((k & 511) == 0 && k < 65536L && k >= 0)
+    {
       *success = false;
       goto _L99;
     }
     if (((1L << ((long)x.sad->dtype)) &
-	 (((1L << ((long)keyword + 1)) - (1L << ((long)atom))) |
-	  (1L << ((long)tatom)))) != 0) {
+         (((1L << ((long)keyword + 1)) - (1L << ((long)atom))) |
+          (1L << ((long)tatom)))) != 0)
+    {
       k = x.sad->name;
       pointa(k, V.mm, &V.l);
       rr->nu = V.mm[0];
-    } else
+    }
+    else
       *success = false;
     break;
     /* ord */
 
-
-  }/* case */
+  } /* case */
 _L99:
   if (!*success)
     rez = null_;
   if (n != 15 && n != 25)
     rr->sa = rez;
 }
-
-
 
 Void mkatom(k, atype, r)
 long k;
@@ -312,7 +317,8 @@ long *r;
   mpd x;
   atomdescriptor *WITH;
 
-  if (k == 0) {
+  if (k == 0)
+  {
     *r = null_;
     return;
   }
@@ -320,8 +326,7 @@ long *r;
   WITH = x.sad;
   WITH->dtype = atype;
   WITH->name = k;
-}  /* mkatom */
-
+} /* mkatom */
 
 Void crlist(l)
 long *l;
@@ -330,7 +335,6 @@ long *l;
   long n;
   mpd x;
   mainlistdescriptor *WITH;
-
 
   gets5(l, &x.sa);
   WITH = x.smld;
@@ -341,9 +345,7 @@ long *l;
   WITH->next = null_;
   for (n = 0; n < mainlistelnum; n++)
     WITH->elt[n] = null_;
-}  /* crlist */
-
-
+} /* crlist */
 
 Static Void errstrmes(n, m)
 long n;
@@ -351,11 +353,12 @@ Char *m;
 {
   Char STR2[130];
 
-  switch (n) {
+  switch (n)
+  {
 
   case 1:
     sprintf(m, "Interpreter stack size overflow (stack size = %s);",
-	    strcpy(STR2, m));
+            strcpy(STR2, m));
     break;
 
   case 2:
@@ -460,7 +463,6 @@ Char *m;
   }
 }
 
-
 Void er(n)
 long n;
 {
@@ -473,8 +475,7 @@ long n;
   else
     printf("*** ERROR %12ld %s\n", n, m);
 
-}  /* err */
-
+} /* err */
 
 Void errstr(n, s)
 long n;
@@ -487,8 +488,7 @@ Char *s;
     fprintf(out, "*** ERROR %12ld %s%s\n", n, m, s);
   else
     printf("*** ERROR %12ld %s%s\n", n, m, s);
-}  /* err */
-
+} /* err */
 
 /* used for statistics only */
 Void d1(r)
@@ -497,38 +497,36 @@ long r;
   /* called from runtime library, s=1, r=1000..1030 */
 }
 
-
-
-Void
- d 
-( 
-status_r
- ,
- rule_name
-, rulenum, param, success)
-long status_r ,  rulenum, param;
-char * rule_name;
+Void d(
+    status_r,
+    rule_name, rulenum, param, success)
+long status_r, rulenum, param;
+char *rule_name;
 boolean success;
 {
   /* called from r1..r999 r=1..999, s=1..4 */
-  if (status_r == 1) { /* Enters rule */
-    printf("=>>>CALLS RULE #%s\n",rule_name);
+  if (status_r == 1)
+  { /* Enters rule */
+    printf("=>>>CALLS RULE #%s\n", rule_name);
     printf("  1-ST ARGUMENT($):");
     pscr(param);
     printf("\n");
-}
-  if (status_r == 2)  {
-     printf("<<<=EXITS FROM RULE #%s:",rule_name);
-     if (success)  printf(" SUCCESS\n");
-      else printf(" UNSUCCESS\n");
-      printf("RESULT:"); 
-      pscr(param);
-      printf("\n");
- }
-/*  if (s == 3)
-    printf(".r.%12ld\n", r);
-  if (s == 4)
-    printf(".e.%12ld\n", r); */
+  }
+  if (status_r == 2)
+  {
+    printf("<<<=EXITS FROM RULE #%s:", rule_name);
+    if (success)
+      printf(" SUCCESS\n");
+    else
+      printf(" UNSUCCESS\n");
+    printf("RESULT:");
+    pscr(param);
+    printf("\n");
+  }
+  /*  if (s == 3)
+      printf(".r.%12ld\n", r);
+    if (s == 4)
+      printf(".e.%12ld\n", r); */
   /*    if s=1 then inc(dmas[r]);
         if s=10 then for i:=1 to 200 do dmas[i]:=0;
         if s=11 then begin
@@ -540,12 +538,7 @@ boolean success;
         close (ff);
         end;
     */
-
-
 }
-
-
-
 
 Void addel(sel, not_atomic, xsel, ob, tr_)
 long sel;
@@ -560,27 +553,26 @@ long xsel, ob, *tr_;
   /* wyhod bez tr:=l */
 
   a l;   /* s-adres glawnogo derewa */
-  mpd x;   /* dostup k glawnomu deskr.derewa */
+  mpd x; /* dostup k glawnomu deskr.derewa */
 
-
-
-
-  if (not_atomic) {
-    if (xsel == null_) {
+  if (not_atomic)
+  {
+    if (xsel == null_)
+    {
       er(21L);
       goto _L2;
     }
     pointr(xsel, &x.sa);
-    if (x.sad->dtype != idatom) {
+    if (x.sad->dtype != idatom)
+    {
       er(22L);
       goto _L2;
     }
     sel = x.sad->name;
   }
   addel3(tr_, sel, ob);
-_L2: ;
+_L2:;
 }
-
 
 long numval(ob)
 long ob;
@@ -590,23 +582,18 @@ long ob;
   /*=============*/
   mpd x;
 
-
   if (ob == null_)
     return 0;
-  else {
+  else
+  {
     pointr(ob, &x.sa);
     if (x.snd->dtype != number)
       return 0;
     else
-      return (x.snd->val);   /* sign proc deleted */
+      return (x.snd->val); /* sign proc deleted */
   }
-
-
 }
 
-
 /* numval*/
-
-
 
 /* End. */

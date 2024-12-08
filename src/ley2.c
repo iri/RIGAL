@@ -4,7 +4,6 @@
 #include "ley.h"
 #include "nef2.h"
 
-
 /* lexic analysis for rigal language
    input : text file with name first_file
            and if 'NOT_INCLUDE' is false
@@ -22,12 +21,12 @@
                              c if returned from %include
 */
 
-#define filemax         4   /* ~islo wlovenij dlq include */
-#define bufmaxlen       10   /* dlina malogo bufera , kak minimum - 8 */
-#define two_char_sym_max  50   /* maks. massiwa */
+#define filemax 4           /* ~islo wlovenij dlq include */
+#define bufmaxlen 10        /* dlina malogo bufera , kak minimum - 8 */
+#define two_char_sym_max 50 /* maks. massiwa */
 
-
-typedef union bufrectype {
+typedef union bufrectype
+{
   Char lexbuf[bufmaxlen];
   Char b1;
   Char b2[2];
@@ -41,35 +40,33 @@ typedef union bufrectype {
   Char b10[10];
 } bufrectype;
 
-
-FILE *infile[filemax];   /* fajly ish. teksta */
-bufrectype bufrec;   /* sohranenie dlq leksera !!!! */
+FILE *infile[filemax]; /* fajly ish. teksta */
+bufrectype bufrec;     /* sohranenie dlq leksera !!!! */
 c2 twochar_symbols[two_char_sym_max];
 char twochar_symbols_num;
 
-
-typedef Char a146[146];   /* source string type */
+typedef Char a146[146]; /* source string type */
 
 typedef Char bigstr_type[146];
 
-
-
-typedef struct _REC_fistack {
-  long curline;   /* current line of this file */
-  filespecification f;   /* file name */
+typedef struct _REC_fistack
+{
+  long curline;        /* current line of this file */
+  filespecification f; /* file name */
 } _REC_fistack;
 
 /* Local variables for ley: */
-struct LOC_ley {
+struct LOC_ley
+{
   error_rec_type *error_rec;
   a satomadr;
-  long i;   /* current byte */
+  long i; /* current byte */
   boolean errflag;
   a146 s;
 
   _REC_fistack fistack[filemax + 1];
   long fistacklen;
-} ;
+};
 
 Local Void newlist(pp, LINK)
 ptr_ *pp;
@@ -101,10 +98,11 @@ struct LOC_ley *LINK;
 
   /* dobawlqet po pojnteru spiska nowyj |lement k spisku*/
   /* i sdwigaet pojnter pp */
-  if (pp->ptrtype != ptrlist) {
+  if (pp->ptrtype != ptrlist)
+  {
     printf("Rigal internal error Push-102\n");
     return;
-  }  /* if/then */
+  } /* if/then */
   points(pp->UU.U1.mainadr, &x.sa);
   if (x.smld->dtype == listmain)
     x.smld->totalelnum++;
@@ -112,10 +110,11 @@ struct LOC_ley *LINK;
     printf("Rigal internal error Push-101\n");
   points(pp->UU.U1.curfragment, &x.sa);
   if (x.smld->dtype == listmain && pp->nel == mainlistelnum ||
-      x.sfld->dtype == listfragm && pp->nel == fragmlistelnum) {
+      x.sfld->dtype == listfragm && pp->nel == fragmlistelnum)
+  {
     /* w slu~ae dostiveniq konca fragmenta spiska */
     gets5(&a1, &x1.sa);
-    if (x.smld->dtype == listmain)   /* podceplenie */
+    if (x.smld->dtype == listmain) /* podceplenie */
       x.smld->next = a1;
     else
       x.sfld->next = a1;
@@ -130,9 +129,10 @@ struct LOC_ley *LINK;
     pp->cel = adr;
     pp->UU.U1.curfragment = a1;
     return;
-  }  /* then */
+  } /* then */
   /* ob{ij clu~aj dobawleniq |lementa wnutri fragmenta */
-  switch (x.smld->dtype) {
+  switch (x.smld->dtype)
+  {
 
   case listmain:
     x.smld->elnum++;
@@ -143,12 +143,12 @@ struct LOC_ley *LINK;
     x.sfld->elnum++;
     x.sfld->elt[pp->nel] = adr;
     break;
-  }/* case */
+  } /* case */
   pp->nel++;
   pp->cel = adr;
 
   /* else */
-}  /* push */
+} /* push */
 
 Local Void mistake(mistake_num, LINK)
 long mistake_num;
@@ -157,7 +157,8 @@ struct LOC_ley *LINK;
   string80 com;
 
   printf("Error...%12ld M=%s\n", mistake_num, LINK->error_rec->message);
-  switch (mistake_num) {
+  switch (mistake_num)
+  {
 
   case 1:
     strcpy(com, "MAIN PROGRAM FILE  IS NOT FOUND ");
@@ -211,7 +212,6 @@ struct LOC_ley *LINK;
     strcpy(com, "WRONG DIGIT (8 or 9) IN OCTAL NUMBER ");
     break;
 
-
   default:
     strcpy(com, "UNKNOWN LEXICAL ERROR");
     break;
@@ -220,11 +220,11 @@ struct LOC_ley *LINK;
   LINK->errflag = true;
   strcpy(LINK->error_rec->message, com);
   LINK->error_rec->address =
-    LINK->fistack[LINK->fistacklen - 1].curline * 80 + LINK->i;
+      LINK->fistack[LINK->fistacklen - 1].curline * 80 + LINK->i;
   strcpy(LINK->error_rec->filename, LINK->fistack[LINK->fistacklen - 1].f);
   printf(" LEXICAL ERROR : %s\n", com);
   printf(" LINE=%12ld  SYMBOL=%12ld\n",
-	 LINK->fistack[LINK->fistacklen - 1].curline, LINK->i);
+         LINK->fistack[LINK->fistacklen - 1].curline, LINK->i);
 }
 
 Local Void makeatom(ik, jk, desk, LINK)
@@ -243,12 +243,10 @@ struct LOC_ley *LINK;
   gets1(&LINK->satomadr, &x.sa);
   WITH = x.sad;
   WITH->cord = LINK->fistack[LINK->fistacklen - 1].curline * 80 + LINK->i;
-      /*!!*/
+  /*!!*/
   WITH->dtype = desk;
   WITH->name = a1m;
 }
-
-
 
 Void ley(first_file_, lesrez, not_include, error_rec_)
 Char *first_file_;
@@ -266,18 +264,17 @@ error_rec_type *error_rec_;
   char jcase;
   long j, nn, jj, ii;
   mpd x;
-  long len;   /* current line length */
+  long len; /* current line length */
   ptr_ p;
   mpd y;
   boolean is_ident, x_lists;
   /*  srb,srl,slb,sll: string; */
-  Char table[254]; 
+  Char table[254];
   boolean maybe_octal;
-  bigstr_type a_long;   /*varying[145] of char;*/
+  bigstr_type a_long; /*varying[145] of char;*/
   a146 s1;
   filespecification ff1;
   string80 ssint;
-
 
   /***  Char twochar_string[161]; **/
   long rline;
@@ -288,13 +285,7 @@ error_rec_type *error_rec_;
   vardescriptor *WITH2;
   specdescriptor *WITH3;
 
-
-printf("L1");
-
+  printf("L1");
 }
 
-
-
-
 /* End. */
-

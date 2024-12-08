@@ -4,7 +4,6 @@
 #include "ley.h"
 #include "nef2.h"
 
-
 /* lexic analysis for rigal language
    input : text file with name first_file
            and if 'NOT_INCLUDE' is false
@@ -22,12 +21,12 @@
                              c if returned from %include
 */
 
-#define filemax         4   /* ~islo wlovenij dlq include */
-#define bufmaxlen       10   /* dlina malogo bufera , kak minimum - 8 */
-#define two_char_sym_max  50   /* maks. massiwa */
+#define filemax 4           /* ~islo wlovenij dlq include */
+#define bufmaxlen 10        /* dlina malogo bufera , kak minimum - 8 */
+#define two_char_sym_max 50 /* maks. massiwa */
 
-
-typedef union bufrectype {
+typedef union bufrectype
+{
   Char lexbuf[bufmaxlen];
   Char b1;
   Char b2[2];
@@ -41,35 +40,33 @@ typedef union bufrectype {
   Char b10[10];
 } bufrectype;
 
-
-FILE *infile[filemax];   /* fajly ish. teksta */
-bufrectype bufrec;   /* sohranenie dlq leksera !!!! */
+FILE *infile[filemax]; /* fajly ish. teksta */
+bufrectype bufrec;     /* sohranenie dlq leksera !!!! */
 c2 twochar_symbols[two_char_sym_max];
 char twochar_symbols_num;
 
-
-typedef Char a146[146];   /* source string type */
+typedef Char a146[146]; /* source string type */
 
 typedef Char bigstr_type[146];
 
-
-
-typedef struct _REC_fistack {
-  long curline;   /* current line of this file */
-  filespecification f;   /* file name */
+typedef struct _REC_fistack
+{
+  long curline;        /* current line of this file */
+  filespecification f; /* file name */
 } _REC_fistack;
 
 /* Local variables for ley: */
-struct LOC_ley {
+struct LOC_ley
+{
   error_rec_type *error_rec;
   a satomadr;
-  long i;   /* current byte */
+  long i; /* current byte */
   boolean errflag;
   a146 s;
 
   _REC_fistack fistack[filemax + 1];
   long fistacklen;
-} ;
+};
 
 Local Void newlist(pp, LINK)
 ptr_ *pp;
@@ -101,10 +98,11 @@ struct LOC_ley *LINK;
 
   /* dobawlqet po pojnteru spiska nowyj |lement k spisku*/
   /* i sdwigaet pojnter pp */
-  if (pp->ptrtype != ptrlist) {
+  if (pp->ptrtype != ptrlist)
+  {
     printf("Rigal internal error Push-102\n");
     return;
-  }  /* if/then */
+  } /* if/then */
   points(pp->UU.U1.mainadr, &x.sa);
   if (x.smld->dtype == listmain)
     x.smld->totalelnum++;
@@ -112,10 +110,11 @@ struct LOC_ley *LINK;
     printf("Rigal internal error Push-101\n");
   points(pp->UU.U1.curfragment, &x.sa);
   if (x.smld->dtype == listmain && pp->nel == mainlistelnum ||
-      x.sfld->dtype == listfragm && pp->nel == fragmlistelnum) {
+      x.sfld->dtype == listfragm && pp->nel == fragmlistelnum)
+  {
     /* w slu~ae dostiveniq konca fragmenta spiska */
     gets5(&a1, &x1.sa);
-    if (x.smld->dtype == listmain)   /* podceplenie */
+    if (x.smld->dtype == listmain) /* podceplenie */
       x.smld->next = a1;
     else
       x.sfld->next = a1;
@@ -130,9 +129,10 @@ struct LOC_ley *LINK;
     pp->cel = adr;
     pp->UU.U1.curfragment = a1;
     return;
-  }  /* then */
+  } /* then */
   /* ob{ij clu~aj dobawleniq |lementa wnutri fragmenta */
-  switch (x.smld->dtype) {
+  switch (x.smld->dtype)
+  {
 
   case listmain:
     x.smld->elnum++;
@@ -143,11 +143,11 @@ struct LOC_ley *LINK;
     x.sfld->elnum++;
     x.sfld->elt[pp->nel] = adr;
     break;
-  }/* case */
+  } /* case */
   pp->nel++;
   pp->cel = adr;
   /* else */
-}  /* push */
+} /* push */
 
 Local Void mistake(mistake_num, LINK)
 long mistake_num;
@@ -156,7 +156,8 @@ struct LOC_ley *LINK;
   string80 com;
 
   printf("Error...%12ld M=%s\n", mistake_num, LINK->error_rec->message);
-  switch (mistake_num) {
+  switch (mistake_num)
+  {
 
   case 1:
     strcpy(com, "MAIN PROGRAM FILE  IS NOT FOUND ");
@@ -210,7 +211,6 @@ struct LOC_ley *LINK;
     strcpy(com, "WRONG DIGIT (8 or 9) IN OCTAL NUMBER ");
     break;
 
-
   default:
     strcpy(com, "UNKNOWN LEXICAL ERROR");
     break;
@@ -219,11 +219,11 @@ struct LOC_ley *LINK;
   LINK->errflag = true;
   strcpy(LINK->error_rec->message, com);
   LINK->error_rec->address =
-    LINK->fistack[LINK->fistacklen - 1].curline * 80 + LINK->i;
+      LINK->fistack[LINK->fistacklen - 1].curline * 80 + LINK->i;
   strcpy(LINK->error_rec->filename, LINK->fistack[LINK->fistacklen - 1].f);
   printf(" LEXICAL ERROR : %s\n", com);
   printf(" LINE=%12ld  SYMBOL=%12ld\n",
-	 LINK->fistack[LINK->fistacklen - 1].curline, LINK->i);
+         LINK->fistack[LINK->fistacklen - 1].curline, LINK->i);
 }
 
 Local Void makeatom(ik, jk, desk, LINK)
@@ -242,12 +242,10 @@ struct LOC_ley *LINK;
   gets1(&LINK->satomadr, &x.sa);
   WITH = x.sad;
   WITH->cord = LINK->fistack[LINK->fistacklen - 1].curline * 80 + LINK->i;
-      /*!!*/
+  /*!!*/
   WITH->dtype = desk;
   WITH->name = a1m;
 }
-
-
 
 Void ley(first_file, lesrez, not_include, error_rec_)
 Char *first_file;
@@ -264,18 +262,17 @@ error_rec_type *error_rec_;
   char jcase;
   long j, nn, jj, ii;
   mpd x;
-  long len;   /* current line length */
+  long len; /* current line length */
   ptr_ p;
   mpd y;
   boolean is_ident, x_lists;
   /*  srb,srl,slb,sll: string; */
-/*  Char table[256]; */
+  /*  Char table[256]; */
   boolean maybe_octal;
-  bigstr_type a_long;   /*varying[145] of char;*/
+  bigstr_type a_long; /*varying[145] of char;*/
   a146 s1;
   filespecification ff1;
   string80 ssint;
-
 
   Char twochar_string[161];
   long rline;
@@ -289,10 +286,10 @@ error_rec_type *error_rec_;
 
   /* start of main program */
 
-/*  strcpy(first_file, first_file_); */
+  /*  strcpy(first_file, first_file_); */
   V.error_rec = error_rec_;
   strcpy(twochar_string,
-    ":= :: >= <> (. .) <= -> (* *) (+ +) ## ;; !! ++ !. <. .> <* *> << >> IF FI IN DO OD OR $$ <] S' V'");
+         ":= :: >= <> (. .) <= -> (* *) (+ +) ## ;; !! ++ !. <. .> <* *> << >> IF FI IN DO OD OR $$ <] S' V'");
   /* file stack initialization */
   V.fistacklen = 1;
   V.fistack[0].curline = 0;
@@ -300,12 +297,14 @@ error_rec_type *error_rec_;
 
   V.errflag = false;
   x_lists = false;
-  for (V.i = 1; V.i <= 33; V.i++) {
+  for (V.i = 1; V.i <= 33; V.i++)
+  {
     twochar_symbols[V.i - 1][0] = twochar_string[V.i * 3 - 3];
     twochar_symbols[V.i - 1][1] = twochar_string[V.i * 3 - 2];
   }
   twochar_symbols_num = 33;
-  if (!existfile(first_file)) {
+  if (!existfile(first_file))
+  {
     strcpy(V.error_rec->message, first_file);
     mistake(1L, &V);
     goto _L199;
@@ -313,15 +312,14 @@ error_rec_type *error_rec_;
   infile[0] = fopen(first_file, "r");
   if (infile[0] == NULL)
     _EscIO(FileNotFound);
-  newlist(&p, &V);   /* create list descriptor */
+  newlist(&p, &V); /* create list descriptor */
   *lesrez = p.UU.U1.mainadr;
- /* for (ii = 0; ii <= 255; ii++)
-    table[(Char)ii] = (Char)ii;*/
+  /* for (ii = 0; ii <= 255; ii++)
+     table[(Char)ii] = (Char)ii;*/
 
-  ii = 0;   /* token number */
+  ii = 0; /* token number */
 
   /* file stack initialization */
-
 
   V.i = 1;
   len = 0;
@@ -332,23 +330,26 @@ _L1:
      i - byte number in this line where first letter of
          token stays */
 
-  if (V.i == len + 1) {
+  if (V.i == len + 1)
+  {
     /* go to next line of source text */
-    if (feof(infile[V.fistacklen - 1])) {
+    if (feof(infile[V.fistacklen - 1]))
+    {
       if (V.fistacklen == 1)
-	goto _L99;   /* exit from lexer */
-      else {
-	if (infile[V.fistacklen - 1] != NULL)
-	  fclose(infile[V.fistacklen - 1]);
-	infile[V.fistacklen - 1] = NULL;
-	V.fistacklen--;
-	/* adding letter 'C'=continuation flag */
-	sprintf(ff1, "%sC", V.fistack[V.fistacklen - 1].f);
-	FORLIM = strlen(ff1);
-	for (j = 0; j < FORLIM; j++)
-	  V.s[j] = ff1[j];
-	makeatom(1L, (long)strlen(ff1), tatom, &V);
-	goto _L33;
+        goto _L99; /* exit from lexer */
+      else
+      {
+        if (infile[V.fistacklen - 1] != NULL)
+          fclose(infile[V.fistacklen - 1]);
+        infile[V.fistacklen - 1] = NULL;
+        V.fistacklen--;
+        /* adding letter 'C'=continuation flag */
+        sprintf(ff1, "%sC", V.fistack[V.fistacklen - 1].f);
+        FORLIM = strlen(ff1);
+        for (j = 0; j < FORLIM; j++)
+          V.s[j] = ff1[j];
+        makeatom(1L, (long)strlen(ff1), tatom, &V);
+        goto _L33;
       }
     }
 
@@ -356,49 +357,53 @@ _L1:
 
     /*readln(infile[fistacklen],a_long);*/
 
-
-
 #ifdef xxx
     *a_long = '\0';
-    while (true) {
-      if (feoln(infile[V.fistacklen - 1])) {
-	c = getc(infile[V.fistacklen - 1]);
-	if (c == '\n')
-	  c = ' ';
-	rline = 4;
-	goto _L95;
+    while (true)
+    {
+      if (feoln(infile[V.fistacklen - 1]))
+      {
+        c = getc(infile[V.fistacklen - 1]);
+        if (c == '\n')
+          c = ' ';
+        rline = 4;
+        goto _L95;
       }
       c = getc(infile[V.fistacklen - 1]);
       if (c == '\n')
-	c = ' ';
+        c = ' ';
       sprintf(a_long + strlen(a_long), "%c", c);
-      if (feof(infile[V.fistacklen - 1])) {
-	rline = 1;
-	goto _L95;
+      if (feof(infile[V.fistacklen - 1]))
+      {
+        rline = 1;
+        goto _L95;
       }
       if (!feoln(infile[V.fistacklen - 1]))
-	continue;
+        continue;
       c = getc(infile[V.fistacklen - 1]);
       if (c == '\n')
-	c = ' ';
+        c = ' ';
       if (feof(infile[V.fistacklen - 1]))
-	rline = 2;
+        rline = 2;
       else
-	rline = 3;
+        rline = 3;
       goto _L95;
     }
-_L95:
+  _L95:
 #endif
 
-    fgets(a_long,145,infile[V.fistacklen-1]);
-    if (a_long[strlen(a_long)-1]=='\n')
-             { a_long[strlen(a_long)-1]=0;
-               fff=fgetc(infile[V.fistacklen-1]);
-               if (fff!=10)
-                    { ungetc(fff,infile[V.fistacklen-1]);}
-               else
-                      V.fistack[V.fistacklen - 1].curline++;
-             }
+    fgets(a_long, 145, infile[V.fistacklen - 1]);
+    if (a_long[strlen(a_long) - 1] == '\n')
+    {
+      a_long[strlen(a_long) - 1] = 0;
+      fff = fgetc(infile[V.fistacklen - 1]);
+      if (fff != 10)
+      {
+        ungetc(fff, infile[V.fistacklen - 1]);
+      }
+      else
+        V.fistack[V.fistacklen - 1].curline++;
+    }
 
     V.fistack[V.fistacklen - 1].curline++;
     /* line counter */
@@ -411,14 +416,16 @@ _L95:
 
   for (j = 1; j <= 10; j++)
     bufrec.b10[j - 1] = V.s[V.i + j - 2];
-  if (!strncmp(bufrec.b2, "--", 2)) {   /* koa_longmentarii */
+  if (!strncmp(bufrec.b2, "--", 2))
+  { /* koa_longmentarii */
     V.i = len + 1;
     goto _L1;
   }
-  switch (bufrec.b1) {
+  switch (bufrec.b1)
+  {
 
   case ' ':
-  case '\t':   /*tabulator*/
+  case '\t': /*tabulator*/
     while ((V.s[V.i - 1] == ' ' || V.s[V.i - 1] == '\t') && V.i <= len)
       V.i++;
     /* when exits  i=len+1 or s[i]<>' ' */
@@ -432,10 +439,11 @@ _L95:
     j = 1;
     jj = 1;
     while (V.i + j <= len &&
-	   (s1[V.i + j - 1] != '\'' ||
-	    s1[V.i + j - 1] == '\'' && s1[V.i + j] == '\'')) {
+           (s1[V.i + j - 1] != '\'' ||
+            s1[V.i + j - 1] == '\'' && s1[V.i + j] == '\''))
+    {
       if (s1[V.i + j - 1] == '\'' && s1[V.i + j] == '\'')
-	j++;
+        j++;
       /* if two apostrophes then we move to second
          and write only one */
       V.s[V.i + jj - 1] = s1[V.i + j - 1];
@@ -444,81 +452,88 @@ _L95:
       j++;
     }
 
-    is_ident = is_rig_letter (V.s[V.i]);
-    for (nn = 1; nn <= jj - 2; nn++) {
-      if (!  is_rig_symbol (V.s[V.i + nn]))
-	is_ident = false;
+    is_ident = is_rig_letter(V.s[V.i]);
+    for (nn = 1; nn <= jj - 2; nn++)
+    {
+      if (!is_rig_symbol(V.s[V.i + nn]))
+        is_ident = false;
     }
     if (is_ident)
       dt = idatom;
     else
       dt = atom;
 
-    if (jj == 1) {
+    if (jj == 1)
+    {
       mistake(13L, &V);
       goto _L199;
     }
-    if (s1[V.i + j - 1] != '\'') {
+    if (s1[V.i + j - 1] != '\'')
+    {
       mistake(8L, &V);
       goto _L199;
     }
     makeatom(V.i + 1, jj - 1, dt, &V);
     V.i += j + 1;
-    memcpy(V.s, s1, sizeof(a146));   /* return saved line */
+    memcpy(V.s, s1, sizeof(a146)); /* return saved line */
     goto _L33;
     break;
 
   case '%':
-    if (!strncmp(bufrec.b6, "%INCLU", 6)) {
+    if (!strncmp(bufrec.b6, "%INCLU", 6))
+    {
       for (j = -1; j <= 6; j++)
-	V.s[V.i + j] = ' ';
+        V.s[V.i + j] = ' ';
       *ff1 = '\0';
-      for (j = 7; j <= len - 2; j++) {
-	/* file name we take till the end of line */
-	if (V.s[V.i + j] != ' ')
-	  sprintf(ff1 + strlen(ff1), "%c", V.s[V.i + j]);
+      for (j = 7; j <= len - 2; j++)
+      {
+        /* file name we take till the end of line */
+        if (V.s[V.i + j] != ' ')
+          sprintf(ff1 + strlen(ff1), "%c", V.s[V.i + j]);
       }
       V.i = len + 1;
-      if (!not_include) {
-	if (V.fistacklen == filemax) {
-	  mistake(2L, &V);
-	  goto _L199;
-	}
+      if (!not_include)
+      {
+        if (V.fistacklen == filemax)
+        {
+          mistake(2L, &V);
+          goto _L199;
+        }
 
-	V.fistacklen++;
+        V.fistacklen++;
 
-	if (!existfile(ff1)) {
-	  V.fistacklen--;
-	  strcpy(V.error_rec->message, ff1);
-	  mistake(3L, &V);
-	  goto _L199;
-	}
+        if (!existfile(ff1))
+        {
+          V.fistacklen--;
+          strcpy(V.error_rec->message, ff1);
+          mistake(3L, &V);
+          goto _L199;
+        }
 
+        infile[V.fistacklen - 1] = fopen(ff1, "r");
 
+        if (infile[V.fistacklen - 1] == NULL)
+          _EscIO(FileNotFound);
+        printf("reading %s\n", ff1);
 
-	infile[V.fistacklen - 1] = fopen(ff1, "r");
-
-	if (infile[V.fistacklen - 1] == NULL)
-	  _EscIO(FileNotFound);
-	printf("reading %s\n", ff1);
-
-
-	V.fistack[V.fistacklen - 1].curline = 0;
-	strcpy(V.fistack[V.fistacklen - 1].f, ff1);
-	/* establish %include flag='I' */
-	strcat(ff1, "I");
-	FORLIM = strlen(ff1);
-	for (j = 0; j < FORLIM; j++)
-	  V.s[j] = ff1[j];
-	makeatom(1L, (long)strlen(ff1), tatom, &V);
-	V.i = 1;
-	len = 0;
-	goto _L33;
+        V.fistack[V.fistacklen - 1].curline = 0;
+        strcpy(V.fistack[V.fistacklen - 1].f, ff1);
+        /* establish %include flag='I' */
+        strcat(ff1, "I");
+        FORLIM = strlen(ff1);
+        for (j = 0; j < FORLIM; j++)
+          V.s[j] = ff1[j];
+        makeatom(1L, (long)strlen(ff1), tatom, &V);
+        V.i = 1;
+        len = 0;
+        goto _L33;
       }
       V.i = 1;
       len = 0;
       goto _L1;
-    } else {
+    }
+    else
+    {
       mistake(11L, &V);
       goto _L199;
     }
@@ -526,15 +541,17 @@ _L95:
 
   case '#':
     j = 1;
-    if (!strncmp(bufrec.b2, "##", 2)) {
+    if (!strncmp(bufrec.b2, "##", 2))
+    {
       makeatom(V.i, 2L, keyword, &V);
       V.i += 2;
       goto _L33;
     }
 
-    while ( is_rig_symbol (V.s[V.i + j - 1]))
+    while (is_rig_symbol(V.s[V.i + j - 1]))
       j++;
-    if (j == 1) {
+    if (j == 1)
+    {
       mistake(14L, &V);
       goto _L199;
     }
@@ -553,7 +570,8 @@ _L95:
 
   case '$':
     j = 1;
-    if (V.s[V.i] == '$') {
+    if (V.s[V.i] == '$')
+    {
       j = 2;
       putatm(&V.s[V.i - 1], j, &adr);
       makeatom(V.i, 2L, keyword, &V);
@@ -566,14 +584,16 @@ _L95:
     if (j > 0)
       putatm(&V.s[V.i], j, &adr);
     j++;
-    if (j == 1) {
+    if (j == 1)
+    {
       V.s[V.i - 1] = '_';
       j = 1;
       putatm(&V.s[V.i - 1], j, &adr);
     }
     gets1(&V.satomadr, &x.sa);
-    WITH2 = x.svd;   /* with */
-    switch (V.s[V.i]) {
+    WITH2 = x.svd; /* with */
+    switch (V.s[V.i])
+    {
 
     case 'N':
       WITH2->dtype = nvariable;
@@ -582,7 +602,6 @@ _L95:
     case 'I':
       WITH2->dtype = idvariable;
       break;
-
 
     default:
       WITH2->dtype = variable;
@@ -606,17 +625,20 @@ _L95:
   case ';':
   case '!':
     if (bufrec.b2[1] == ']' || bufrec.b2[1] == '<' || bufrec.b2[1] == '!' ||
-	bufrec.b2[1] == ';' || bufrec.b2[1] == '+' || bufrec.b2[1] == ':' ||
-	bufrec.b2[1] == '*' || bufrec.b2[1] == ')' || bufrec.b2[1] == '>' ||
-	bufrec.b2[1] == '.' || bufrec.b2[1] == '=') {
+        bufrec.b2[1] == ';' || bufrec.b2[1] == '+' || bufrec.b2[1] == ':' ||
+        bufrec.b2[1] == '*' || bufrec.b2[1] == ')' || bufrec.b2[1] == '>' ||
+        bufrec.b2[1] == '.' || bufrec.b2[1] == '=')
+    {
       FORLIM = twochar_symbols_num;
-      for (nn = 0; nn < FORLIM; nn++) {
-	if (bufrec.b2[0] == twochar_symbols[nn][0] &&
-	    bufrec.b2[1] == twochar_symbols[nn][1]) {
-	  makeatom(V.i, 2L, keyword, &V);
-	  V.i += 2;
-	  goto _L33;
-	}
+      for (nn = 0; nn < FORLIM; nn++)
+      {
+        if (bufrec.b2[0] == twochar_symbols[nn][0] &&
+            bufrec.b2[1] == twochar_symbols[nn][1])
+        {
+          makeatom(V.i, 2L, keyword, &V);
+          V.i += 2;
+          goto _L33;
+        }
       }
     }
     makeatom(V.i, 1L, keyword, &V);
@@ -638,144 +660,154 @@ _L95:
     break;
 
   default:
-    if (isdigit(bufrec.b1)) {
+    if (isdigit(bufrec.b1))
+    {
       *ssint = '\0';
       jj = 0;
       j = 0;
       ilong = 0;
       maybe_octal = true;
-      while (isdigit (V.s[V.i + j - 1]) ) {
-	if (V.s[V.i + j - 1] == '8' || V.s[V.i + j - 1] == '9')
-	  maybe_octal = false;
-	ilong = ilong * 8 + V.s[V.i + j - 1] - '0';
-	sprintf(ssint + strlen(ssint), "%c", V.s[V.i + j - 1]);
-	j++;
+      while (isdigit(V.s[V.i + j - 1]))
+      {
+        if (V.s[V.i + j - 1] == '8' || V.s[V.i + j - 1] == '9')
+          maybe_octal = false;
+        ilong = ilong * 8 + V.s[V.i + j - 1] - '0';
+        sprintf(ssint + strlen(ssint), "%c", V.s[V.i + j - 1]);
+        j++;
       }
-      if (V.s[V.i + j - 1] == 'B' || V.s[V.i + j - 1] == 'b') {
-	if (!maybe_octal) {
-	  mistake(18L, &V);
-	  goto _L199;
-	}
-	j++;
-      } else if (is_rig_symbol (V.s[V.i + j - 1])) {
-	mistake(5L, &V);
-	goto _L199;
-      } else
-	val(ssint, &ilong, &jj);
-      if (jj == 0 && ilong < 2147483647 ) {
-	gets1(&V.satomadr, &x.sa);
-	WITH = x.snd;   /* with */
-	WITH->dtype = number;
-	WITH->cord = V.fistack[V.fistacklen - 1].curline * 80 + V.i;   /*!!*/
-	WITH->val = ilong;
-	V.i += j;
-	goto _L33;
-      } else {
-	mistake(6L, &V);
-	goto _L199;
+      if (V.s[V.i + j - 1] == 'B' || V.s[V.i + j - 1] == 'b')
+      {
+        if (!maybe_octal)
+        {
+          mistake(18L, &V);
+          goto _L199;
+        }
+        j++;
       }
+      else if (is_rig_symbol(V.s[V.i + j - 1]))
+      {
+        mistake(5L, &V);
+        goto _L199;
+      }
+      else
+        val(ssint, &ilong, &jj);
+      if (jj == 0 && ilong < 2147483647)
+      {
+        gets1(&V.satomadr, &x.sa);
+        WITH = x.snd; /* with */
+        WITH->dtype = number;
+        WITH->cord = V.fistack[V.fistacklen - 1].curline * 80 + V.i; /*!!*/
+        WITH->val = ilong;
+        V.i += j;
+        goto _L33;
+      }
+      else
+      {
+        mistake(6L, &V);
+        goto _L199;
+      }
+    }
+    else
+    {
 
-    } else {
+      if (is_rig_letter(bufrec.b1))
+      {
+        j = 1;
+        while (is_rig_symbol(V.s[V.i + j - 1]))
+          j++;
+        dt = idatom;
+        jcase = j;
+        switch (jcase)
+        {
 
+        case 1:
+          if (!strncmp(bufrec.b2, "S'", 2) || !strncmp(bufrec.b2, "V'", 2))
+          {
+            j = 2;
+            dt = keyword;
+          }
+          break;
 
+        case 2:
+          if (!strncmp(bufrec.b2, "OD", 2) || !strncmp(bufrec.b2, "IF", 2) ||
+              !strncmp(bufrec.b2, "FI", 2) || !strncmp(bufrec.b2, "IN", 2) ||
+              !strncmp(bufrec.b2, "DO", 2) || !strncmp(bufrec.b2, "OR", 2))
+            dt = keyword;
+          break;
 
+        case 3:
+          if (!strncmp(bufrec.b3, "AND", 3) ||
+              !strncmp(bufrec.b3, "MOD", 3) ||
+              !strncmp(bufrec.b3, "DIV", 3) ||
+              !strncmp(bufrec.b3, "END", 3) || !strncmp(bufrec.b3, "NOT", 3))
+            dt = keyword;
+          break;
 
+        case 4:
+          if (!strncmp(bufrec.b4, "NULL", 4))
+          {
+            V.i += 4;
+            gets1(&V.satomadr, &x.sa);
+            WITH3 = x.sspec;
+            WITH3->dtype = spec;
+            WITH3->val = 0;
+            goto _L33;
+          }
 
-      if ( is_rig_letter (bufrec.b1)) {
-	j = 1;
-	while ( is_rig_symbol (V.s[V.i + j - 1]))
-	  j++;
-	dt = idatom;
-	jcase = j;
-	switch (jcase) {
+          if (!strncmp(bufrec.b4, "LAST", 4) ||
+              !strncmp(bufrec.b4, "LOOP", 4) ||
+              !strncmp(bufrec.b4, "OPEN", 4) ||
+              !strncmp(bufrec.b4, "SAVE", 4) ||
+              !strncmp(bufrec.b4, "FAIL", 4) ||
+              !strncmp(bufrec.b4, "COPY", 4) ||
+              !strncmp(bufrec.b4, "LOAD", 4))
+            dt = keyword;
+          break;
 
-	case 1:
-	  if (!strncmp(bufrec.b2, "S'", 2) || !strncmp(bufrec.b2, "V'", 2)) {
-	    j = 2;
-	    dt = keyword;
-	  }
-	  break;
+        case 5:
+          if (!strncmp(bufrec.b5, "ELSIF", 5) ||
+              !strncmp(bufrec.b5, "CLOSE", 5) ||
+              !strncmp(bufrec.b5, "BREAK", 5) ||
+              !strncmp(bufrec.b5, "PRINT", 5))
+            dt = keyword;
+          break;
 
-	case 2:
-	  if (!strncmp(bufrec.b2, "OD", 2) || !strncmp(bufrec.b2, "IF", 2) ||
-	      !strncmp(bufrec.b2, "FI", 2) || !strncmp(bufrec.b2, "IN", 2) ||
-	      !strncmp(bufrec.b2, "DO", 2) || !strncmp(bufrec.b2, "OR", 2))
-	    dt = keyword;
-	  break;
+        case 6:
+          if (!strncmp(bufrec.b6, "ONFAIL", 6) ||
+              !strncmp(bufrec.b6, "RETURN", 6) ||
+              !strncmp(bufrec.b6, "FORALL", 6))
+            dt = keyword;
+          break;
 
-	case 3:
-	  if (!strncmp(bufrec.b3, "AND", 3) ||
-	      !strncmp(bufrec.b3, "MOD", 3) ||
-	      !strncmp(bufrec.b3, "DIV", 3) ||
-	      !strncmp(bufrec.b3, "END", 3) || !strncmp(bufrec.b3, "NOT", 3))
-	    dt = keyword;
-	  break;
+        case 8:
+          if (!strncmp(bufrec.b8, "BRANCHES", 8))
+            dt = keyword;
+          break;
 
-	case 4:
-	  if (!strncmp(bufrec.b4, "NULL", 4)) {
-	    V.i += 4;
-	    gets1(&V.satomadr, &x.sa);
-	    WITH3 = x.sspec;
-	    WITH3->dtype = spec;
-	    WITH3->val = 0;
-	    goto _L33;
-	  }
+        case 9:
+          if (!strncmp(bufrec.b9, "SELECTORS", 9))
+            dt = keyword;
+          break;
 
-	  if (!strncmp(bufrec.b4, "LAST", 4) ||
-	      !strncmp(bufrec.b4, "LOOP", 4) ||
-	      !strncmp(bufrec.b4, "OPEN", 4) ||
-	      !strncmp(bufrec.b4, "SAVE", 4) ||
-	      !strncmp(bufrec.b4, "FAIL", 4) ||
-	      !strncmp(bufrec.b4, "COPY", 4) ||
-	      !strncmp(bufrec.b4, "LOAD", 4))
-	    dt = keyword;
-	  break;
+        } /*case*/
 
-	case 5:
-	  if (!strncmp(bufrec.b5, "ELSIF", 5) ||
-	      !strncmp(bufrec.b5, "CLOSE", 5) ||
-	      !strncmp(bufrec.b5, "BREAK", 5) ||
-	      !strncmp(bufrec.b5, "PRINT", 5))
-	    dt = keyword;
-	  break;
-
-	case 6:
-	  if (!strncmp(bufrec.b6, "ONFAIL", 6) ||
-	      !strncmp(bufrec.b6, "RETURN", 6) ||
-	      !strncmp(bufrec.b6, "FORALL", 6))
-	    dt = keyword;
-	  break;
-
-	case 8:
-	  if (!strncmp(bufrec.b8, "BRANCHES", 8))
-	    dt = keyword;
-	  break;
-
-	case 9:
-	  if (!strncmp(bufrec.b9, "SELECTORS", 9))
-	    dt = keyword;
-	  break;
-
-
-	}/*case*/
-
-	makeatom(V.i, j, dt, &V);
-	V.i += j;
-	goto _L33;
-      } else {
-	mistake(11L, &V);
-	goto _L199;
+        makeatom(V.i, j, dt, &V);
+        V.i += j;
+        goto _L33;
+      }
+      else
+      {
+        mistake(11L, &V);
+        goto _L199;
       }
     }
     break;
-  }/* case */
-
-
+  } /* case */
 
 _L33:
   ii++;
-  push(&p, V.satomadr, &V);   /* adding to list */
-  goto _L1;   /*with*/
+  push(&p, V.satomadr, &V); /* adding to list */
+  goto _L1;                 /*with*/
 _L99:
   if (V.errflag)
     printf("... RIGAL  lexic errors found\n");
@@ -783,12 +815,11 @@ _L99:
   if (infile[0] != NULL)
     fclose(infile[0]);
   infile[0] = NULL;
-/* printf(" TOTAL RESULT=\n");
- pscr(*lesrez);
- printf("\n"); */
+  /* printf(" TOTAL RESULT=\n");
+   pscr(*lesrez);
+   printf("\n"); */
 
-_L199: ;
-
+_L199:;
 
   /* prints current line counter */
   /*write(fistack[fistacklen].curline,' ');*/
@@ -796,8 +827,5 @@ _L199: ;
 
   /* no mistake */
 }
-
-
-
 
 /* End. */

@@ -7,10 +7,9 @@
 #include "usemod.h"
 #include <math.h>
 #include <string.h>
- /* us1   bodies of use-procedures      for sun */
+/* us1   bodies of use-procedures      for sun */
 
 mpd xx;
-
 
 Static boolean plstr(p0, strval, lenval, stringflag, stringval)
 long p0;
@@ -33,28 +32,27 @@ Char *stringval;
   *stringval = '\0';
   if (p0 == null_)
     return false;
-  else {
-    pointr(p0, &xx.sa);   /* access to atom in memory */
-    if (((1L << ((long)xx.sad->dtype)) & ((1L << ((long)fatom + 1)) -
-	   (1L << ((long)atom))) & (~(1L << ((long)number)))) == 0)
+  else
+  {
+    pointr(p0, &xx.sa); /* access to atom in memory */
+    if (((1L << ((long)xx.sad->dtype)) & ((1L << ((long)fatom + 1)) - (1L << ((long)atom))) & (~(1L << ((long)number)))) == 0)
       return false;
-    else {
-      atm = xx.sad->name;   /* access to a-address */
-      pointa(atm, strval, lenval);   /* reads value to str variable */
-      if (stringflag) {
-	FORLIM = *lenval;
-	for (i = 0; i < FORLIM; i++)
-	  sprintf(stringval + strlen(stringval), "%c", strval[i]);
-	/* and to stringval variable */
+    else
+    {
+      atm = xx.sad->name;          /* access to a-address */
+      pointa(atm, strval, lenval); /* reads value to str variable */
+      if (stringflag)
+      {
+        FORLIM = *lenval;
+        for (i = 0; i < FORLIM; i++)
+          sprintf(stringval + strlen(stringval), "%c", strval[i]);
+        /* and to stringval variable */
       }
 
       return true;
     }
   }
-}  /* plstr */
-
-
-
+} /* plstr */
 
 Static Char bc(a_)
 long a_;
@@ -65,13 +63,11 @@ long a_;
     return ((Char)(a_ + 48));
 }
 
-
 Static Void dump(adr, sad)
 long adr, sad;
 {
   /* physical address */
 }
-
 
 a a2, atm;
 long j, l, i1;
@@ -81,23 +77,22 @@ FILE *workfile;
 Char c;
 boolean id;
 string80 sv1, sv2, svar;
-bl80 str_;   /*for pointa & putatm*/
-bl80 str1_;   /*for pointa & putatm*/
+bl80 str_;  /*for pointa & putatm*/
+bl80 str1_; /*for pointa & putatm*/
 longint im[5];
 
-
- typedef union sa_pointer {
+typedef union sa_pointer
+{
   a pointa;
   Char immed[4];
-  struct {
-
+  struct
+  {
 
     word offset;
     Char page, pazime;
 
   } struct_;
 } sa_pointer;
-
 
 Void use_42(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
@@ -120,7 +115,6 @@ long p1, p2, p3, *rez;
   WITH->val = xxx.immed[1];
 }
 
-
 Void use_43(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
@@ -135,7 +129,6 @@ long p1, p2, p3, *rez;
   vols(im, &im[1], &WITH->val);
 }
 
-
 Void use_30(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
@@ -143,12 +136,12 @@ long p1, p2, p3, *rez;
   /*write atom or number*/
   if (plstr(p1, str_, &l, true, sv1))
     fputs(sv1, stdout);
-  else {
+  else
+  {
     if (plnum(p1, im))
       printf("%12ld", im[0]);
   }
 }
-
 
 Void use_31(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
@@ -157,30 +150,32 @@ long p1, p2, p3, *rez;
 
   /*write atom or number with adding spaces after it or rupping the end*/
   *rez = 0;
-  if (!plstr(p1, str_, &l, true, sv1)) {
+  if (!plstr(p1, str_, &l, true, sv1))
+  {
     if (!plnum(p1, &im[1]))
       goto _L1;
     long_to_str(sv1, im[1]);
   }
-  if (plnum(p2, im)) {
-    if (im[0] > strlen(sv1)) {
+  if (plnum(p2, im))
+  {
+    if (im[0] > strlen(sv1))
+    {
       FORLIM = im[0];
       for (i = strlen(sv1); i < FORLIM; i++)
-	sv1[i] = ' ';
+        sv1[i] = ' ';
     }
 
     printf("%*s", (int)im[0], sv1);
-  } else
+  }
+  else
     fputs(sv1, stdout);
-_L1: ;
+_L1:;
 }
-
-
 
 Void use_1(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
-  char *TEMP;  /* Char ->char */
+  char *TEMP; /* Char ->char */
 
   *rez = 0;
   /* puts an atom (or null) to screen.
@@ -189,11 +184,10 @@ long p1, p2, p3, *rez;
     fputs(sv1, stdout);
   fgets(svar, 81, stdin);
   TEMP = strchr(svar, '\n');
-  if (TEMP != NULL)   /* enters from screen */
+  if (TEMP != NULL) /* enters from screen */
     *TEMP = 0;
   *rez = str_to_atom(svar);
 }
-
 
 /*rigal lexical analyser */
 Void use_14(p1, p2, p3, rez)
@@ -204,7 +198,6 @@ long p1, p2, p3, *rez;
   if (plstr(p1, str_, &l, true, sv1))
     ley(sv1, rez, false, &error_rec_use);
 }
-
 
 Void use_15(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
@@ -226,40 +219,42 @@ long p1, p2, p3, *rez;
 
   inpfile = NULL;
   *rez = 0;
-  if (plstr(p1, str_, &l, true, sv1)) {
-    if (existfile(sv1)) {
+  if (plstr(p1, str_, &l, true, sv1))
+  {
+    if (existfile(sv1))
+    {
       inpfile = fopen(sv1, "r");
-      if (inpfile == NULL) _EscIO(FileNotFound);
+      if (inpfile == NULL)
+        _EscIO(FileNotFound);
 
       *rez = null_;
-      while (!feof(inpfile)) {
+      while (!feof(inpfile))
+      {
 
-
-         fgets(s,145,inpfile);
-         if (s[strlen(s)-1]=='\n')
-             { s[strlen(s)-1]=0;
-               fff=fgetc(inpfile);
-               if (fff!=10)
-                    { ungetc(fff,inpfile);}
-             }
-
+        fgets(s, 145, inpfile);
+        if (s[strlen(s) - 1] == '\n')
+        {
+          s[strlen(s) - 1] = 0;
+          fff = fgetc(inpfile);
+          if (fff != 10)
+          {
+            ungetc(fff, inpfile);
+          }
+        }
 
         a2 = str_to_textatom(s);
         lconc(rez, a2);
-      }  /*while eof*/
+      } /*while eof*/
       /*    readln(inftext,svar);  */
 
       if (inpfile != NULL)
-	fclose(inpfile);
+        fclose(inpfile);
       inpfile = NULL;
     }
-
   }
   if (inpfile != NULL)
     fclose(inpfile);
 }
-
-
 
 Void use_4(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
@@ -271,21 +266,19 @@ long p1, p2, p3, *rez;
   if (p1 == 0)
     return;
   pointr(p1, &xx.sa);
-  if (((1L << ((long)xx.sad->dtype)) & ((1L << ((long)fatom + 1)) -
-	 (1L << ((long)atom))) & (~(1L << ((long)number)))) != 0)
+  if (((1L << ((long)xx.sad->dtype)) & ((1L << ((long)fatom + 1)) - (1L << ((long)atom))) & (~(1L << ((long)number)))) != 0)
     a2 = xx.sad->cord;
   else if (xx.snd->dtype == number)
     a2 = xx.snd->cord;
   else
     a2 = 0;
   /* make numerical atom */
-  gets1(rez, &xx.sa);   /* fill descriptor */
+  gets1(rez, &xx.sa); /* fill descriptor */
   WITH = xx.snd;
   WITH->dtype = number;
   WITH->cord = 0;
   WITH->val = a2;
 }
-
 
 Void use_10(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
@@ -296,7 +289,8 @@ long p1, p2, p3, *rez;
   if (p1 == 0)
     return;
   a2 = p1;
-  do {
+  do
+  {
     pointr(a2, &xx.sa);
     dump(xx.sa, a2);
     printf(" Another address=");
@@ -305,16 +299,14 @@ long p1, p2, p3, *rez;
   } while (a2 != 0);
 }
 
-
 Void use_13(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
   /* nice print */
   *rez = 0;
   if (p1 != 0)
-    putchar('\n');   /* dout(p1);*/
+    putchar('\n'); /* dout(p1);*/
 }
-
 
 Void use_12(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
@@ -322,28 +314,21 @@ long p1, p2, p3, *rez;
   *rez = 0;
   /* nice print */
   if (p1 != 0)
-    fprintf(out, "\n\n");   /*dout2(p1);*/
+    fprintf(out, "\n\n"); /*dout2(p1);*/
 }
-
-
 
 Void use_19(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
   *rez = 0;
-
-
 }
-
 
 Void use_20(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
   /*random*/
   *rez = 0;
-
 }
-
 
 Void use_21(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
@@ -360,12 +345,7 @@ long p1, p2, p3, *rez;
     *rez = long_to_atom(im[0]);
 }
 
-
-
-
-
- a erlist;
-
+a erlist;
 
 /* used to leave error message list in usepas after scaner
                 return it to another usepas call later - when it will
@@ -379,14 +359,13 @@ long p1, p2, p3, *rez;
   /* returns null if file  does not exist */
   erlist = 0;
   *rez = 0;
-  if (!plstr(p1, str_, &l, true, sv1))  /* file name */
+  if (!plstr(p1, str_, &l, true, sv1)) /* file name */
     return;
-  if (!plstr(p2, str_, &l, true, sv2))   /* options */
+  if (!plstr(p2, str_, &l, true, sv2)) /* options */
     *sv2 = '\0';
   initialize_scan_variables();
   scaner(1L, sv1, sv2, rez, &erlist, (long)null_, 0L, 0L);
 }
-
 
 Void use_121(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
@@ -396,14 +375,13 @@ long p1, p2, p3, *rez;
   /* returns null if file  does not exist */
   erlist = 0;
   *rez = 0;
-  if (!plstr(p1, str_, &l, true, sv1))  /* file name */
+  if (!plstr(p1, str_, &l, true, sv1)) /* file name */
     return;
-  if (!plstr(p2, str_, &l, true, sv2))   /* options */
+  if (!plstr(p2, str_, &l, true, sv2)) /* options */
     *sv2 = '\0';
   initialize_scan_variables_mif();
   scaner_mif(1L, sv1, sv2, rez, &erlist, (long)null_, 0L, 0L);
 }
-
 
 Void use_36(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
@@ -413,12 +391,11 @@ long p1, p2, p3, *rez;
   /* format  #call_pas(36 $list [$options] ) */
   *rez = 0;
   erlist = 0;
-  if (!plstr(p2, str_, &l, true, sv2))   /* options */
+  if (!plstr(p2, str_, &l, true, sv2)) /* options */
     *sv2 = '\0';
   initialize_scan_variables();
   scaner(2L, "", sv2, rez, &erlist, p1, 0L, 0L);
 }
-
 
 Void use_38(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
@@ -427,8 +404,6 @@ long p1, p2, p3, *rez;
      produced after last call of "scaner" */
   *rez = erlist;
 }
-
-
 
 Void use_40(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
@@ -443,7 +418,6 @@ long p1, p2, p3, *rez;
   WITH->val = p1;
 }
 
-
 Void use_41(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
@@ -457,7 +431,6 @@ long p1, p2, p3, *rez;
   WITH->val = *rez;
 }
 
-
 Void use_44(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
@@ -465,19 +438,18 @@ long p1, p2, p3, *rez;
   *rez = 0;
   if (!plnum(p2, im))
     goto _L1;
-  if (p1 != 0) {
+  if (p1 != 0)
+  {
     *rez = p1;
     a2 = p1;
     points(a2, &xx.sa);
-    if (((1L << ((long)xx.sad->dtype)) & ((1L << ((long)fatom + 1)) -
-	   (1L << ((long)atom))) & (~(1L << ((long)number)))) != 0)
+    if (((1L << ((long)xx.sad->dtype)) & ((1L << ((long)fatom + 1)) - (1L << ((long)atom))) & (~(1L << ((long)number)))) != 0)
       xx.sad->cord = im[0];
     else if (xx.snd->dtype == number)
       xx.snd->cord = im[0];
   }
-_L1: ;
+_L1:;
 }
-
 
 Void use_45(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
@@ -488,21 +460,17 @@ long p1, p2, p3, *rez;
   /* this not allowed in interpreter ! */
 }
 
-
 Void use_46(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
   *rez = null_;
-}  /* returns null if we are in compiler */
-
-
+} /* returns null if we are in compiler */
 
 Void use_9(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
   *rez = 0;
 }
-
 
 Void use_85(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
@@ -514,13 +482,13 @@ long p1, p2, p3, *rez;
   if (!plstr(p1, str_, &l, true, sv1))
     return;
   FORLIM = strlen(sv1);
-  for (j = 1; j <= FORLIM; j++) {
+  for (j = 1; j <= FORLIM; j++)
+  {
     if (islower(sv1[j - 1]))
       sv1[j - 1] -= 32;
   }
   *rez = str_to_textatom(sv1);
 }
-
 
 Void use_86(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
@@ -532,13 +500,13 @@ long p1, p2, p3, *rez;
   if (!plstr(p1, str_, &l, true, sv1))
     return;
   FORLIM = strlen(sv1);
-  for (j = 1; j <= FORLIM; j++) {
+  for (j = 1; j <= FORLIM; j++)
+  {
     if (isupper(sv1[j - 1]))
       sv1[j - 1] += 32;
   }
   *rez = str_to_textatom(sv1);
 }
-
 
 Void use_87(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
@@ -549,7 +517,8 @@ long p1, p2, p3, *rez;
   *rez = 0;
   if (!plstr(p1, str_, &l, true, sv1))
     return;
-  if (plnum(p2, im)) {
+  if (plnum(p2, im))
+  {
     if (!plnum(p3, &im[1]))
       im[1] = l;
   }
@@ -557,19 +526,21 @@ long p1, p2, p3, *rez;
   *rez = str_to_textatom(STR1);
 }
 
-
 Void use_88(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
-{ char * tmp;
+{
+  char *tmp;
   /* position */
   *rez = 0;
-  if (plstr(p1, str_, &l, true, sv1)) {
+  if (plstr(p1, str_, &l, true, sv1))
+  {
     if (plstr(p2, str_, &l, true, sv2))
-      { tmp=strstr(sv2,sv1);
-      *rez = long_to_atom((long) (tmp?((long)tmp-(long)sv1):0) );}
+    {
+      tmp = strstr(sv2, sv1);
+      *rez = long_to_atom((long)(tmp ? ((long)tmp - (long)sv1) : 0));
+    }
   }
 }
-
 
 Void use_90(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
@@ -577,18 +548,23 @@ long p1, p2, p3, *rez;
   long iii;
 
   /* if plnum(p2,im[1]) then hlt:=im[1] else hlt:=0; */
-  for (iii = 0; iii < filenum; iii++) {
-    if (filetab[iii].isopen) {
+  for (iii = 0; iii < filenum; iii++)
+  {
+    if (filetab[iii].isopen)
+    {
       if (filetab[iii].screen)
-	putchar('\n'); /* Corrected 29/5/95 */ 
+        putchar('\n'); /* Corrected 29/5/95 */
       else
-	{putc('\n', files[iii]);
-	 if (files[iii] != NULL)
-	   fclose(files[iii]);}
+      {
+        putc('\n', files[iii]);
+        if (files[iii] != NULL)
+          fclose(files[iii]);
+      }
       files[iii] = NULL;
     }
   }
-  if (out_open) {
+  if (out_open)
+  {
     if (out != NULL)
       fclose(out);
     out = NULL;
@@ -599,15 +575,12 @@ long p1, p2, p3, *rez;
   exit(0);
 }
 
-
-
 Void use_78(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
   if (plnum(p1, im))
     max_printlevel = im[0];
 }
-
 
 Void use_79(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
@@ -621,7 +594,8 @@ long p1, p2, p3, *rez;
   first(p1, &ap);
   is_tree = (ap.ptrtype == ptrtree);
   elnum = 0;
-  while (ap.nel != 0) {
+  while (ap.nel != 0)
+  {
     elnum++;
     if (eqatoms(ap.cel, p2))
       goto _L22;
@@ -629,18 +603,18 @@ long p1, p2, p3, *rez;
   }
   return;
 _L22:
-  if (!is_tree) {
+  if (!is_tree)
+  {
     *rez = long_to_atom(elnum);
     return;
   }
 
-  gets1(rez, &xx.sa);   /* makes s-address */
+  gets1(rez, &xx.sa); /* makes s-address */
   /* fills descriptor */
-  WITH = xx.sad;   /* with */
+  WITH = xx.sad; /* with */
   WITH->dtype = idatom;
   WITH->name = ap.UU.U1.arc;
 }
-
 
 Void use_91(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
@@ -677,28 +651,31 @@ long p1, p2, p3, *rez;
      we split to 4 cases main/fragm  element/descriptor */
   *rez = p1;
   points(ap.UU.U1.curfragment, &xx.sa);
-  if (xx.smld->dtype == listmain) {
-    if (ap.nel == mainlistelnum) {
+  if (xx.smld->dtype == listmain)
+  {
+    if (ap.nel == mainlistelnum)
+    {
       xx.smld->next = null_;
       xx.smld->lastfragm = ap.UU.U1.curfragment;
       /* correction 8-apr-1993 */
-    } else
+    }
+    else
       xx.smld->elnum--;
     xx.smld->totalelnum--;
     return;
   }
-  if (ap.nel == fragmlistelnum) {
+  if (ap.nel == fragmlistelnum)
+  {
     xx.sfld->next = null_;
     points(p1, &xx.sa);
     xx.smld->lastfragm = ap.UU.U1.curfragment;
     /* correction 8-apr-1993 */
-  } else
+  }
+  else
     xx.sfld->elnum--;
   points(p1, &xx.sa);
   xx.smld->totalelnum--;
 }
-
-
 
 Static long selection(tree, arc)
 long tree, arc;
@@ -716,7 +693,6 @@ long tree, arc;
     return (ap.cel);
   return Result;
 }
-
 
 Static long indexing(list, index)
 long list, index;
@@ -740,8 +716,6 @@ long list, index;
   return (ap.cel);
 }
 
-
-
 Void use_92(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
@@ -752,11 +726,13 @@ long p1, p2, p3, *rez;
 
   *rez = p2;
   first(p1, &ap);
-  if (ap.ptrtype != ptrlist) {
+  if (ap.ptrtype != ptrlist)
+  {
     *rez = null_;
     return;
   }
-  while (ap.nel != null_) {
+  while (ap.nel != null_)
+  {
     pointr(ap.cel, &xx.sa);
     if (xx.snd->dtype == number)
       *rez = indexing(*rez, xx.snd->val);
@@ -770,17 +746,12 @@ long p1, p2, p3, *rez;
   }
 }
 
-
 Void use_93(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
   /* returns stack size*/
   *rez = 0;
 }
-
-
-
-
 
 Void use_108(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
@@ -792,27 +763,24 @@ long p1, p2, p3, *rez;
   string80 pc;
 
   *rez = 0;
-  if (plstr(p1, str_, &l, true, sv1)) {
+  if (plstr(p1, str_, &l, true, sv1))
+  {
 
     *rez = str_to_atom(getenv(sv1));
   }
 }
 
-
-
 Void use_110(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
-   *rez = 0;
- }
-
+  *rez = 0;
+}
 
 Void use_111(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
-   *rez = 0;
- }
-
+  *rez = 0;
+}
 
 Void use_116(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
@@ -825,7 +793,8 @@ long p1, p2, p3, *rez;
     return;
   strcpy(sv2, "\"");
   FORLIM = l;
-  for (i = 0; i < FORLIM; i++) {
+  for (i = 0; i < FORLIM; i++)
+  {
     if (sv1[i] == '\\' || sv1[i] == '"')
       strcat(sv2, "\\");
     sprintf(sv2 + strlen(sv2), "%c", sv1[i]);
@@ -833,9 +802,6 @@ long p1, p2, p3, *rez;
   strcat(sv2, "\"");
   *rez = str_to_atom(sv2);
 }
-
-
-
 
 /* floating point processor */
 Void use_80(p1, p2, p3, rez)
@@ -852,18 +818,19 @@ long p1, p2, p3, *rez;
   atomdescriptor *WITH1;
 
   real_size = sizeof(double);
-  *rez = 0;   /* in case of unsuccessful data returns null */
+  *rez = 0; /* in case of unsuccessful data returns null */
   if (!plstr(p1, str1_, &l, false, sv1))
     goto _L1;
 
   c1 = str1_[0];
-  if (l > 1 )
+  if (l > 1)
     c2_ = str1_[1];
   else
     c2_ = ' ';
-  switch (c1) {   /*1*/
+  switch (c1)
+  { /*1*/
 
-  case 'S':  /* string -> real */
+  case 'S': /* string -> real */
     if (!plstr(p2, str_, &l, true, sv1))
       goto _L1;
     val2(sv1, &re1, &i);
@@ -871,13 +838,12 @@ long p1, p2, p3, *rez;
       goto _L1;
     break;
 
-  case 'I':   /*2*/
+  case 'I': /*2*/
     /* integer -> real */
     if (!plnum(p2, &im[1]))
       goto _L1;
-    re1 = im[1];   /* *1.0 */
+    re1 = im[1]; /* *1.0 */
     break;
-
 
     /* real -> ... */
 
@@ -888,8 +854,9 @@ long p1, p2, p3, *rez;
       goto _L1;
     refr2 = (double *)str_;
     /*  re2 = *refr2; */
-    memcpy(&re2,refr2,sizeof(double));
-    switch (c1) {   /*3*/
+    memcpy(&re2, refr2, sizeof(double));
+    switch (c1)
+    { /*3*/
 
     case 'T':
       im[2] = (long)re2;
@@ -900,12 +867,12 @@ long p1, p2, p3, *rez;
       goto _L1;
       break;
 
-    case 'Z':   /*4*/
+    case 'Z': /*4*/
       if (!plnum(p3, &im[1]))
-	goto _L1;
+        goto _L1;
       real_to_string_f(svar, re2, im[1] / 100, im[1] % 100);
-/* p2c: ./use80.pas, line 48:
- * Note: Using % for possibly-negative arguments [317] */
+      /* p2c: ./use80.pas, line 48:
+       * Note: Using % for possibly-negative arguments [317] */
       i = strlen(svar);
       putatm(svar, i, &atm);
       gets1(rez, &x.sa);
@@ -915,8 +882,8 @@ long p1, p2, p3, *rez;
       goto _L1;
       break;
 
-  case 'V':   /*4*/
-      sprintf(svar,"%E",re2);
+    case 'V': /*4*/
+      sprintf(svar, "%E", re2);
       i = strlen(svar);
       putatm(svar, i, &atm);
       gets1(rez, &x.sa);
@@ -925,11 +892,11 @@ long p1, p2, p3, *rez;
       WITH1->name = atm;
       goto _L1;
       break;
-      
-  case 'F':
-    if (!plstr(p3, str_, &l, true, sv1))
-      goto _L1;
-    sprintf(svar,sv1,re2);
+
+    case 'F':
+      if (!plstr(p3, str_, &l, true, sv1))
+        goto _L1;
+      sprintf(svar, sv1, re2);
       i = strlen(svar);
       putatm(svar, i, &atm);
       gets1(rez, &x.sa);
@@ -938,111 +905,130 @@ long p1, p2, p3, *rez;
       WITH1->name = atm;
       goto _L1;
       break;
-   
 
+    case 'Q':
+      if (re2 > 0)
+        re1 = sqrt(re2);
+      else
+        goto _L1;
+      break;
+    case 'X':
+      re1 = exp(re2);
+      break;
+    case 'L':
+      if (re2 > 0)
+        re1 = log(re2);
+      else
+        goto _L1;
+      break;
 
-  case 'Q':   if (re2>0) re1=sqrt(re2); else goto  _L1; break;
-  case 'X':   re1=exp(re2);  break;
-  case 'L':   if (re2>0) re1=log(re2); else goto  _L1; break;
+    case 't':
+      if (!strncmp("tSIN", str1_, 4))
+        re1 = sin(re2);
+      else if (!strncmp("tCOS", str1_, 4))
+        re1 = cos(re2);
+      else if (!strncmp("tTAN", str1_, 4))
+        re1 = tan(re2);
+      else if (!strncmp("tASIN", str1_, 5))
+        re1 = asin(re2);
+      else if (!strncmp("tACOS", str1_, 5))
+        re1 = acos(re2);
+      else if (!strncmp("tATAN", str1_, 5))
+        re1 = atan(re2);
+      break;
 
-  
-  case 't':
-      if (!strncmp("tSIN",str1_,4))      re1=sin(re2);
-      else if (!strncmp("tCOS",str1_,4)) re1=cos(re2); 
-      else if (!strncmp("tTAN",str1_,4))   re1=tan(re2);
-      else if (!strncmp("tASIN",str1_,5))   re1=asin(re2);
-      else if (!strncmp("tACOS",str1_,5))     re1=acos(re2);
-      else if (!strncmp("tATAN",str1_,5))     re1=atan(re2);
-      break;     
-      
-  default:
+    default:
       if (!plstr(p3, str_, &l, false, sv1))
-          goto _L1;
+        goto _L1;
       if (l != real_size)
-	goto _L1;
+        goto _L1;
       refr3 = (double *)str_;
-   /*   re3 = *refr3; */
-       memcpy(&re3,refr3,sizeof(double));
+      /*   re3 = *refr3; */
+      memcpy(&re3, refr3, sizeof(double));
 
-      switch (c1) {   /*5*/
+      switch (c1)
+      { /*5*/
 
       case '+':
-	re1 = re2 + re3;
-	break;
+        re1 = re2 + re3;
+        break;
 
       case '-':
-	re1 = re2 - re3;
-	break;
+        re1 = re2 - re3;
+        break;
 
       case '*':
-	re1 = re2 * re3;
-	break;
+        re1 = re2 * re3;
+        break;
 
       case '/':
-	if (re3 == 0)
-	  goto _L1;
-	re1 = re2 / re3;
-	break;
+        if (re3 == 0)
+          goto _L1;
+        re1 = re2 / re3;
+        break;
 
       case '=':
-	if (re2 == re3)
-	  *rez = p2;
-	goto _L1;
-	break;
+        if (re2 == re3)
+          *rez = p2;
+        goto _L1;
+        break;
 
       case '>':
-	if (c2_ == '=') {
-	  if (re2 >= re3)
-	    *rez = p2;
-	} else {
-	  if (re2 > re3)
-	    *rez = p2;
-	}
-	goto _L1;
-	break;
+        if (c2_ == '=')
+        {
+          if (re2 >= re3)
+            *rez = p2;
+        }
+        else
+        {
+          if (re2 > re3)
+            *rez = p2;
+        }
+        goto _L1;
+        break;
 
       case '<':
-	if (c2_ == '=') {
-	  if (re2 <= re3)
-	    *rez = p2;
-	} else if (c2_ == '>') {
-	  if (re2 != re3)
-	    *rez = p2;
-	} else if (re2 < re3)
-	  *rez = p2;
-	goto _L1;
-	break;
+        if (c2_ == '=')
+        {
+          if (re2 <= re3)
+            *rez = p2;
+        }
+        else if (c2_ == '>')
+        {
+          if (re2 != re3)
+            *rez = p2;
+        }
+        else if (re2 < re3)
+          *rez = p2;
+        goto _L1;
+        break;
 
+      case 'P':
+        re1 = pow(re2, re3);
+        break;
 
-       case 'P':   
-          re1=pow(re2,re3); break;
-
-      default:   /* wrong real operation */
-	goto _L1;
-	break;
-      }/*5*/
+      default: /* wrong real operation */
+        goto _L1;
+        break;
+      } /*5*/
       /*4*/
       break;
-    }/*3*/
+    } /*3*/
     /*2*/
     break;
-  }/*1*/
+  } /*1*/
   /* this part processes only + - * / s(str->real) i(int->real) */
   refr2 = (double *)svar;
-/*  *refr2 = re1; */
-  memcpy(refr2,&re1,sizeof(double));
+  /*  *refr2 = re1; */
+  memcpy(refr2, &re1, sizeof(double));
 
   putatm(svar, real_size, &atm);
   gets1(rez, &x.sa);
   WITH1 = x.sad;
   WITH1->dtype = fatom;
   WITH1->name = atm;
-_L1: ;
+_L1:;
 }
-
-
-
-
 
 /* these procedures currently are used in ibm/pc version
    of rigal. don't use them for future compatibility */
@@ -1051,336 +1037,280 @@ long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_3(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_5(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_6(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_7(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_8(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_11(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_17(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_18(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_22(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_23(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_24(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_25(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_26(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_27(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_28(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_29(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_32(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_33(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_34(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_37(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_39(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_47(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_48(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_49(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_50(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_51(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_52(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_53(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_54(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_55(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_56(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_57(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_58(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_59(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_60(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_61(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_62(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_63(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_64(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_65(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_66(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_67(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_68(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_69(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_70(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_71(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_72(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_73(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_74(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_75(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_76(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_77(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_81(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_82(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_83(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_84(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
@@ -1392,139 +1322,115 @@ long p1, p2, p3, *rez;
 {
 }
 
-
-
 Void use_94(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_95(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_96(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_97(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_98(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_99(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_100(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_101(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_102(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_103(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_104(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_105(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_106(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_107(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_109(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_112(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_113(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_114(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_115(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_117(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_118(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_119(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 /* these procedures are not used , you can use them ! */
 
@@ -1533,182 +1439,149 @@ long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_122(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_123(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_124(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_125(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_126(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_127(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_128(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_129(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_130(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_131(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_132(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_133(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_134(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_135(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_136(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_137(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_138(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_139(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_140(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_141(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_142(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_143(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_144(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_145(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_146(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_147(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_148(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
-
 
 Void use_149(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
 Void use_150(p1, p2, p3, rez)
 long p1, p2, p3, *rez;
 {
 }
 
-
-
-
 /* End. */
-

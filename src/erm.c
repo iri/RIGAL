@@ -19,7 +19,8 @@ long *rez;
   next(pl);
   pp2 = pl->cel;
   next(pl);
-  switch (n) {
+  switch (n)
+  {
 
   /*    n:   use_x(pp1,pp2,pl.cel,rez) */
   case 1:
@@ -198,7 +199,7 @@ long *rez;
     use_44(pp1, pp2, pl->cel, rez);
     break;
 
-  /* 45 & 46 are passed*/
+    /* 45 & 46 are passed*/
 
   case 47:
     use_47(pp1, pp2, pl->cel, rez);
@@ -622,9 +623,6 @@ long *rez;
   }
 }
 
-
-
-
 Void add(d, r)
 long *d, *r;
 {
@@ -635,11 +633,13 @@ long *d, *r;
   numberdescriptor *WITH;
 
   /* deleted sign processing 2-oct-89 */
-  if (*d == null_) {
+  if (*d == null_)
+  {
     if (*r == null_)
       return;
     pointr(*r, &y.sa);
-    if (y.snd->dtype == number) {
+    if (y.snd->dtype == number)
+    {
       /* instead of d:=r; changed 22-oct-90 */
       gets1(d, &x.sa);
       *x.snd = *y.snd;
@@ -647,7 +647,8 @@ long *d, *r;
     return;
   }
   points(*d, &x.sa);
-  if (x.snd->dtype != number) {
+  if (x.snd->dtype != number)
+  {
     *d = null_;
     err(9L);
     return;
@@ -655,18 +656,20 @@ long *d, *r;
   if (*r == null_)
     return;
   pointr(*r, &y.sa);
-  if (y.snd->dtype == number) {
+  if (y.snd->dtype == number)
+  {
     WITH = x.snd;
     WITH->val += y.snd->val;
-  } else {  /* not number */
+  }
+  else
+  { /* not number */
     *d = null_;
     err(10L);
   }
 
   /* a */
   /* a */
-}  /* add */
-
+} /* add */
 
 Void arithm(op)
 long op;
@@ -683,7 +686,7 @@ long op;
   /* wyhod */
 
   mpd x;
-  longint n[2];   /* changed 17-nov-90 */
+  longint n[2]; /* changed 17-nov-90 */
   a rez;
   aa a_adr[2];
   char dts[2];
@@ -692,131 +695,129 @@ long op;
   long j;
 
   rez = null_;
-  for (k = 2; k >= 1; k--) {
+  for (k = 2; k >= 1; k--)
+  {
     getval(&v[base - k - 1]);
-    if (v[base - k - 1] == null_) {
+    if (v[base - k - 1] == null_)
+    {
       n[2 - k] = 0;
       dts[2 - k] = dummy;
       /* a_adr - not used ! */
-    } else {
+    }
+    else
+    {
       pointr(v[base - k - 1], &x.sa);
 
       dts[2 - k] = x.snd->dtype;
       if (dts[2 - k] == number)
-	n[2 - k] = x.snd->val;
+        n[2 - k] = x.snd->val;
       else
-	n[2 - k] = 0;
+        n[2 - k] = 0;
       a_adr[2 - k] = x.sad->name;
     }
   }
 
-
-
-
-
   if (dts[0] == dummy && dts[1] == dummy || dts[0] == number ||
-      dts[1] == number) {
+      dts[1] == number)
+  {
     if (op == cgt && n[0] > n[1] || op == clt && n[0] < n[1] ||
-	op == cge && n[0] >= n[1] || op == cle && n[0] <= n[1])
+        op == cge && n[0] >= n[1] || op == cle && n[0] <= n[1])
       rez = atomt;
-    else {  /* arifmetika */
-      if (op >= cmult && op <= cminus) {  /* sozdatx atom rezulxtata */
-	gets1(&rez, &x.sa);
-	if (op == cadd)
-	  k = n[0] + n[1];
-	else if (op == cminus)
-	  k = n[0] - n[1];
-	else if (op == cmult)
-	  k = n[0] * n[1];
-	else if (op == cdiv)
-	  k = n[0] / n[1];
-	else if (op == cmod) {
-	  k = n[0] % n[1];
-/* p2c: erm.z, line 1070:
- * Note: Using % for possibly-negative arguments [317] */
-	}
-	x.snd->dtype = number;
-	x.snd->val = k;
+    else
+    { /* arifmetika */
+      if (op >= cmult && op <= cminus)
+      { /* sozdatx atom rezulxtata */
+        gets1(&rez, &x.sa);
+        if (op == cadd)
+          k = n[0] + n[1];
+        else if (op == cminus)
+          k = n[0] - n[1];
+        else if (op == cmult)
+          k = n[0] * n[1];
+        else if (op == cdiv)
+          k = n[0] / n[1];
+        else if (op == cmod)
+        {
+          k = n[0] % n[1];
+          /* p2c: erm.z, line 1070:
+           * Note: Using % for possibly-negative arguments [317] */
+        }
+        x.snd->dtype = number;
+        x.snd->val = k;
       }
     }
-
-  } else {
-    if (op >= cmult && op <= cminus) {
+  }
+  else
+  {
+    if (op >= cmult && op <= cminus)
+    {
       gets1(&rez, &x.sa);
       x.snd->dtype = number;
       x.snd->val = 0;
-    } else {  /* operations cgt,cge,clt.cle only */
+    }
+    else
+    { /* operations cgt,cge,clt.cle only */
 
       if (((1L << ((long)dts[0])) &
-	   ((1L << ((long)atom)) | (1L << ((long)idatom)) |
-	    (1L << ((long)keyword)) | (1L << ((long)tatom)))) != 0) {
-	if (((1L << ((long)dts[1])) &
-	     ((1L << ((long)atom)) | (1L << ((long)idatom)) |
-	      (1L << ((long)keyword)) | (1L << ((long)tatom)))) != 0) {
-	  switch (op) {
+           ((1L << ((long)atom)) | (1L << ((long)idatom)) |
+            (1L << ((long)keyword)) | (1L << ((long)tatom)))) != 0)
+      {
+        if (((1L << ((long)dts[1])) &
+             ((1L << ((long)atom)) | (1L << ((long)idatom)) |
+              (1L << ((long)keyword)) | (1L << ((long)tatom)))) != 0)
+        {
+          switch (op)
+          {
 
-	  case clt:
-	    j = 1;
-	    break;
+          case clt:
+            j = 1;
+            break;
 
-	  case cle:
-	    j = 2;
-	    break;
+          case cle:
+            j = 2;
+            break;
 
-	  case cgt:
-	    j = 3;
-	    break;
+          case cgt:
+            j = 3;
+            break;
 
-	  case cge:
-	    j = 4;
-	    break;
-	  }
+          case cge:
+            j = 4;
+            break;
+          }
 
-	  if (compatom(j, a_adr[0], a_adr[1]))
-	    rez = atomt;
-	} else {
-	  if (dts[1] == dummy) {
-	    if (op == cgt || op == cge)
-	      rez = atomt;
-	  }
-	}
-
-
-      } else {
-	if (dts[0] == dummy) {
-	  if (((1L << ((long)dts[1])) &
-	       ((1L << ((long)atom)) | (1L << ((long)idatom)) |
-		(1L << ((long)keyword)) | (1L << ((long)tatom)))) != 0) {
-	    if (op == clt || op == cle)
-	      rez = atomt;
-	  }
-	}
+          if (compatom(j, a_adr[0], a_adr[1]))
+            rez = atomt;
+        }
+        else
+        {
+          if (dts[1] == dummy)
+          {
+            if (op == cgt || op == cge)
+              rez = atomt;
+          }
+        }
+      }
+      else
+      {
+        if (dts[0] == dummy)
+        {
+          if (((1L << ((long)dts[1])) &
+               ((1L << ((long)atom)) | (1L << ((long)idatom)) |
+                (1L << ((long)keyword)) | (1L << ((long)tatom)))) != 0)
+          {
+            if (op == clt || op == cle)
+              rez = atomt;
+          }
+        }
       }
     }
-
   }
 
 _L33:
   base--;
   v[base - 2] = rez;
-
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 Void unmins()
 {
@@ -827,22 +828,23 @@ Void unmins()
   if (v[base - 2] == null_)
     goto _L99;
   pointr(v[base - 2], &y.sa);
-  if (y.snd->dtype != number) {
+  if (y.snd->dtype != number)
+  {
     v[base - 2] = null_;
     goto _L99;
   }
   gets1(&rez, &x.sa);
   *x.snd = *y.snd;
-  x.snd->val = -y.snd->val;   /* del sign change 3-oct-89 */
+  x.snd->val = -y.snd->val; /* del sign change 3-oct-89 */
   v[base - 2] = rez;
-_L99: ;
-}  /* unmins*/
-
+_L99:;
+} /* unmins*/
 
 /* Local variables for bltin: */
-struct LOC_bltin {
+struct LOC_bltin
+{
   long l;
-} ;
+};
 
 Local long alen(k, LINK)
 long k;
@@ -851,12 +853,10 @@ struct LOC_bltin *LINK;
   bl80 m;
   a t;
 
-
   t = k;
-  pointa(t, m, &LINK->l);   /* [1] ibm/pc */
+  pointa(t, m, &LINK->l); /* [1] ibm/pc */
   return LINK->l;
-}  /* alen */
-
+} /* alen */
 
 Void bltin(rez, success, pl, n)
 long *rez;
@@ -876,13 +876,12 @@ long n;
   a k, s;
   mpd x, y;
   long t;
-  longint li_;   /* 12- mar -91 */
+  longint li_; /* 12- mar -91 */
   bl80 mm;
   numberdescriptor *WITH;
   atomdescriptor *WITH1;
   specdescriptor *WITH2;
   long FORLIM;
-
 
   rulenum = n;
   k = pl->cel;
@@ -890,127 +889,129 @@ long n;
     pointr(k, &x.sa);
   *success = true;
   *rez = k;
-  switch (rulenum) {
+  switch (rulenum)
+  {
 
-  case 1:   /* #implode */
+  case 1: /* #implode */
     implode(pl, rez);
     break;
 
-  case 2:   /* #explode */
+  case 2: /* #explode */
     if (k == null_)
       goto _L99;
     if (((1L << ((long)x.sad->dtype)) &
-	 ((1L << ((long)fatom + 1)) - (1L << ((long)atom)))) != 0)
+         ((1L << ((long)fatom + 1)) - (1L << ((long)atom)))) != 0)
       explode(k, rez);
     else
       *success = false;
     break;
 
-  case 3:   /* #atom */
+  case 3: /* #atom */
     if (k == null_)
       goto _L99;
     *success = (((1L << ((long)x.sad->dtype)) &
-		 ((1L << ((long)fatom + 1)) - (1L << ((long)atom)))) != 0);
+                 ((1L << ((long)fatom + 1)) - (1L << ((long)atom)))) != 0);
     break;
 
-  case 4:   /* #number */
+  case 4: /* #number */
     if (k == null_)
       *success = false;
     else
       *success = (x.sad->dtype == number);
     break;
 
-  case 5:   /* #ident */
+  case 5: /* #ident */
     if (k == null_)
       *success = false;
     else
       *success = (x.sad->dtype == idatom);
     break;
 
-  case 6:   /* #list */
+  case 6: /* #list */
     if (k == null_)
       goto _L99;
     *success = (x.sad->dtype == listmain);
     break;
 
-  case 7:   /* #tree */
+  case 7: /* #tree */
     if (k == null_)
       goto _L99;
     *success = (x.sad->dtype == treemain);
     break;
 
-  case 8:   /* #tatom */
+  case 8: /* #tatom */
     if (k == null_)
       *success = false;
     else
       *success = (x.sad->dtype == tatom);
     break;
 
-  case 9:   /* #fatom */
+  case 9: /* #fatom */
     if (k == null_)
       *success = false;
     else
       *success = (x.sad->dtype == fatom);
     break;
 
-  case 10:   /* #_keyword */
+  case 10: /* #_keyword */
     if (k == null_)
       *success = false;
     else
       *success = (x.sad->dtype == keyword);
     break;
 
-  case 11:   /* #_specdesc */
+  case 11: /* #_specdesc */
     if (k == null_)
       *success = false;
     else
       *success = (x.sad->dtype == spec);
     break;
 
-  case 12:   /* #len */
+  case 12: /* #len */
     if (k == null_)
       *rez = 0;
-    else {
-      switch (x.sad->dtype) {
+    else
+    {
+      switch (x.sad->dtype)
+      {
 
       case atom:
       case idatom:
       case keyword:
       case tatom:
       case fatom:
-	*rez = alen(x.sad->name, &V);
-	break;
+        *rez = alen(x.sad->name, &V);
+        break;
 
       case number:
-	/* pods~itatx ~islo zna~.cifr */
-	li_ = x.snd->val;
-	t = 0;
-	while (li_ != 0) {
-	  li_ /= 10;
-	  t++;
-	}
-	if (t == 0)
-	  t = 1;
-	if (x.snd->val < 0)
-	  t++;
-	*rez = t;
-	break;
-	/* number */
+        /* pods~itatx ~islo zna~.cifr */
+        li_ = x.snd->val;
+        t = 0;
+        while (li_ != 0)
+        {
+          li_ /= 10;
+          t++;
+        }
+        if (t == 0)
+          t = 1;
+        if (x.snd->val < 0)
+          t++;
+        *rez = t;
+        break;
+        /* number */
 
       case listmain:
-	*rez = x.smld->totalelnum;
-	break;
+        *rez = x.smld->totalelnum;
+        break;
 
       case treemain:
-	*rez = x.smtd->totalarcnum;
-	break;
-
-
+        *rez = x.smtd->totalarcnum;
+        break;
 
       default:
-	*rez = 0;
-	break;
-      }/* case */
+        *rez = 0;
+        break;
+      } /* case */
     }
     gets1(&k, &x.sa);
     WITH = x.snd;
@@ -1020,89 +1021,101 @@ long n;
     break;
     /* #len */
 
-  case 13:   /* #_specatom */
+  case 13: /* #_specatom */
     if ((k & 511) != 0 || k >= 65535L || k < 0)
       *success = false;
     break;
 
-  case 14:   /* #_rulename */
+  case 14: /* #_rulename */
     if (k == null_)
       *success = false;
     else
       *success = (x.sad->dtype == rulename);
     break;
 
-  case 15:   /* #_varname */
+  case 15: /* #_varname */
     if (k == null_)
       *success = false;
-    else {
+    else
+    {
       *success = (((1L << ((long)x.sad->dtype)) &
-	    ((1L << ((long)fvariable + 1)) - (1L << ((long)variable)))) != 0);
+                   ((1L << ((long)fvariable + 1)) - (1L << ((long)variable)))) != 0);
       points(k, &x.sa);
       x.svd->guard = true;
     }
     break;
 
   case 16:
-  case 17:   /* #_ruletoatom, #_varntoatm */
+  case 17: /* #_ruletoatom, #_varntoatm */
     if (k == null_)
       *success = false;
-    else {
+    else
+    {
       if (x.srd->dtype == rulename && rulenum == 16 ||
-	  (((1L << ((long)x.svd->dtype)) &
-	    ((1L << ((long)fvariable + 1)) - (1L << ((long)variable)))) != 0 &&
-	   rulenum == 17)) {
-	gets1(&s, &y.sa);
-	WITH1 = y.sad;
-	WITH1->dtype = idatom;
-	if (rulenum == 16)   /* !!! vax !!! */
-	  WITH1->name = x.srd->name;
-	else
-	  WITH1->name = x.svd->name;
-	*rez = s;
-      } else
-	*success = false;
+          (((1L << ((long)x.svd->dtype)) &
+            ((1L << ((long)fvariable + 1)) - (1L << ((long)variable)))) != 0 &&
+           rulenum == 17))
+      {
+        gets1(&s, &y.sa);
+        WITH1 = y.sad;
+        WITH1->dtype = idatom;
+        if (rulenum == 16) /* !!! vax !!! */
+          WITH1->name = x.srd->name;
+        else
+          WITH1->name = x.svd->name;
+        *rez = s;
+      }
+      else
+        *success = false;
     }
     break;
 
-  case 18:   /* #_vardesloc */
+  case 18: /* #_vardesloc */
     if (((1L << ((long)x.svd->dtype)) &
-	 ((1L << ((long)fvariable + 1)) - (1L << ((long)variable)))) != 0) {
+         ((1L << ((long)fvariable + 1)) - (1L << ((long)variable)))) != 0)
+    {
       next(pl);
       s = pl->cel;
       pointr(s, &y.sa);
       points(k, &x.sa);
       x.svd->location = y.snd->val;
-    } else
+    }
+    else
       *success = false;
     break;
 
-  case 19:   /* #debug */
-    if (eqatoms(pl->cel, atomrules)) {
+  case 19: /* #debug */
+    if (eqatoms(pl->cel, atomrules))
+    {
       /*
            rules */
       debugrule = true;
-    } else if (eqatoms(pl->cel, atomnorules)) {
+    }
+    else if (eqatoms(pl->cel, atomnorules))
+    {
       /* norules */
       debugrule = false;
     }
     break;
 
-  case 20:   /* #_spectodsc */
+  case 20: /* #_spectodsc */
     gets1(&s, &y.sa);
-    if ((k & 511) == 0 && k < 65535L && k >= 0) {
+    if ((k & 511) == 0 && k < 65535L && k >= 0)
+    {
       WITH2 = y.sspec;
       WITH2->dtype = spec;
       WITH2->val = k;
-    } else
+    }
+    else
       *y.sspec = *x.sspec;
     *rez = s;
     break;
 
-  case 21:   /* _content2 */
+  case 21: /* _content2 */
     if ((k & 511) == 0 && k < 65535L && k >= 0)
       *success = false;
-    else {
+    else
+    {
       s = x.snd->val;
       gets1(&k, &x.sa);
       WITH = x.snd;
@@ -1114,14 +1127,19 @@ long n;
     break;
     /* _content2 */
 
-  case 22:   /* #chr */
-    if ((k & 511) == 0 && k < 65535L && k >= 0) {
+  case 22: /* #chr */
+    if ((k & 511) == 0 && k < 65535L && k >= 0)
+    {
       *rez = null_;
       *success = false;
-    } else if (x.snd->dtype != number || x.snd->val > 255 || x.snd->val < 0) {
+    }
+    else if (x.snd->dtype != number || x.snd->val > 255 || x.snd->val < 0)
+    {
       *rez = null_;
       *success = false;
-    } else {
+    }
+    else
+    {
       t = x.snd->val;
       mm[0] = (Char)t;
       V.l = 1;
@@ -1129,29 +1147,31 @@ long n;
       gets1(&k, &x.sa);
       WITH1 = x.sad;
       if (is_rig_letter((int)t))
-	WITH1->dtype = idatom;
+        WITH1->dtype = idatom;
       else
-	WITH1->dtype = atom;
+        WITH1->dtype = atom;
       WITH1->name = s;
       *rez = k;
     }
     break;
     /* chr */
 
-  case 23:   /* parameter */
+  case 23: /* parameter */
     *rez = null_;
     FORLIM = run_param_cnt;
-    for (V.l = 1; V.l <= FORLIM; V.l++) {  /* see glovar.pas */
+    for (V.l = 1; V.l <= FORLIM; V.l++)
+    { /* see glovar.pas */
       printf(" %s", run_param_array[V.l - 1]);
       lconc(rez, str_to_atom(run_param_array[V.l - 1]));
     }
     putchar('\n');
     break;
 
-  case 24:   /* #_totatom */
+  case 24: /* #_totatom */
     if (k == null_)
       *success = false;
-    else {
+    else
+    {
       gets1(&s, &y.sa);
       WITH1 = y.sad;
       WITH1->dtype = tatom;
@@ -1161,12 +1181,13 @@ long n;
     }
     break;
 
-  case 25:   /* #ord */
+  case 25: /* #ord */
     if ((k & 511) == 0 && k < 65535L && k >= 0)
       goto _L99;
     if (((1L << ((long)x.sad->dtype)) &
-	 (((1L << ((long)keyword + 1)) - (1L << ((long)atom))) |
-	  (1L << ((long)tatom)))) != 0) {
+         (((1L << ((long)keyword + 1)) - (1L << ((long)atom))) |
+          (1L << ((long)tatom)))) != 0)
+    {
       s = x.sad->name;
       pointa(s, mm, &V.l);
       gets1(&k, &y.sa);
@@ -1174,41 +1195,44 @@ long n;
       WITH->dtype = number;
       WITH->val = mm[0];
       *rez = k;
-    } else
+    }
+    else
       *success = false;
     break;
     /* ord */
 
-  case 26:   /* call_pas */
-    if ((k & 511) == 0 && k < 65535L && k >= 0) {
+  case 26: /* call_pas */
+    if ((k & 511) == 0 && k < 65535L && k >= 0)
+    {
       *rez = null_;
       goto _L99;
     }
-    if (x.snd->dtype != number) {
+    if (x.snd->dtype != number)
+    {
       *rez = null_;
       goto _L99;
     }
     next(pl);
-    if (debugrule) {
+    if (debugrule)
+    {
       if (out_screen)
-	printf("(%12ld)", x.snd->val);
+        printf("(%12ld)", x.snd->val);
       else
-	fprintf(out, "(%12ld)", x.snd->val);
+        fprintf(out, "(%12ld)", x.snd->val);
     }
     usepas(x.snd->val, pl, rez);
     break;
 
-
-
-  }/* case */
+  } /* case */
 _L99:
-  if (*success) {
+  if (*success)
+  {
     if (pl->ptrtype != ptrtree)
       next(pl);
-  } else
+  }
+  else
     *rez = null_;
 }
-
 
 boolean compnames(p, ld)
 long p, ld;
@@ -1229,7 +1253,6 @@ long p, ld;
   mpd x, y;
   a w;
 
-
   pointr(p, &x.sa);
   /* polu~itx dostup k deskr. atoma ili peremennoj */
   Result = false;
@@ -1239,24 +1262,26 @@ long p, ld;
   /* polu~itx dostup k deskr.spiska */
   if (((1L << ((long)x.sad->dtype)) &
        ((1L << ((long)fatom + 1)) - (1L << ((long)atom)))) != 0)
-  {  /* atom */
+  { /* atom */
     w = y.smld->name;
-    if ((w & 511) == 0 && w < 65536L && w >= 0) {
+    if ((w & 511) == 0 && w < 65536L && w >= 0)
+    {
       /* u spiska net imeni */
       return false;
     }
     /* posmotretx deskr. imeni (atom ili spisok) */
     pointr(w, &y.sa);
     if (((1L << ((long)y.sad->dtype)) &
-	 ((1L << ((long)fatom + 1)) - (1L << ((long)atom)))) != 0)
+         ((1L << ((long)fatom + 1)) - (1L << ((long)atom)))) != 0)
       return (eqatoms(p, w));
     return Result;
-  }  /* atom */
-  if (x.sad->dtype != spec) {
+  } /* atom */
+  if (x.sad->dtype != spec)
+  {
     v[mybase + x.svd->location - 1] = y.smld->name;
     /* peremennoj priswoitx spisok imen iz y.smld^.name */
     return true;
-  }  /* specadres */
+  } /* specadres */
 
   /* specadres */
   w = y.smld->name;
@@ -1266,7 +1291,6 @@ long p, ld;
 
   /* w {ablone - peremennaq */
 }
-
 
 Void concop(a1, a2)
 long *a1, a2;
@@ -1281,42 +1305,47 @@ long *a1, a2;
   ptr_ p1;
   a l;
 
-
   l = *a1;
-  if (a2 == null_) {
+  if (a2 == null_)
+  {
     if (l == null_)
       goto _L99;
-    else {
+    else
+    {
       pointr(l, &x.sa);
       if (x.smld->dtype == listmain)
-	goto _L99;
-      else {
-	l = null_;
-	goto _L99;
+        goto _L99;
+      else
+      {
+        l = null_;
+        goto _L99;
       }
     }
   }
   pointr(a2, &x.sa);
-  if (x.smld->dtype != listmain) {
+  if (x.smld->dtype != listmain)
+  {
     l = null_;
     goto _L99;
   }
-  if (l != null_) {
+  if (l != null_)
+  {
     pointr(l, &x.sa);
-    if (x.smld->dtype != listmain) {
+    if (x.smld->dtype != listmain)
+    {
       l = null_;
       goto _L99;
     }
   }
   first(a2, &p1);
-  while (p1.nel != 0) {
+  while (p1.nel != 0)
+  {
     lconc(&l, p1.cel);
     next(&p1);
   }
 _L99:
   *a1 = l;
-}  /* concop */
-
+} /* concop */
 
 Void copyop()
 {
@@ -1331,12 +1360,12 @@ Void copyop()
   mpd x, y, z;
   a r1, r2, r3;
 
-
   getval(&v[base - 2]);
   if (v[base - 2] == null_)
     goto _L99;
   pointr(v[base - 2], &x.sa);
-  switch (x.sad->dtype) {
+  switch (x.sad->dtype)
+  {
 
   case atom:
   case idatom:
@@ -1348,7 +1377,7 @@ Void copyop()
   case idvariable:
   case nvariable:
   case fvariable:
-  case spec:   /* coord removed */
+  case spec: /* coord removed */
     gets1(&r1, &y.sa);
     *y.sad = *x.sad;
     v[base - 2] = r1;
@@ -1368,7 +1397,8 @@ Void copyop()
     *y.smld = *x.smld;
     v[base - 2] = r1;
     r2 = x.smld->next;
-    while (r2 != null_) {
+    while (r2 != null_)
+    {
       pointr(r2, &x.sa);
       gets5(&r3, &z.sa);
       *z.smld = *x.smld;
@@ -1376,33 +1406,31 @@ Void copyop()
       y.smld->next = r3;
       r1 = r3;
       r2 = z.smld->next;
-    }  /* while */
+    } /* while */
     break;
 
-  }/* case */
-_L99: ;   /* wyhod */
-}  /* copyop */
-
+  } /* case */
+_L99:; /* wyhod */
+} /* copyop */
 
 Void epilog()
 {
   long iii;
   longint dr, dw, dp;
 
-
-  for (iii = 0; iii < filenum; iii++) {
-    if (filetab[iii].isopen) {
+  for (iii = 0; iii < filenum; iii++)
+  {
+    if (filetab[iii].isopen)
+    {
       if (filetab[iii].screen)
-	putchar('\n');
-      else {
-	putc('\n', files[iii]);
-	if (files[iii] != NULL)
-	  fclose(files[iii]);
-	files[iii] = NULL;
+        putchar('\n');
+      else
+      {
+        putc('\n', files[iii]);
+        if (files[iii] != NULL)
+          fclose(files[iii]);
+        files[iii] = NULL;
       }
-
-
-
     }
   }
   printf("\n========== End of execution ==========\n");
@@ -1412,7 +1440,8 @@ Void epilog()
   vols(&dr, &dw, &dp);
   if (dr + dw + dp > 0)
     printf("S-Space :%12ld reads %12ld writes %12ld pages \n", dr, dw, dp);
-  if (out_open) {
+  if (out_open)
+  {
     if (out != NULL)
       fclose(out);
     out = NULL;
@@ -1420,9 +1449,7 @@ Void epilog()
 
   closea();
   closes();
-}  /* epilog */
-
-
+} /* epilog */
 
 Void eqop(o)
 long o;
@@ -1436,7 +1463,6 @@ long o;
   /*====================================*/
   boolean rez;
 
-
   getval(&v[base - 3]);
   getval(&v[base - 2]);
   eqop1(o, v[base - 3], v[base - 2], &rez);
@@ -1445,8 +1471,7 @@ long o;
   else
     v[base - 3] = null_;
   base--;
-}  /* eqop */
-
+} /* eqop */
 
 Void eqop1(o, a1, a2, rez1)
 long o, a1, a2;
@@ -1464,38 +1489,40 @@ boolean *rez1;
   boolean rez;
   ptr_ px, py;
 
-
-
   rez = true;
-  if (a2 == null_) {
+  if (a2 == null_)
+  {
     if (a1 == null_)
       goto _L1;
-    else {
+    else
+    {
       pointr(a1, &x.sa);
       rez = (((1L << ((long)x.smld->dtype)) &
-	      ((1L << ((long)listmain)) | (1L << ((long)treemain)))) != 0 &&
-	     x.smld->totalelnum == 0);
+              ((1L << ((long)listmain)) | (1L << ((long)treemain)))) != 0 &&
+             x.smld->totalelnum == 0);
       goto _L1;
     }
-  }  /* a2 =null */
+  } /* a2 =null */
   /* oba ne null */
 
   pointr(a2, &x.sa);
-  if (a1 == null_) {
+  if (a1 == null_)
+  {
     rez = (((1L << ((long)x.smld->dtype)) &
-	    ((1L << ((long)listmain)) | (1L << ((long)treemain)))) != 0 &&
-	   x.smld->totalelnum == 0);
+            ((1L << ((long)listmain)) | (1L << ((long)treemain)))) != 0 &&
+           x.smld->totalelnum == 0);
     goto _L1;
   }
   pointr(a1, &y.sa);
-  switch (x.smld->dtype) {
+  switch (x.smld->dtype)
+  {
 
   case variable:
   case idvariable:
   case nvariable:
   case fvariable:
   case spec:
-  case rulename:   /* coord removed */
+  case rulename: /* coord removed */
     rez = (memcmp(x.sc8, y.sc8, sizeof(atomdescriptor)) == 0);
     break;
 
@@ -1504,15 +1531,14 @@ boolean *rez1;
     rez = (y.snd->dtype == number && x.snd->val == y.snd->val);
     break;
 
-
-
   case atom:
   case idatom:
   case keyword:
   case tatom:
     rez = (((1L << ((long)y.sad->dtype)) & (((1L << ((long)keyword + 1)) -
-		(1L << ((long)atom))) | (1L << ((long)tatom)))) != 0 &&
-	   x.sad->name == y.sad->name);
+                                             (1L << ((long)atom))) |
+                                            (1L << ((long)tatom)))) != 0 &&
+           x.sad->name == y.sad->name);
     break;
 
   case fatom:
@@ -1521,43 +1547,46 @@ boolean *rez1;
 
   case listmain:
     rez = (x.smld->totalelnum == y.smld->totalelnum &&
-	   y.smld->dtype == listmain);
-    if (rez) {
+           y.smld->dtype == listmain);
+    if (rez)
+    {
       first(a1, &px);
       first(a2, &py);
-      while (rez && px.nel != 0) {
-	eqop1(o, px.cel, py.cel, &rez);
-	next(&px);
-	next(&py);
-      }  /* while */
+      while (rez && px.nel != 0)
+      {
+        eqop1(o, px.cel, py.cel, &rez);
+        next(&px);
+        next(&py);
+      } /* while */
     }
     break;
 
   case treemain:
     rez = (x.smtd->totalarcnum == y.smtd->totalarcnum &&
-	   y.smtd->dtype == treemain);
-    if (rez) {
+           y.smtd->dtype == treemain);
+    if (rez)
+    {
       first(a1, &px);
-      while (rez && px.nel != 0) {
-	first(a2, &py);
-	while (py.nel != 0 && px.UU.U1.arc != py.UU.U1.arc)
-	  next(&py);
-	if (py.nel == 0)
-	  rez = false;
-	else
-	  eqop1(o, px.cel, py.cel, &rez);
-	next(&px);
-      }  /* while */
+      while (rez && px.nel != 0)
+      {
+        first(a2, &py);
+        while (py.nel != 0 && px.UU.U1.arc != py.UU.U1.arc)
+          next(&py);
+        if (py.nel == 0)
+          rez = false;
+        else
+          eqop1(o, px.cel, py.cel, &rez);
+        next(&px);
+      } /* while */
     }
     break;
-  }/* case */
+  } /* case */
 _L1:
 
   *rez1 = rez;
 
   /* a2 <>null */
-}  /* eqop */
-
+} /* eqop */
 
 Void explode(kk, rez)
 long kk, *rez;
@@ -1567,7 +1596,7 @@ long kk, *rez;
   /*=====================================*/
   a s, k;
   mpd x;
-  longint l;   /* changed fron integer 17-nov-90 */
+  longint l; /* changed fron integer 17-nov-90 */
   string80 str_val;
   Char STR1[256];
   long FORLIM;
@@ -1577,9 +1606,10 @@ long kk, *rez;
     goto _L99;
 
   pointr(kk, &x.sa);
-  switch (x.sad->dtype) {
+  switch (x.sad->dtype)
+  {
 
-  case fatom:   /* added 17-feb-92 */
+  case fatom: /* added 17-feb-92 */
     real_to_string(str_val, take_fatom(x.sad->name));
     break;
 
@@ -1594,36 +1624,34 @@ long kk, *rez;
     aa_str(str_val, x.sad->name);
     break;
 
-
-
   default:
     goto _L99;
     break;
-  }/* case */
+  } /* case */
   /* w m sformirowan massiw simwolow */
-  s = null_;   /* rez.spisok */
+  s = null_; /* rez.spisok */
   FORLIM = strlen(str_val);
-  for (l = 0; l < FORLIM; l++) {
+  for (l = 0; l < FORLIM; l++)
+  {
     sprintf(STR1, "%c", str_val[l]);
     k = str_to_textatom(STR1);
     lconc(&s, k);
-  }  /* for */
+  } /* for */
   *rez = s;
-_L99: ;
-}  /* explode */
+_L99:;
+} /* explode */
 
-
-#define max_digit       10   /* maximum for longint type */
-
+#define max_digit 10 /* maximum for longint type */
 
 /* Local variables for implode: */
-struct LOC_implode {
+struct LOC_implode
+{
   bl80 m, m1;
   mpd x;
   a k;
-  long p1;   /* posledn.zanqtyj |l-t w m1 */
+  long p1; /* posledn.zanqtyj |l-t w m1 */
   string80 str_val;
-} ;
+};
 
 Local Void pass(pl, LINK)
 ptr_ *pl;
@@ -1632,87 +1660,103 @@ struct LOC_implode *LINK;
   ptr_ pl1;
   long t, l;
 
-  while (pl->nel != 0) {
+  while (pl->nel != 0)
+  {
     LINK->k = pl->cel;
-    if (LINK->k != null_) {
+    if (LINK->k != null_)
+    {
       pointr(LINK->k, &LINK->x.sa);
-      if (LINK->x.smld->dtype == listmain) {
-	first(LINK->k, &pl1);   /*, st */
-	pass(&pl1, LINK);
-      } else {  /* not list */
-	if (((1L << ((long)LINK->x.sad->dtype)) &
-	     ((1L << ((long)fatom + 1)) - (1L << ((long)atom)))) == 0)
-	  goto _L99;
+      if (LINK->x.smld->dtype == listmain)
+      {
+        first(LINK->k, &pl1); /*, st */
+        pass(&pl1, LINK);
+      }
+      else
+      { /* not list */
+        if (((1L << ((long)LINK->x.sad->dtype)) &
+             ((1L << ((long)fatom + 1)) - (1L << ((long)atom)))) == 0)
+          goto _L99;
 
-	if (LINK->x.sad->dtype == fatom) {   /* added 17-feb-92 */
-	  real_to_string(LINK->str_val, take_fatom(LINK->x.sad->name));
-	  l = strlen(LINK->str_val);
-	  if (LINK->p1 + l > 80) {
-	    err(25L);
-	    goto _L99;
-	  }
-	  for (t = 0; t < l; t++)
-	    LINK->m1[LINK->p1 + t] = LINK->str_val[t];
-	  LINK->p1 += l;
-	} else {
-	  if (((1L << ((long)LINK->x.sad->dtype)) &
-	       (((1L << ((long)keyword + 1)) - (1L << ((long)atom))) |
-		(1L << ((long)tatom)))) != 0) {
-	    /* wzqtx atom iz a-prostranstwa w m */
-	    LINK->k = LINK->x.sad->name;
-	    pointa(LINK->k, LINK->m, &l);   /* [1] ibm/pc */
-	    if (LINK->p1 + l > 80) {
-	      err(25L);
-	      goto _L99;
-	    }
-	    for (t = 0; t < l; t++)
-	      LINK->m1[LINK->p1 + t] = LINK->m[t];
-	    LINK->p1 += l;
-	  } else {  /* number */
-	    /*==============================*/
-	    /* perewesti ~islo w simwoly i  */
-	    /* pomestitx w m [1..max_digit]         */
-	    /*==============================*/
-	    LINK->k = LINK->x.snd->val;
-	    if (LINK->k < 0)   /* changed from abs call */
-	      LINK->k = -LINK->k;
-	    for (t = max_digit - 1; t >= 0; t--) {
-	      l = LINK->k % 10;
-/* p2c: erm.z, line 1925:
- * Note: Using % for possibly-negative arguments [317] */
-	      LINK->k /= 10;
-	      LINK->m[t] = (Char)(l + '0');
-	    }
-	    t = 1;
-	    while (t < max_digit && LINK->m[t - 1] == '0')
-	      t++;
-	    if (LINK->x.snd->val < 0) {
-	      if (LINK->p1 == 80) {
-		err(25L);
-		goto _L99;
-	      }
-	      LINK->p1++;
-	      LINK->m1[LINK->p1 - 1] = '-';
-	    }
-	    if (LINK->p1 + max_digit - t > 79) {
-	      err(25L);
-	      goto _L99;
-	    }
-	    for (l = t - 1; l < max_digit; l++) {
-	      LINK->p1++;
-	      LINK->m1[LINK->p1 - 1] = LINK->m[l];
-	    }
-	  }  /* number */
-	}
-      }  /* not list */
-    }  /* k<> null */
+        if (LINK->x.sad->dtype == fatom)
+        { /* added 17-feb-92 */
+          real_to_string(LINK->str_val, take_fatom(LINK->x.sad->name));
+          l = strlen(LINK->str_val);
+          if (LINK->p1 + l > 80)
+          {
+            err(25L);
+            goto _L99;
+          }
+          for (t = 0; t < l; t++)
+            LINK->m1[LINK->p1 + t] = LINK->str_val[t];
+          LINK->p1 += l;
+        }
+        else
+        {
+          if (((1L << ((long)LINK->x.sad->dtype)) &
+               (((1L << ((long)keyword + 1)) - (1L << ((long)atom))) |
+                (1L << ((long)tatom)))) != 0)
+          {
+            /* wzqtx atom iz a-prostranstwa w m */
+            LINK->k = LINK->x.sad->name;
+            pointa(LINK->k, LINK->m, &l); /* [1] ibm/pc */
+            if (LINK->p1 + l > 80)
+            {
+              err(25L);
+              goto _L99;
+            }
+            for (t = 0; t < l; t++)
+              LINK->m1[LINK->p1 + t] = LINK->m[t];
+            LINK->p1 += l;
+          }
+          else
+          { /* number */
+            /*==============================*/
+            /* perewesti ~islo w simwoly i  */
+            /* pomestitx w m [1..max_digit]         */
+            /*==============================*/
+            LINK->k = LINK->x.snd->val;
+            if (LINK->k < 0) /* changed from abs call */
+              LINK->k = -LINK->k;
+            for (t = max_digit - 1; t >= 0; t--)
+            {
+              l = LINK->k % 10;
+              /* p2c: erm.z, line 1925:
+               * Note: Using % for possibly-negative arguments [317] */
+              LINK->k /= 10;
+              LINK->m[t] = (Char)(l + '0');
+            }
+            t = 1;
+            while (t < max_digit && LINK->m[t - 1] == '0')
+              t++;
+            if (LINK->x.snd->val < 0)
+            {
+              if (LINK->p1 == 80)
+              {
+                err(25L);
+                goto _L99;
+              }
+              LINK->p1++;
+              LINK->m1[LINK->p1 - 1] = '-';
+            }
+            if (LINK->p1 + max_digit - t > 79)
+            {
+              err(25L);
+              goto _L99;
+            }
+            for (l = t - 1; l < max_digit; l++)
+            {
+              LINK->p1++;
+              LINK->m1[LINK->p1 - 1] = LINK->m[l];
+            }
+          } /* number */
+        }
+      } /* not list */
+    } /* k<> null */
     next(pl);
-  }  /* while */
-_L99: ;
+  } /* while */
+_L99:;
 
-
-}  /* pass */
-
+} /* pass */
 
 Void implode(pl, rez)
 ptr_ *pl;
@@ -1731,10 +1775,10 @@ long *rez;
   long FORLIM;
   atomdescriptor *WITH;
 
-
   V.p1 = 0;
   pass(pl, &V);
-  if (V.p1 == 0) {
+  if (V.p1 == 0)
+  {
     *rez = null_;
     return;
   }
@@ -1753,11 +1797,9 @@ long *rez;
   WITH->name = V.k;
 
   /* zapisatx nowyj atom w a-prostr. */
-
 }
 
 #undef max_digit
-
 
 Void indxop()
 {
@@ -1778,16 +1820,17 @@ Void indxop()
   boolean wasobject, mainlist;
   objdescriptor *WITH;
 
-
   getval(&v[base - 2]);
-  if (v[base - 2] == null_) {
+  if (v[base - 2] == null_)
+  {
     err(5L);
     v[base - 3] = null_;
     goto _L1;
   }
   /* proweritx, ~to x -~islo */
   pointr(v[base - 2], &x.sa);
-  if (x.snd->dtype != number) {
+  if (x.snd->dtype != number)
+  {
     err(3L);
     v[base - 3] = null_;
     goto _L1;
@@ -1796,14 +1839,16 @@ Void indxop()
   /* delete sign proc.*/
   wasobject = false;
   getval(&v[base - 3]);
-  if (v[base - 3] == null_)   /* rezulxtat= null */
+  if (v[base - 3] == null_) /* rezulxtat= null */
     goto _L1;
   /* opredelitx tip l */
   pointr(v[base - 3], &z.sa);
   if (z.smld->dtype == listmain)
     y = z;
-  else {
-    if (z.smld->dtype != object_d) {
+  else
+  {
+    if (z.smld->dtype != object_d)
+    {
       err(4L);
       v[base - 3] = null_;
       goto _L1;
@@ -1811,38 +1856,42 @@ Void indxop()
     wasobject = true;
     if (z.sobj->variable_)
       t = v[z.sobj->fragmorvar - 1];
-    else {
+    else
+    {
       t = z.sobj->fragmorvar;
       pointr(t, &x.sa);
-      switch (x.smld->dtype) {
+      switch (x.smld->dtype)
+      {
 
       case listmain:
       case listfragm:
-	t = x.sfld->elt[z.sobj->nel - 1];
-	break;
+        t = x.sfld->elt[z.sobj->nel - 1];
+        break;
 
       /* ****** very strange ******* */
       case treemain:
-	t = x.smtd->arc[z.sobj->nel - 1].elt;
-	break;
+        t = x.smtd->arc[z.sobj->nel - 1].elt;
+        break;
 
       case treefragm:
-	t = x.sftd->arc[z.sobj->nel - 1].elt;
-	break;
-      }/* case */
+        t = x.sftd->arc[z.sobj->nel - 1].elt;
+        break;
+      } /* case */
     }
     /* t ukazywaet na glawn. deskriptor spiska */
-    if (t == null_) {
+    if (t == null_)
+    {
       v[base - 3] = null_;
       goto _L1;
     }
     pointr(t, &y.sa);
-    if (y.smld->dtype != listmain) {
+    if (y.smld->dtype != listmain)
+    {
       err(4L);
       v[base - 3] = null_;
       goto _L1;
     }
-  }  /* object */
+  } /* object */
   /*============================================*/
   /* y ukazywaet na deskriptor glawnogo spiska  */
   /* z - na object, esli takoj byl              */
@@ -1851,7 +1900,8 @@ Void indxop()
   k = y.smld->totalelnum;
   if (n < 0)
     n += k + 1;
-  if (n < 1 || n > k) {
+  if (n < 1 || n > k)
+  {
     err(5L);
     /*  indeks wne spiska */
     v[base - 3] = null_;
@@ -1860,15 +1910,19 @@ Void indxop()
   /*================================*/
   /* poisk |l-ta spiska             */
   /*================================*/
-  if (n <= y.smld->elnum) {
+  if (n <= y.smld->elnum)
+  {
     mainlist = true;
     r = y.smld->elt[n - 1];
-  } else {
+  }
+  else
+  {
     mainlist = false;
     n -= y.smld->elnum;
     t = y.smld->next;
     pointr(t, &y.sa);
-    while (n > y.sfld->elnum) {
+    while (n > y.sfld->elnum)
+    {
       n -= y.sfld->elnum;
       t = y.sfld->next;
       pointr(t, &y.sa);
@@ -1876,7 +1930,8 @@ Void indxop()
     r = y.sfld->elt[n - 1];
   }
   /* w r rezulxtat = l [ x ]  */
-  if (wasobject) {
+  if (wasobject)
+  {
     points(v[base - 3], &z.sa);
     WITH = z.sobj;
     WITH->variable_ = false;
@@ -1884,16 +1939,15 @@ Void indxop()
       WITH->nel = n + 2;
     else
       WITH->nel = n;
-    WITH->fragmorvar = t;   /* with */
-  }  /* wasobject */
+    WITH->fragmorvar = t; /* with */
+  } /* wasobject */
   else
     v[base - 3] = r;
 _L1:
   base--;
 
   /* o{ibka */
-}  /* indxop */
-
+} /* indxop */
 
 Void nameop()
 {
@@ -1908,9 +1962,9 @@ Void nameop()
 
   mpd x, y;
 
-
   getval(&v[base - 2]);
-  if (v[base - 2] == null_) {
+  if (v[base - 2] == null_)
+  {
     v[base - 3] = null_;
     goto _L1;
   }
@@ -1918,12 +1972,14 @@ Void nameop()
   /* if v[base - 2] = null then
      goto 1; */
   /* deleted 23-1-1992 for null::<.a:b.> <> null */
-  if ((v[base - 3] & 511) != 0 || v[base - 3] >= 65536L || v[base - 3] < 0) {
+  if ((v[base - 3] & 511) != 0 || v[base - 3] >= 65536L || v[base - 3] < 0)
+  {
     pointr(v[base - 3], &y.sa);
     /*   dostup k atomu  */
     if (((1L << ((long)y.sad->dtype)) &
-	 (((1L << ((long)fatom + 1)) - (1L << ((long)atom))) |
-	  (1L << ((long)spec)))) == 0) {
+         (((1L << ((long)fatom + 1)) - (1L << ((long)atom))) |
+          (1L << ((long)spec)))) == 0)
+    {
       err(7L);
       v[base - 3] = null_;
       goto _L1;
@@ -1932,7 +1988,8 @@ Void nameop()
   points(v[base - 2], &x.sa);
   /*  polu~itx deskriptor spiska (derewa) */
   if (((1L << ((long)x.smld->dtype)) &
-       ((1L << ((long)listmain)) | (1L << ((long)treemain)))) == 0) {
+       ((1L << ((long)listmain)) | (1L << ((long)treemain)))) == 0)
+  {
     err(6L);
     v[base - 3] = null_;
     goto _L1;
@@ -1942,7 +1999,6 @@ Void nameop()
 _L1:
   base--;
 }
-
 
 Void prolog(y, debug, code)
 ptr_ *y;
@@ -2010,12 +2066,12 @@ long code;
 
   /* wojti w s-kod rigal */
   first(vs[0], y);
-  next(y);   /* mybase */
+  next(y); /* mybase */
   rez = y->cel;
   points(rez, &x.sa);
   mybase = base - 1;
   x.snd->val = mybase;
-  next(y);   /* ~islo lok.peremennyh */
+  next(y); /* ~islo lok.peremennyh */
   rez = y->cel;
   pointr(rez, &x.sa);
   base += x.snd->val + 1;
@@ -2030,16 +2086,7 @@ long code;
 
   printf("=========Start  of execution ==========\n");
 
-}  /* prolog */
-
-
-
-
-
-
-
-
-
+} /* prolog */
 
 Void selctr()
 {
@@ -2053,8 +2100,8 @@ Void selctr()
   /* wyhod */
 
   mpd x, y, z;
-  a n;   /* imq selektora */
-  a t, glavnder;   /* s-adr.glawn.derewa */
+  a n;           /* imq selektora */
+  a t, glavnder; /* s-adr.glawn.derewa */
   long ai, i;
   boolean wasobject;
   maintreedescriptor *WITH;
@@ -2062,16 +2109,17 @@ Void selctr()
   fragmtreedescriptor *WITH1;
   objdescriptor *WITH2;
 
-
   getval(&v[base - 2]);
-  if (v[base - 2] == null_) {
+  if (v[base - 2] == null_)
+  {
     err(21L);
     v[base - 3] = null_;
     goto _L1;
   }
   /* prowerim, ~to x -ne~islowoj atom */
   pointr(v[base - 2], &x.sa);
-  if (x.sad->dtype != idatom) {
+  if (x.sad->dtype != idatom)
+  {
     err(22L);
     v[base - 3] = null_;
     goto _L1;
@@ -2087,8 +2135,10 @@ Void selctr()
   pointr(v[base - 3], &z.sa);
   if (z.smtd->dtype == treemain)
     y = z;
-  else {
-    if (z.smtd->dtype != object_d) {
+  else
+  {
+    if (z.smtd->dtype != object_d)
+    {
       err(23L);
       v[base - 3] = null_;
       goto _L1;
@@ -2097,33 +2147,37 @@ Void selctr()
     wasobject = true;
     if (z.sobj->variable_)
       t = v[z.sobj->fragmorvar - 1];
-    else {
+    else
+    {
       t = z.sobj->fragmorvar;
       pointr(t, &x.sa);
-      switch (x.smld->dtype) {
+      switch (x.smld->dtype)
+      {
 
       case listmain:
       case listfragm:
-	t = x.sfld->elt[z.sobj->nel - 1];
-	break;
+        t = x.sfld->elt[z.sobj->nel - 1];
+        break;
 
       case treemain:
-	t = x.smtd->arc[z.sobj->nel - 1].elt;
-	break;
+        t = x.smtd->arc[z.sobj->nel - 1].elt;
+        break;
 
       case treefragm:
-	t = x.sftd->arc[z.sobj->nel - 1].elt;
-	break;
-      }/* case */
+        t = x.sftd->arc[z.sobj->nel - 1].elt;
+        break;
+      } /* case */
     }
-    if (t == null_) {
+    if (t == null_)
+    {
       v[base - 3] = null_;
       goto _L1;
     }
     /* added 20-jul-1989 in pc/at from 10-jul-89 on vax */
 
     pointr(t, &y.sa);
-    if (y.smtd->dtype != treemain) {
+    if (y.smtd->dtype != treemain)
+    {
       err(23L);
       v[base - 3] = null_;
       goto _L1;
@@ -2135,14 +2189,16 @@ Void selctr()
   /*  z  na object, esli takoj byl       */
   /*  t  na deskr.glawn. derewa          */
   /*=====================================*/
-  glavnder = t;   /* sna~ala w glawnom derewe */
+  glavnder = t; /* sna~ala w glawnom derewe */
   /* wy~islenie y.x               */
   /* poisk selektora n w derewe y */
 
-  WITH = y.smtd;   /* with */
+  WITH = y.smtd; /* with */
   FORLIM = WITH->arcnum;
-  for (i = 1; i <= FORLIM; i++) {
-    if (WITH->arc[i - 1].arcname == n) {   /* na{li */
+  for (i = 1; i <= FORLIM; i++)
+  {
+    if (WITH->arc[i - 1].arcname == n)
+    { /* na{li */
       ai = i;
       n = WITH->arc[i - 1].elt;
       goto _L2;
@@ -2150,30 +2206,34 @@ Void selctr()
   }
   t = WITH->next;
   /* prodolvaem poisk w fragmentah */
-  while (t != null_) {
+  while (t != null_)
+  {
     pointr(t, &y.sa);
     WITH1 = y.sftd;
     FORLIM = WITH1->arcnum;
-    for (i = 1; i <= FORLIM; i++) {
-      if (WITH1->arc[i - 1].arcname == n) {   /* na{li */
-	ai = i;
-	n = WITH1->arc[i - 1].elt;
-	goto _L2;
+    for (i = 1; i <= FORLIM; i++)
+    {
+      if (WITH1->arc[i - 1].arcname == n)
+      { /* na{li */
+        ai = i;
+        n = WITH1->arc[i - 1].elt;
+        goto _L2;
       }
     }
-    t = WITH1->next;   /* with */
-  }  /* while */
+    t = WITH1->next; /* with */
+  } /* while */
 
   /* ne na{li !  */
   v[base - 3] = null_;
   goto _L1;
-_L2:   /* na{li */
+_L2: /* na{li */
   /*==============================*/
   /* w n -rezulxtat t.x           */
   /* w ai -nomer w arc[...]       */
   /* w t  -s-ssylka na fragment   */
   /*==============================*/
-  if (wasobject) {
+  if (wasobject)
+  {
     points(v[base - 3], &z.sa);
     WITH2 = z.sobj;
     WITH2->variable_ = false;
@@ -2181,7 +2241,7 @@ _L2:   /* na{li */
     WITH2->fragmorvar = t;
     WITH2->glavn = glavnder;
     /* with */
-  }  /* wasobject */
+  } /* wasobject */
   else
     v[base - 3] = n;
 _L1:
@@ -2189,8 +2249,7 @@ _L1:
 
   /* t ukazywaet na glawn.deskriptor derewa */
   /* o{ibka */
-}  /* selctr */
-
+} /* selctr */
 
 Void int11(debug, code)
 boolean debug;
@@ -2205,13 +2264,13 @@ long code;
   /* osnownoj cikl */
 
   success = true;
-  while (y.cel != null_ && continue_) {
+  while (y.cel != null_ && continue_)
+  {
     statement(y.cel, &success, &rez);
     next(&y);
   }
   epilog();
 }
-
 
 Void push()
 {
@@ -2221,9 +2280,12 @@ Void push()
   /*========================================*/
   base++;
   if (base > varnum)
-     {err(1L); epilog();exit(1); } /* VADIM CHANGED 8/6/95 */
+  {
+    err(1L);
+    epilog();
+    exit(1);
+  } /* VADIM CHANGED 8/6/95 */
 }
-
 
 Void pratom(aa_)
 long aa_;
@@ -2234,15 +2296,15 @@ long aa_;
   a k;
 
   k = aa_;
-  pointa(k, m, &l);   /* ibm/pc [1] */
-  for (s = 0; s < l; s++) {
+  pointa(k, m, &l); /* ibm/pc [1] */
+  for (s = 0; s < l; s++)
+  {
     if (out_screen)
       putchar(m[s]);
     else
       putc(m[s], out);
   }
-}  /* pratom */
-
+} /* pratom */
 
 Void prblt(nn)
 long nn;
@@ -2254,7 +2316,8 @@ long nn;
 
   pointr(nn, &x.sa);
   bn = x.snd->val;
-  switch (bn) {
+  switch (bn)
+  {
 
   case 1:
     strcpy(rn, "#IMPLODE");
@@ -2359,13 +2422,12 @@ long nn;
   case 26:
     strcpy(rn, "#CALL_PAS");
     break;
-  }/* case */
+  } /* case */
   if (out_screen)
     fputs(rn, stdout);
   else
     fputs(rn, out);
-}  /* prblt */
-
+} /* prblt */
 
 Void srchrule(rd, pp)
 long rd;
@@ -2392,10 +2454,10 @@ ptr_ *pp;
   a v1, v, name;
   ruledescriptor *WITH;
 
-
   pointr(rd, &x.sa);
   /* polu~itx deskriptor #l */
-  if (x.srd->fragmadr == 0) {
+  if (x.srd->fragmadr == 0)
+  {
     /* nuven poisk w spiske programmy */
     name = x.srd->name;
     v1 = x.srd->nomintab;
@@ -2405,21 +2467,23 @@ ptr_ *pp;
                           programmy */
     v = y.cel;
     pointr(v, &z.sa);
-    while (z.srd->name != name) {
+    while (z.srd->name != name)
+    {
       while (y.cel != 0)
-	next(&y);
+        next(&y);
       next(&y);
       v = y.cel;
       pointr(v, &z.sa);
-    }  /* #l najden */
+    } /* #l najden */
     next(&y);
     /* y na "base  prawila #l"    */
     /* zapisatx informaci` w deskriptor #l */
     points(v1, &x.sa);
     x.srd->fragmadr = y.UU.U1.curfragment;
     x.srd->nomintab = y.nel;
-  }  /* poisk */
-  else {
+  } /* poisk */
+  else
+  {
     /* w deskriptore #l estx ssylka na spisok
            programmy*/
     v = x.srd->fragmadr;
@@ -2434,8 +2498,7 @@ ptr_ *pp;
     y.UU.U1.curfragment = WITH->fragmadr;
   }
   *pp = y;
-}  /* srchrule */
-
+} /* srchrule */
 
 Void srchrule1(rd, pp)
 long rd;
@@ -2462,10 +2525,10 @@ ptr_ *pp;
   a v, name;
   ruledescriptor *WITH;
 
-
   pointr(rd, &x.sa);
   /* polu~itx deskriptor #l */
-  if (x.srd->fragmadr == 0) {
+  if (x.srd->fragmadr == 0)
+  {
     /* nuven poisk w spiske programmy */
     name = x.srd->name;
     first(vs[0], &y);
@@ -2473,21 +2536,23 @@ ptr_ *pp;
                           programmy */
     v = y.cel;
     pointr(v, &z.sa);
-    while (z.srd->name != name) {
+    while (z.srd->name != name)
+    {
       while (y.cel != 0)
-	next(&y);
+        next(&y);
       next(&y);
       v = y.cel;
       pointr(v, &z.sa);
-    }  /* #l najden */
+    } /* #l najden */
     next(&y);
     /* y na "base  prawila #l"    */
     /* zapisatx informaci` w deskriptor #l */
     points(rd, &x.sa);
     x.srd->fragmadr = y.UU.U1.curfragment;
     x.srd->nomintab = y.nel;
-  }  /* poisk */
-  else {
+  } /* poisk */
+  else
+  {
     /* w deskriptore #l estx ssylka na spisok
            programmy*/
     v = x.srd->fragmadr;
@@ -2502,8 +2567,7 @@ ptr_ *pp;
     y.UU.U1.curfragment = WITH->fragmadr;
   }
   *pp = y;
-}  /* srchrule */
-
+} /* srchrule */
 
 Void lastop()
 {
@@ -2518,24 +2582,22 @@ Void lastop()
   mpd x;
   a k;
 
-
   srchrule(v[base - 3], &p);
   /*   p ukaz. na sled.posle #l |l-t w tabl.prawil*/
   k = p.cel;
   pointr(k, &x.sa);
   /*  polu~itx dostup k base poslednego wyzowa #l */
   k = x.snd->val;
-  if (k >= 0) {   /* change from x.snd^.sign=true 3-oct-89 */
+  if (k >= 0)
+  { /* change from x.snd^.sign=true 3-oct-89 */
     pointr(v[base - 2], &x.sa);
     /* polu~itx dostup k deskr.$e  */
     v[base - 3] = v[k + x.svd->location - 1];
-  } else
+  }
+  else
     v[base - 3] = null_;
-  base--;   /* osw.stek */
-}  /* lastop */
-
-
-
+  base--; /* osw.stek */
+} /* lastop */
 
 Static Void errstrmes(n, m)
 long n;
@@ -2543,11 +2605,12 @@ Char *m;
 {
   Char STR2[130];
 
-  switch (n) {
+  switch (n)
+  {
 
   case 1:
     sprintf(m, "Interpreter stack size overflow (stack size = %d);",
-	    varnum);
+            varnum);
     break;
 
   case 2:
@@ -2646,14 +2709,11 @@ Char *m;
     strcpy(m, "\"BRANCHES\" option cannot be used for lists ");
     break;
 
-
-
   default:
     strcpy(m, "Unknown error");
     break;
   }
 }
-
 
 Void err(n)
 long n;
@@ -2667,8 +2727,7 @@ long n;
   if (out_open)
     fprintf(out, "%s\n", m);
   puts(m);
-}  /* err */
-
+} /* err */
 
 Void errstr(n, s)
 long n;
@@ -2683,8 +2742,7 @@ Char *s;
   if (out_open)
     fprintf(out, "%s\n", m);
   puts(m);
-}  /* err */
-
+} /* err */
 
 Void getval(m)
 long *m;
@@ -2698,7 +2756,6 @@ long *m;
   /*========================================*/
   mpd x;
 
-
   if (((*m) & 511) == 0 && *m < 65535L && *m >= 0)
     return;
   pointr(*m, &x.sa);
@@ -2707,7 +2764,5 @@ long *m;
       !x.svd->guard)
     *m = v[mybase + x.svd->location - 1];
 }
-
-
 
 /* End. */

@@ -4,17 +4,15 @@
 #include "ley.h"
 #include "nef2.h"
 
-
-
-#define sh_depth        2
-
+#define sh_depth 2
 
 /* Local variables for pscr: */
-struct LOC_pscr {
+struct LOC_pscr
+{
   mpd x;
   long shift;
   bl80 str80;
-} ;
+};
 
 Local long sh_atom(atm, LINK)
 long atm;
@@ -36,20 +34,24 @@ struct LOC_pscr *LINK;
   long Result, sum;
   ptr_ pp;
 
-  if (root == 0) {
+  if (root == 0)
+  {
     Result = 5;
     goto _L99;
   }
-  if ((root & 511) == 0 && root < 65536L && root >= 0) {
+  if ((root & 511) == 0 && root < 65536L && root >= 0)
+  {
     Result = 8;
     goto _L99;
   }
   pointr(root, &LINK->x.sa);
-  switch (LINK->x.sad->dtype) {   /* with */
+  switch (LINK->x.sad->dtype)
+  { /* with */
 
   case listmain:
     LINK->shift += sh_depth;
-    if (LINK->shift / sh_depth > max_printlevel) {
+    if (LINK->shift / sh_depth > max_printlevel)
+    {
       Result = 12;
       LINK->shift -= sh_depth;
       goto _L99;
@@ -58,12 +60,14 @@ struct LOC_pscr *LINK;
     if (LINK->x.smld->name != 0)
       sum += sh_rec(LINK->x.smld->name, LINK) + 1;
     first(root, &pp);
-    while (pp.nel != 0) {
+    while (pp.nel != 0)
+    {
       sum += sh_rec(pp.cel, LINK);
-      if (sum > 150) {
-	Result = sum;
-	LINK->shift -= sh_depth;
-	goto _L99;
+      if (sum > 150)
+      {
+        Result = sum;
+        LINK->shift -= sh_depth;
+        goto _L99;
       }
       next(&pp);
     }
@@ -73,7 +77,8 @@ struct LOC_pscr *LINK;
 
   case treemain:
     LINK->shift += sh_depth;
-    if (LINK->shift / sh_depth > max_printlevel) {
+    if (LINK->shift / sh_depth > max_printlevel)
+    {
       Result = 12;
       LINK->shift -= sh_depth;
       goto _L99;
@@ -82,12 +87,14 @@ struct LOC_pscr *LINK;
     if (LINK->x.smtd->name != 0)
       sum += sh_rec(LINK->x.smtd->name, LINK) + 2;
     first(root, &pp);
-    while (pp.nel != 0) {
+    while (pp.nel != 0)
+    {
       sum += sh_atom(pp.UU.U1.arc, LINK) + sh_rec(pp.cel, LINK) + 2;
-      if (sum > 150) {
-	Result = sum;
-	LINK->shift -= sh_depth;
-	goto _L99;
+      if (sum > 150)
+      {
+        Result = sum;
+        LINK->shift -= sh_depth;
+        goto _L99;
       }
       next(&pp);
     }
@@ -109,11 +116,12 @@ struct LOC_pscr *LINK;
   case number:
     if (LINK->x.snd->val > 65536L)
       Result = 10;
-    else {
+    else
+    {
       if (LINK->x.snd->val > 99)
-	Result = 5;
+        Result = 5;
       else
-	Result = 2;
+        Result = 2;
     }
     break;
 
@@ -128,16 +136,13 @@ struct LOC_pscr *LINK;
     Result = sh_atom(LINK->x.srd->name, LINK) + 1;
     break;
 
-
-
   default:
     Result = 80;
     break;
-  }/* case */
+  } /* case */
 _L99:
   return Result;
 }
-
 
 Local boolean is_short(root, LINK)
 long root;
@@ -156,13 +161,13 @@ struct LOC_pscr *LINK;
   long ilen, i;
 
   pointa(un, LINK->str80, &ilen);
-  for (i = 0; i < ilen; i++) {
+  for (i = 0; i < ilen; i++)
+  {
     putchar(LINK->str80[i]);
     if (LINK->str80[i] == '\'')
       putchar('\'');
   }
 }
-
 
 Local Void poutrec(root, sm, LINK)
 long root;
@@ -173,25 +178,30 @@ struct LOC_pscr *LINK;
   ptr_ pp;
   boolean nofirstflag, treenamed;
 
-  if (!sm) {
-    if (is_short(root, LINK)) {
+  if (!sm)
+  {
+    if (is_short(root, LINK))
+    {
       poutrec(root, true, LINK);
       goto _L99;
     }
   }
 
-  if (root == 0) {
+  if (root == 0)
+  {
     printf(" NULL ");
     goto _L99;
   }
-  if ((root & 511) == 0 && root < 65536L && root >= 0) {
+  if ((root & 511) == 0 && root < 65536L && root >= 0)
+  {
     printf(" a'%5ld ", root);
     goto _L99;
   }
 
   pointr(root, &LINK->x.sa);
   /* write( ' '); */
-  switch (LINK->x.sad->dtype) {   /* with */
+  switch (LINK->x.sad->dtype)
+  { /* with */
 
   case listmain:
     if (!sm)
@@ -201,40 +211,46 @@ struct LOC_pscr *LINK;
       printf("%*s", (int)LINK->shift, "  ");
     /* pe~atx spiska - pe~atx zagolowka,
        ustanowka na perwyj |lement, */
-    if (LINK->x.smld->name != 0) {
+    if (LINK->x.smld->name != 0)
+    {
       poutrec(LINK->x.smld->name, sm, LINK);
       printf("::");
       if (!sm)
-	putchar('\n');
+        putchar('\n');
       if (!sm)
-	printf("%*s", (int)LINK->shift, "  ");
+        printf("%*s", (int)LINK->shift, "  ");
     }
     printf("(.");
-    if (LINK->shift / sh_depth > max_printlevel) {
+    if (LINK->shift / sh_depth > max_printlevel)
+    {
       printf(" .. .)");
       if (!sm)
-	putchar('\n');
-    } else {
+        putchar('\n');
+    }
+    else
+    {
       first(root, &pp);
-      while (pp.nel != 0) {
-	poutrec(pp.cel, sm, LINK);
-	next(&pp);
+      while (pp.nel != 0)
+      {
+        poutrec(pp.cel, sm, LINK);
+        next(&pp);
 
-	if (pp.nel == mainlistelnum) {
-	  putchar('\n');
-	  if (!sm)
-	    printf("%*s", (int)(LINK->shift + sh_depth), "   ");
-	}
-	putchar(' ');
+        if (pp.nel == mainlistelnum)
+        {
+          putchar('\n');
+          if (!sm)
+            printf("%*s", (int)(LINK->shift + sh_depth), "   ");
+        }
+        putchar(' ');
       }
 
       if (!sm)
-	putchar('\n');
+        putchar('\n');
       if (!sm)
-	printf("%*s", (int)LINK->shift, "  ");
+        printf("%*s", (int)LINK->shift, "  ");
       printf(".)");
       if (!sm)
-	putchar('\n');
+        putchar('\n');
     }
     if (!sm)
       printf("%*c", (int)LINK->shift, ' ');
@@ -248,40 +264,44 @@ struct LOC_pscr *LINK;
     if (!sm)
       printf("%*c", (int)LINK->shift, ' ');
     treenamed = false;
-    if (LINK->x.smtd->name != 0) {
+    if (LINK->x.smtd->name != 0)
+    {
       treenamed = true;
       poutrec(LINK->x.smtd->name, sm, LINK);
       printf("::");
       if (!sm)
-	putchar('\n');
+        putchar('\n');
       if (!sm)
-	printf("%*c", (int)LINK->shift, ' ');
+        printf("%*c", (int)LINK->shift, ' ');
     }
     if (LINK->shift / sh_depth > max_printlevel)
       printf("<. .. .>\n");
-    else {
+    else
+    {
       printf("<.");
       first(root, &pp);
       nofirstflag = false;
-      while (pp.nel != 0) {
-	if (nofirstflag) {
-	  putchar(',');
-	  if (!sm)
-	    putchar('\n');
-	  if (!sm)
-	    printf("%*c", (int)(LINK->shift + sh_depth), ' ');
-	}
-	nofirstflag = true;
-	/* pe~atx |lementow derewa */
-	printunit(pp.UU.U1.arc, LINK);
-	putchar(':');
-	poutrec(pp.cel, sm, LINK);
-	next(&pp);
+      while (pp.nel != 0)
+      {
+        if (nofirstflag)
+        {
+          putchar(',');
+          if (!sm)
+            putchar('\n');
+          if (!sm)
+            printf("%*c", (int)(LINK->shift + sh_depth), ' ');
+        }
+        nofirstflag = true;
+        /* pe~atx |lementow derewa */
+        printunit(pp.UU.U1.arc, LINK);
+        putchar(':');
+        poutrec(pp.cel, sm, LINK);
+        next(&pp);
       }
       if (!sm)
-	putchar('\n');
+        putchar('\n');
       if (!sm)
-	printf("%*c", (int)LINK->shift, ' ');
+        printf("%*c", (int)LINK->shift, ' ');
       printf(".>");
     }
     LINK->shift -= sh_depth;
@@ -301,8 +321,8 @@ struct LOC_pscr *LINK;
     break;
 
   case fatom:
-/*    printf("% .5E", take_fatom(LINK->x.sad->name));*/
-    printf("%E",take_fatom(LINK->x.sad->name));
+    /*    printf("% .5E", take_fatom(LINK->x.sad->name));*/
+    printf("%E", take_fatom(LINK->x.sad->name));
     break;
 
   case number:
@@ -331,25 +351,18 @@ struct LOC_pscr *LINK;
     printf("aspec'%6ld", LINK->x.sspec->val);
     break;
 
-
-
-
   default:
     printf("--/ ?? /--");
     break;
-  }/* case */
-_L99: ;
+  } /* case */
+_L99:;
 
-
-}  /* poutrec */
-
+} /* poutrec */
 
 /*procedure pscr(xxx:a); begin end;*/
 /* #include "p4.inc" */
 /* #include "pscr.pas" */
 /*  #include "poutx.pas"  */
-
-
 
 /* ********************* pscr_.pas ******************* */
 /* only procedure text/ implementation part of poutlexu */
@@ -360,24 +373,24 @@ long root;
   /* have some local procedures */
   struct LOC_pscr V;
 
-  if (true) {   /*out_open*/
-    V.shift = 0;   /* sdwig ot lewogo kraq stroki wywoda */
+  if (true)
+  {              /*out_open*/
+    V.shift = 0; /* sdwig ot lewogo kraq stroki wywoda */
     poutrec(root, false, &V);
-  }  /* wyzow rekursiwnoj ~asti iz postoqnnoj pout */
+  } /* wyzow rekursiwnoj ~asti iz postoqnnoj pout */
 }
 
 #undef sh_depth
 
-
-#define sh_depth        2
-
+#define sh_depth 2
 
 /* Local variables for pout: */
-struct LOC_pout {
+struct LOC_pout
+{
   mpd x;
   long shift;
   bl80 str80;
-} ;
+};
 
 Local long sh_atom_(atm, LINK)
 long atm;
@@ -399,20 +412,24 @@ struct LOC_pout *LINK;
   long Result, sum;
   ptr_ pp;
 
-  if (root == 0) {
+  if (root == 0)
+  {
     Result = 5;
     goto _L99;
   }
-  if ((root & 511) == 0 && root < 65536L && root >= 0) {
+  if ((root & 511) == 0 && root < 65536L && root >= 0)
+  {
     Result = 8;
     goto _L99;
   }
   pointr(root, &LINK->x.sa);
-  switch (LINK->x.sad->dtype) {   /* with */
+  switch (LINK->x.sad->dtype)
+  { /* with */
 
   case listmain:
     LINK->shift += sh_depth;
-    if (LINK->shift / sh_depth > max_printlevel) {
+    if (LINK->shift / sh_depth > max_printlevel)
+    {
       Result = 12;
       LINK->shift -= sh_depth;
       goto _L99;
@@ -421,12 +438,14 @@ struct LOC_pout *LINK;
     if (LINK->x.smld->name != 0)
       sum += sh_rec_(LINK->x.smld->name, LINK) + 1;
     first(root, &pp);
-    while (pp.nel != 0) {
+    while (pp.nel != 0)
+    {
       sum += sh_rec_(pp.cel, LINK);
-      if (sum > 150) {
-	Result = sum;
-	LINK->shift -= sh_depth;
-	goto _L99;
+      if (sum > 150)
+      {
+        Result = sum;
+        LINK->shift -= sh_depth;
+        goto _L99;
       }
       next(&pp);
     }
@@ -436,7 +455,8 @@ struct LOC_pout *LINK;
 
   case treemain:
     LINK->shift += sh_depth;
-    if (LINK->shift / sh_depth > max_printlevel) {
+    if (LINK->shift / sh_depth > max_printlevel)
+    {
       Result = 12;
       LINK->shift -= sh_depth;
       goto _L99;
@@ -445,12 +465,14 @@ struct LOC_pout *LINK;
     if (LINK->x.smtd->name != 0)
       sum += sh_rec_(LINK->x.smtd->name, LINK) + 2;
     first(root, &pp);
-    while (pp.nel != 0) {
+    while (pp.nel != 0)
+    {
       sum += sh_atom_(pp.UU.U1.arc, LINK) + sh_rec_(pp.cel, LINK) + 2;
-      if (sum > 150) {
-	Result = sum;
-	LINK->shift -= sh_depth;
-	goto _L99;
+      if (sum > 150)
+      {
+        Result = sum;
+        LINK->shift -= sh_depth;
+        goto _L99;
       }
       next(&pp);
     }
@@ -472,11 +494,12 @@ struct LOC_pout *LINK;
   case number:
     if (LINK->x.snd->val > 65536L)
       Result = 10;
-    else {
+    else
+    {
       if (LINK->x.snd->val > 99)
-	Result = 5;
+        Result = 5;
       else
-	Result = 2;
+        Result = 2;
     }
     break;
 
@@ -491,15 +514,13 @@ struct LOC_pout *LINK;
     Result = sh_atom_(LINK->x.srd->name, LINK) + 1;
     break;
 
-
   default:
     Result = 80;
     break;
-  }/* case */
+  } /* case */
 _L99:
   return Result;
 }
-
 
 Local boolean is_short_(root, LINK)
 long root;
@@ -518,13 +539,13 @@ struct LOC_pout *LINK;
   long ilen, i;
 
   pointa(un, LINK->str80, &ilen);
-  for (i = 0; i < ilen; i++) {
+  for (i = 0; i < ilen; i++)
+  {
     putc(LINK->str80[i], out);
     if (LINK->str80[i] == '\'')
       putc('\'', out);
   }
 }
-
 
 Local Void poutrec_(root, sm, LINK)
 long root;
@@ -535,25 +556,30 @@ struct LOC_pout *LINK;
   ptr_ pp;
   boolean nofirstflag, treenamed;
 
-  if (!sm) {
-    if (is_short_(root, LINK)) {
+  if (!sm)
+  {
+    if (is_short_(root, LINK))
+    {
       poutrec_(root, true, LINK);
       goto _L99;
     }
   }
 
-  if (root == 0) {
+  if (root == 0)
+  {
     fprintf(out, " NULL ");
     goto _L99;
   }
-  if ((root & 511) == 0 && root < 65536L && root >= 0) {
+  if ((root & 511) == 0 && root < 65536L && root >= 0)
+  {
     fprintf(out, " a'%5ld ", root);
     goto _L99;
   }
 
   pointr(root, &LINK->x.sa);
   /* write(out, ' '); */
-  switch (LINK->x.sad->dtype) {   /* with */
+  switch (LINK->x.sad->dtype)
+  { /* with */
 
   case listmain:
     if (!sm)
@@ -563,40 +589,46 @@ struct LOC_pout *LINK;
       fprintf(out, "%*s", (int)LINK->shift, "  ");
     /* pe~atx spiska - pe~atx zagolowka,
        ustanowka na perwyj |lement, */
-    if (LINK->x.smld->name != 0) {
+    if (LINK->x.smld->name != 0)
+    {
       poutrec_(LINK->x.smld->name, sm, LINK);
       fprintf(out, "::");
       if (!sm)
-	putc('\n', out);
+        putc('\n', out);
       if (!sm)
-	fprintf(out, "%*s", (int)LINK->shift, "  ");
+        fprintf(out, "%*s", (int)LINK->shift, "  ");
     }
     fprintf(out, "(.");
-    if (LINK->shift / sh_depth > max_printlevel) {
+    if (LINK->shift / sh_depth > max_printlevel)
+    {
       fprintf(out, " .. .)");
       if (!sm)
-	putc('\n', out);
-    } else {
+        putc('\n', out);
+    }
+    else
+    {
       first(root, &pp);
-      while (pp.nel != 0) {
-	poutrec_(pp.cel, sm, LINK);
-	next(&pp);
+      while (pp.nel != 0)
+      {
+        poutrec_(pp.cel, sm, LINK);
+        next(&pp);
 
-	if (pp.nel == mainlistelnum) {
-	  putc('\n', out);
-	  if (!sm)
-	    fprintf(out, "%*s", (int)(LINK->shift + sh_depth), "   ");
-	}
-	putc(' ', out);
+        if (pp.nel == mainlistelnum)
+        {
+          putc('\n', out);
+          if (!sm)
+            fprintf(out, "%*s", (int)(LINK->shift + sh_depth), "   ");
+        }
+        putc(' ', out);
       }
 
       if (!sm)
-	putc('\n', out);
+        putc('\n', out);
       if (!sm)
-	fprintf(out, "%*s", (int)LINK->shift, "  ");
+        fprintf(out, "%*s", (int)LINK->shift, "  ");
       fprintf(out, ".)");
       if (!sm)
-	putc('\n', out);
+        putc('\n', out);
     }
     if (!sm)
       fprintf(out, "%*c", (int)LINK->shift, ' ');
@@ -610,40 +642,44 @@ struct LOC_pout *LINK;
     if (!sm)
       fprintf(out, "%*c", (int)LINK->shift, ' ');
     treenamed = false;
-    if (LINK->x.smtd->name != 0) {
+    if (LINK->x.smtd->name != 0)
+    {
       treenamed = true;
       poutrec_(LINK->x.smtd->name, sm, LINK);
       fprintf(out, "::");
       if (!sm)
-	putc('\n', out);
+        putc('\n', out);
       if (!sm)
-	fprintf(out, "%*c", (int)LINK->shift, ' ');
+        fprintf(out, "%*c", (int)LINK->shift, ' ');
     }
     if (LINK->shift / sh_depth > max_printlevel)
       fprintf(out, "<. .. .>\n");
-    else {
+    else
+    {
       fprintf(out, "<.");
       first(root, &pp);
       nofirstflag = false;
-      while (pp.nel != 0) {
-	if (nofirstflag) {
-	  putc(',', out);
-	  if (!sm)
-	    putc('\n', out);
-	  if (!sm)
-	    fprintf(out, "%*c", (int)(LINK->shift + sh_depth), ' ');
-	}
-	nofirstflag = true;
-	/* pe~atx |lementow derewa */
-	printunit_(pp.UU.U1.arc, LINK);
-	putc(':', out);
-	poutrec_(pp.cel, sm, LINK);
-	next(&pp);
+      while (pp.nel != 0)
+      {
+        if (nofirstflag)
+        {
+          putc(',', out);
+          if (!sm)
+            putc('\n', out);
+          if (!sm)
+            fprintf(out, "%*c", (int)(LINK->shift + sh_depth), ' ');
+        }
+        nofirstflag = true;
+        /* pe~atx |lementow derewa */
+        printunit_(pp.UU.U1.arc, LINK);
+        putc(':', out);
+        poutrec_(pp.cel, sm, LINK);
+        next(&pp);
       }
       if (!sm)
-	putc('\n', out);
+        putc('\n', out);
       if (!sm)
-	fprintf(out, "%*c", (int)LINK->shift, ' ');
+        fprintf(out, "%*c", (int)LINK->shift, ' ');
       fprintf(out, ".>");
     }
     LINK->shift -= sh_depth;
@@ -667,9 +703,8 @@ struct LOC_pout *LINK;
     break;
 
   case fatom:
-    fprintf(out,"%E", take_fatom(LINK->x.sad->name));
+    fprintf(out, "%E", take_fatom(LINK->x.sad->name));
     break;
-
 
   case variable:
   case idvariable:
@@ -696,16 +731,13 @@ struct LOC_pout *LINK;
     fprintf(out, "aspec'%6ld", LINK->x.sspec->val);
     break;
 
-
   default:
     fprintf(out, "--/ ?? /--");
     break;
-  }/* case */
-_L99: ;
+  } /* case */
+_L99:;
 
-
-}  /* poutrec */
-
+} /* poutrec */
 
 /* ********************* poutx.pas ******************* */
 /* only procedure text/ implementation part of poutlexu */
@@ -716,14 +748,13 @@ long root;
   /* have some local procedures */
   struct LOC_pout V;
 
-  if (out_open) {
-    V.shift = 0;   /* sdwig ot lewogo kraq stroki wywoda */
+  if (out_open)
+  {
+    V.shift = 0; /* sdwig ot lewogo kraq stroki wywoda */
     poutrec_(root, false, &V);
-  }  /* wyzow rekursiwnoj ~asti iz postoqnnoj pout */
+  } /* wyzow rekursiwnoj ~asti iz postoqnnoj pout */
 }
 
 #undef sh_depth
-
-
 
 /* End. */

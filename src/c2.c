@@ -4,7 +4,6 @@
 #include "nef2.h"
 #include "c1.h"
 
-
 Void addnum(a1, a2)
 long *a1, a2;
 {
@@ -14,23 +13,25 @@ long *a1, a2;
   mpd x;
   numberdescriptor *WITH;
 
-
-  if (*a1 == null_) {
+  if (*a1 == null_)
+  {
     mknumb(a2, a1);
     return;
   }
   points(*a1, &x.sa);
   /* changed from pointr 25-jul-1989
      due to change in vax 10-feb-1989 */
-  if (x.snd->dtype != number) {
+  if (x.snd->dtype != number)
+  {
     er(9L);
     *a1 = null_;
-  } else {
-    WITH = x.snd;
-    WITH->val += a2;   /* deleted sign */
   }
-}  /* addnum*/
-
+  else
+  {
+    WITH = x.snd;
+    WITH->val += a2; /* deleted sign */
+  }
+} /* addnum*/
 
 Void setsel(xn, not_atomic, xa, tr_, rez)
 long xn;
@@ -44,27 +45,29 @@ long xa, tr_, rez;
   /* wyhod */
 
   mpd x;
-  a n;   /* imq selektora */
+  a n; /* imq selektora */
   a t;
   long i, j;
   maintreedescriptor *WITH;
   long FORLIM, FORLIM1;
   fragmtreedescriptor *WITH1;
 
-
-
-  if (not_atomic) {
-    if (xa == null_) {
+  if (not_atomic)
+  {
+    if (xa == null_)
+    {
       er(21L);
       goto _L1;
     }
     pointr(xa, &x.sa);
-    if (x.sad->dtype != idatom) {
+    if (x.sad->dtype != idatom)
+    {
       er(22L);
       goto _L1;
     }
     n = x.sad->name;
-  } else
+  }
+  else
     n = xn;
   if (tr_ == null_)
     goto _L1;
@@ -72,7 +75,8 @@ long xa, tr_, rez;
 
   /* opredelitx tip tr */
   pointr(tr_, &x.sa);
-  if (x.smtd->dtype != treemain) {   /* sna~ala w glawnom derewe */
+  if (x.smtd->dtype != treemain)
+  { /* sna~ala w glawnom derewe */
     /* oibka */
     er(23L);
     goto _L1;
@@ -84,52 +88,58 @@ long xa, tr_, rez;
   /*=====================================*/
   /* poisk selektora n w derewe x */
 
-  WITH = x.smtd;   /* with */
+  WITH = x.smtd; /* with */
   FORLIM = WITH->arcnum;
-  for (i = 1; i <= FORLIM; i++) {
-    if (WITH->arc[i - 1].arcname == n) {   /* na{li */
+  for (i = 1; i <= FORLIM; i++)
+  {
+    if (WITH->arc[i - 1].arcname == n)
+    { /* na{li */
       points(tr_, &x.sa);
       WITH->arc[i - 1].elt = rez;
-      if (rez == null_) {
-	FORLIM1 = WITH->arcnum;
-	for (j = i; j < FORLIM1; j++)
-	  WITH->arc[j - 1] = WITH->arc[j];
-	WITH->arcnum--;
-	WITH->totalarcnum--;
+      if (rez == null_)
+      {
+        FORLIM1 = WITH->arcnum;
+        for (j = i; j < FORLIM1; j++)
+          WITH->arc[j - 1] = WITH->arc[j];
+        WITH->arcnum--;
+        WITH->totalarcnum--;
       }
       goto _L1;
     }
   }
   t = WITH->next;
   /* prodolvaem poisk w fragmentah */
-  while (t != null_) {
+  while (t != null_)
+  {
     pointr(t, &x.sa);
     WITH1 = x.sftd;
     FORLIM = WITH1->arcnum;
-    for (i = 1; i <= FORLIM; i++) {
-      if (WITH1->arc[i - 1].arcname == n) {   /* na{li */
-	points(t, &x.sa);
-	WITH1->arc[i - 1].elt = rez;
-	if (rez == null_) {
-	  FORLIM1 = WITH1->arcnum;
-	  for (j = i; j < FORLIM1; j++)
-	    WITH1->arc[j - 1] = WITH1->arc[j];
-	  WITH1->arcnum--;
-	  points(tr_, &x.sa);
-	  WITH = x.smtd;
-	  WITH->totalarcnum--;
-	}
-	goto _L1;
+    for (i = 1; i <= FORLIM; i++)
+    {
+      if (WITH1->arc[i - 1].arcname == n)
+      { /* na{li */
+        points(t, &x.sa);
+        WITH1->arc[i - 1].elt = rez;
+        if (rez == null_)
+        {
+          FORLIM1 = WITH1->arcnum;
+          for (j = i; j < FORLIM1; j++)
+            WITH1->arc[j - 1] = WITH1->arc[j];
+          WITH1->arcnum--;
+          points(tr_, &x.sa);
+          WITH = x.smtd;
+          WITH->totalarcnum--;
+        }
+        goto _L1;
       }
     }
-    t = WITH1->next;   /* with */
-  }  /* while */
+    t = WITH1->next; /* with */
+  } /* while */
 
   /* ne nali !  */
   er(8L);
-_L1: ;
-}  /* setsel */
-
+_L1:;
+} /* setsel */
 
 Void setind(xx, isobject, xa, l, rez)
 long xx;
@@ -149,22 +159,24 @@ long xa, l, rez;
   long k, n;
   a t;
 
-
-
-  if (isobject) {
+  if (isobject)
+  {
     n = numval(xa);
-    if (n == 0) {
+    if (n == 0)
+    {
       er(3L);
       goto _L1;
     }
-  } else
+  }
+  else
     n = xx;
   /* w n -zna~enie indeksa */
-  if (l == null_)   /* rezulxtat= null */
+  if (l == null_) /* rezulxtat= null */
     goto _L1;
   /* opredelitx tip l */
   pointr(l, &y.sa);
-  if (y.smld->dtype != listmain) {
+  if (y.smld->dtype != listmain)
+  {
     er(4L);
     goto _L1;
   }
@@ -175,7 +187,8 @@ long xa, l, rez;
   k = y.smld->totalelnum;
   if (n < 0)
     n += k + 1;
-  if (n < 1 || n > k) {
+  if (n < 1 || n > k)
+  {
     er(5L);
     /*  indeks wne spiska */
     goto _L1;
@@ -183,14 +196,18 @@ long xa, l, rez;
   /*================================*/
   /* poisk |l-ta spiska             */
   /*================================*/
-  if (n <= y.smld->elnum) {
+  if (n <= y.smld->elnum)
+  {
     points(l, &y.sa);
     y.smld->elt[n - 1] = rez;
-  } else {
+  }
+  else
+  {
     n -= y.smld->elnum;
     t = y.smld->next;
     pointr(t, &y.sa);
-    while (n > y.sfld->elnum) {
+    while (n > y.sfld->elnum)
+    {
       n -= y.sfld->elnum;
       t = y.sfld->next;
       pointr(t, &y.sa);
@@ -198,9 +215,8 @@ long xa, l, rez;
     points(t, &y.sa);
     y.sfld->elt[n - 1] = rez;
   }
-_L1: ;
-}  /* setind */
-
+_L1:;
+} /* setind */
 
 Void selop(xn, not_atomic, xa, tr_, rez)
 long xn;
@@ -214,27 +230,30 @@ long xa, tr_, *rez;
   /* wyhod */
 
   mpd x;
-  a n;   /* imq selektora */
+  a n; /* imq selektora */
   a t;
   long i;
   maintreedescriptor *WITH;
   long FORLIM;
   fragmtreedescriptor *WITH1;
 
-
   *rez = null_;
-  if (not_atomic) {
-    if (xa == null_) {
+  if (not_atomic)
+  {
+    if (xa == null_)
+    {
       er(21L);
       goto _L1;
     }
     pointr(xa, &x.sa);
-    if (x.sad->dtype != idatom) {
+    if (x.sad->dtype != idatom)
+    {
       er(22L);
       goto _L1;
     }
     n = x.sad->name;
-  } else
+  }
+  else
     n = xn;
   if (tr_ == null_)
     goto _L1;
@@ -242,7 +261,8 @@ long xa, tr_, *rez;
 
   /* opredelitx tip tr */
   pointr(tr_, &x.sa);
-  if (x.smtd->dtype != treemain) {   /* sna~ala w glawnom derewe */
+  if (x.smtd->dtype != treemain)
+  { /* sna~ala w glawnom derewe */
     /* o{ibka */
     er(23L);
     goto _L1;
@@ -254,33 +274,37 @@ long xa, tr_, *rez;
   /*=====================================*/
   /* poisk selektora n w derewe x */
 
-  WITH = x.smtd;   /* with */
+  WITH = x.smtd; /* with */
   FORLIM = WITH->arcnum;
-  for (i = 0; i < FORLIM; i++) {
-    if (WITH->arc[i].arcname == n) {   /* na{li */
+  for (i = 0; i < FORLIM; i++)
+  {
+    if (WITH->arc[i].arcname == n)
+    { /* na{li */
       *rez = WITH->arc[i].elt;
       goto _L1;
     }
   }
   t = WITH->next;
   /* prodolvaem poisk w fragmentah */
-  while (t != null_) {
+  while (t != null_)
+  {
     pointr(t, &x.sa);
     WITH1 = x.sftd;
     FORLIM = WITH1->arcnum;
-    for (i = 0; i < FORLIM; i++) {
-      if (WITH1->arc[i].arcname == n) {   /* na{li */
-	*rez = WITH1->arc[i].elt;
-	goto _L1;
+    for (i = 0; i < FORLIM; i++)
+    {
+      if (WITH1->arc[i].arcname == n)
+      { /* na{li */
+        *rez = WITH1->arc[i].elt;
+        goto _L1;
       }
     }
-    t = WITH1->next;   /* with */
-  }  /* while */
+    t = WITH1->next; /* with */
+  } /* while */
 
   /* ne na{li !  */
-_L1: ;
-}  /* selop */
-
+_L1:;
+} /* selop */
 
 Void indxop(xx, isobject, xa, l, rez)
 long xx;
@@ -300,23 +324,25 @@ long xa, l, *rez;
   long k, n;
   a t;
 
-
-
   *rez = null_;
-  if (isobject) {
+  if (isobject)
+  {
     n = numval(xa);
-    if (n == 0) {
+    if (n == 0)
+    {
       er(3L);
       goto _L1;
     }
-  } else
+  }
+  else
     n = xx;
   /* w n -zna~enie indeksa */
-  if (l == null_)   /* rezulxtat= null */
+  if (l == null_) /* rezulxtat= null */
     goto _L1;
   /* opredelitx tip l */
   pointr(l, &y.sa);
-  if (y.smld->dtype != listmain) {
+  if (y.smld->dtype != listmain)
+  {
     er(4L);
     goto _L1;
   }
@@ -327,7 +353,8 @@ long xa, l, *rez;
   k = y.smld->totalelnum;
   if (n < 0)
     n += k + 1;
-  if (n < 1 || n > k) {
+  if (n < 1 || n > k)
+  {
     er(5L);
     /*  indeks wne spiska */
     goto _L1;
@@ -337,11 +364,13 @@ long xa, l, *rez;
   /*================================*/
   if (n <= y.smld->elnum)
     *rez = y.smld->elt[n - 1];
-  else {
+  else
+  {
     n -= y.smld->elnum;
     t = y.smld->next;
     pointr(t, &y.sa);
-    while (n > y.sfld->elnum) {
+    while (n > y.sfld->elnum)
+    {
       n -= y.sfld->elnum;
       t = y.sfld->next;
       pointr(t, &y.sa);
@@ -349,9 +378,8 @@ long xa, l, *rez;
     *rez = y.sfld->elt[n - 1];
   }
   /* w rez rezulxtat = l [ x ]  */
-_L1: ;
-}  /* indxop */
-
+_L1:;
+} /* indxop */
 
 Void concop(a1, a2)
 long *a1, a2;
@@ -366,43 +394,47 @@ long *a1, a2;
   ptr_ p1;
   a l;
 
-
-
   l = *a1;
-  if (a2 == null_) {
+  if (a2 == null_)
+  {
     if (l == null_)
       goto _L99;
-    else {
+    else
+    {
       pointr(l, &x.sa);
       if (x.smld->dtype == listmain)
-	goto _L99;
-      else {
-	l = null_;
-	goto _L99;
+        goto _L99;
+      else
+      {
+        l = null_;
+        goto _L99;
       }
     }
   }
   pointr(a2, &x.sa);
-  if (x.smld->dtype != listmain) {
+  if (x.smld->dtype != listmain)
+  {
     l = null_;
     goto _L99;
   }
-  if (l != null_) {
+  if (l != null_)
+  {
     pointr(l, &x.sa);
-    if (x.smld->dtype != listmain) {
+    if (x.smld->dtype != listmain)
+    {
       l = null_;
       goto _L99;
     }
   }
   first(a2, &p1);
-  while (p1.nel != 0) {
+  while (p1.nel != 0)
+  {
     lconc(&l, p1.cel);
     next(&p1);
   }
 _L99:
   *a1 = l;
-}  /* concop */
-
+} /* concop */
 
 Void copyop(ob, rez)
 long ob, *rez;
@@ -417,14 +449,14 @@ long ob, *rez;
   mpd x, y, z;
   a r1, r2, r3;
 
-
-
-  if (ob == null_) {
+  if (ob == null_)
+  {
     *rez = null_;
     goto _L99;
   }
   pointr(ob, &x.sa);
-  switch (x.sad->dtype) {
+  switch (x.sad->dtype)
+  {
 
   case atom:
   case idatom:
@@ -436,7 +468,7 @@ long ob, *rez;
   case idvariable:
   case nvariable:
   case fvariable:
-  case spec:   /* coord removed */
+  case spec: /* coord removed */
     gets1(&r1, &y.sa);
     *y.sad = *x.sad;
     *rez = r1;
@@ -456,7 +488,8 @@ long ob, *rez;
     *y.smld = *x.smld;
     *rez = r1;
     r2 = x.smld->next;
-    while (r2 != null_) {
+    while (r2 != null_)
+    {
       pointr(r2, &x.sa);
       gets5(&r3, &z.sa);
       *z.smld = *x.smld;
@@ -464,15 +497,11 @@ long ob, *rez;
       y.smld->next = r3;
       r1 = r3;
       r2 = z.smld->next;
-    }  /* while */
+    } /* while */
     break;
 
-  }/* case */
-_L99: ;   /* wyhod */
-}  /* copyop */
-
-
-
-
+  } /* case */
+_L99:; /* wyhod */
+} /* copyop */
 
 /* End. */
