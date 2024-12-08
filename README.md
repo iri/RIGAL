@@ -1,6 +1,6 @@
 # RIGAL
 
-RIGAL is a specialized programming language created for writing compilers. It was originally developed by M. Auguston and V. Engelson at the University of Latvia (USSR) during 1987-1990.
+RIGAL is a specialized programming language created for writing compilers. It was originally developed by M. Auguston and V. Engelson at the University of Latvia (USSR) during 1987-1993.
 
 This repository includes RIGAL to C compiler, examples, detailed language description and user guide.
 
