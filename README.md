@@ -1,6 +1,6 @@
 # RIGAL
 
-RIGAL is a specialized programming language created for writing compilers. It was originally developed by M. Auguston and V. Engelson at the University of Latvia (USSR) during 1987-1993.
+Rigal is compiler construction language developed at the University of Latvia, Institute of Mathematics and Computer Science in 1987. The main data structures are atoms, lists and labelled trees. The control structures are based on advanced pattern matching. All phases of compilation, including parsing, optimization and code generation, can be programmed in this language in short and readable form.
 
 This repository includes RIGAL to C compiler, examples, detailed language description and user guide.
 
@@ -14,13 +14,13 @@ This repository includes RIGAL to C compiler, examples, detailed language descri
 ## Documentation
 
 ### Language description
-[\<RIGAL\>/docs/RIGAL_language_description.html](docs/RIGAL_language_description.pdf)
+[RIGAL_language_description.html](docs/RIGAL_language_description.pdf)
 
 ### Programmers guide
-[\<RIGAL\>/docs/RIGAL_programmers_guide.html](docs/RIGAL_programmers_guide.pdf)
+[RIGAL_programmers_guide.html](docs/RIGAL_programmers_guide.pdf)
 
 ### Manual page
-[\<RIGAL\>/docs/man/rigal_manpage.html](docs/rigal_manpage.pdf)
+[rigal_manpage.html](docs/rigal_manpage.pdf)
 
 ## Prerequisites 
 
@@ -37,21 +37,23 @@ make
 
 After build the folder with executables (bin/) contains the following executables:
 
-rc - checks and compiles RIGAL file 
-
-ic - interprets intermediate RIGAL code 
-
-v - viewer for RIGAL data saved in file 
-
-rig_crf - RIGAL cross -referencer 
-
-rig_lint - RIGAL Lint (data type checker) 
+`rc` - checks and compiles RIGAL file 
+`ic` - interprets intermediate RIGAL code 
+`v` - viewer for RIGAL data saved in file 
+`rig_lint` - RIGAL Lint (data type checker) 
 
 
-## Install
+## Install on Debian/Ubuntu Linux as package
 
-To install you may add the folder with executables (bin/) to the $PATH environment variable
 ```bash
-export PATH="<RIGAL>/bin:$PATH
+sudo dpkg -i distr/rigal_4.45.1_amd64.deb
 ```
 
+## Install (manually, from source)
+
+To install you may compile and add the folder with executables (`bin`) to the `$PATH` environment variable
+```bash
+cd src
+make
+export PATH="<rigal-path>/bin:$PATH
+```
