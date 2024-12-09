@@ -28,11 +28,12 @@ CCF_SRC = defsun3.o ley_.o scan.o scanmif.o usemod.o c1.o c2.o c3.o c4.o nef2.o 
 DISTLIB =  defsun3.c ley_.c scan.c scanmif.c usemod.c c1.c c2.c c3.c c4.c nef2.c ou2.c sevice.c
 
 # All include files
-INCLIB_SRC = ../include/c1.h ../include/define.h  \
- ../include/defpage.h ../include/ley.h \
- ../include/scan.h ../include/cim.h \
- ../include/def180.h   ../include/nef2.h \
- ../include/usemod.h   ../include/globrig.h
+INCLIB_SRC = c1.h define.h defpage.h ley.h scan.h cim.h def180.h nef2.h usemod.h globrig.h
+# INCLIB_SRC = ../include/c1.h ../include/define.h  \
+#  ../include/defpage.h ../include/ley.h \
+#  ../include/scan.h ../include/cim.h \
+#  ../include/def180.h   ../include/nef2.h \
+#  ../include/usemod.h   ../include/globrig.h
 
 #--------------------------------------------------------
 # TARGET DEFINITIONS
@@ -44,7 +45,7 @@ all: bins riglib.a anrig genrigd rig_lint test clean
 bins: bin rc ic v
 
 bin:
-	-mkdir ../bin
+	mkdir ../bin
 
 rc: $(RCF_SRC) rc_.o
 	cc $(CCFLAGS)  -o ../bin/rc rc_.o $(RCF_SRC)
@@ -57,10 +58,10 @@ v: $(RCF_SRC) v.o
 
 riglib.a: $(CCF_SRC)
 	@echo '*Starting creating library'
-	-mkdir ../lib
-	-rm -f ../lib/riglib.a
+	mkdir ../lib
+	rm -f ../lib/riglib.a
 	ar rv ../lib/riglib.a $(CCF_SRC)
-	-ranlib ../lib/riglib.a
+	ranlib ../lib/riglib.a
 	@echo '*Library created'
 
 anrig: $(INCLIB_SRC) ../lib/riglib.a

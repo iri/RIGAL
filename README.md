@@ -38,8 +38,11 @@ make
 After build the folder with executables (bin/) contains the following executables:
 
 `rc` - checks and compiles RIGAL file 
+
 `ic` - interprets intermediate RIGAL code 
+
 `v` - viewer for RIGAL data saved in file 
+
 `rig_lint` - RIGAL Lint (data type checker) 
 
 
